@@ -26,13 +26,22 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".cendanaForest"
+            android:name=".CendanaForestActivity"
             android:parentActivityName=".TravelPage">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".TravelPage" />
+        </activity>
+        <activity
+            android:name=".SignUpActivity"
+            android:parentActivityName=".MainActivity">
+
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
     </application>
 

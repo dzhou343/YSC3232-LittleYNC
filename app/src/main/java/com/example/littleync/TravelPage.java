@@ -15,7 +15,7 @@ public class TravelPage extends AppCompatActivity {
     }
 
     public void cendanaForestButton(View view) {
-        Intent intent = new Intent(this, cendanaForest.class);
+        Intent intent = new Intent(this, CendanaForestActivity.class);
         startActivity(intent);
     }
 }
