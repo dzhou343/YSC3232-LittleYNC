@@ -24,7 +24,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Called when the user presses the sign-up text.
-    public void onClick(View view) {
-
+    public void signUp(View view) {
+        Intent intent = new Intent(this, SignUpActivity.class);
+        startActivity(intent);
     }
 }
