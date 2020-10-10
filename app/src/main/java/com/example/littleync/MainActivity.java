@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     /** Called when the user taps the Login button */
     public void loginButton(View view) {
-        Intent intent = new Intent(this, TravelPage.class);
+        Intent intent = new Intent(this, TravelActivity.class);
         startActivity(intent);
 
     }

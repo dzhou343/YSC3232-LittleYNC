@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TravelPage"
+            android:name=".TravelActivity"
             android:parentActivityName=".MainActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
@@ -27,12 +27,12 @@
         </activity>
         <activity
             android:name=".CendanaForestActivity"
-            android:parentActivityName=".TravelPage">
+            android:parentActivityName=".TravelActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".TravelPage" />
+                android:value=".TravelActivity" />
         </activity>
         <activity
             android:name=".SignUpActivity"
@@ -42,6 +42,15 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".ArmoryActivity"
+            android:parentActivityName=".TravelActivity">
+
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TravelActivity" />
         </activity>
     </application>
 
