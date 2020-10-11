@@ -23,18 +23,8 @@ public class CendanaForestActivity extends AppCompatActivity {
         OnlineDatabase dbb = new OnlineDatabase();
         ///Read the DocumentReference
         System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-        dbb.userRead("hMYfocWEMPeheG4CD7Re","playground").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                                             @Override
-                                                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                                                 if (task.isSuccessful()) {
-                                                                                     Map n = task.getResult().getData();
-                                                                                     System.out.println(n.keySet());
+        dbb.userRead("hMYfocWEMPeheG4CD7Re","playground");
 
-                                                                                 }
-                                                                             }
-
-                                                                         }
-        );
         System.out.println();
         ///TODO: Parse the Document...
 
@@ -42,8 +32,8 @@ public class CendanaForestActivity extends AppCompatActivity {
         toto.put("Yay","HAPPY DAY");
         toto.put("Hi Mark!","HAPPY DAY");
 
-        dbb.userWrite("hMYfocWEMPeheG4CD7Re","playground").update("test",toto);
-        dbb.userWrite("hMYfocWEMPeheG4CD7Re","playground").update("test",toto);
+        dbb.userWrite("hMYfocWEMPeheG4CD7Re","playground", toto);
+        dbb.userUpdate("hMYfocWEMPeheG4CD7Re","playground", "hello",toto);
         setContentView(R.layout.cendana_forest);
     }
 }
