@@ -14,16 +14,16 @@ public class OnlineDatabase {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     ///Function to read user data
-    public DocumentReference userRead(String userIdInput){
+    public DocumentReference userRead(String userIdInput, String collection){
         this.userID = userIdInput;
         System.out.println(userIdInput + userID);
-        DocumentReference dRef = db.collection("users").document(userIdInput);
+        DocumentReference dRef = db.collection(collection).document(userIdInput);
         return dRef;
     }
-    public DocumentReference userWrite(String userIdInput){
+    public DocumentReference userWrite(String userIdInput, String collection){
         this.userID = userIdInput;
         System.out.println(userIdInput + userID);
-        DocumentReference dRef = db.collection("users").document(userIdInput);
+        DocumentReference dRef = db.collection(collection).document(userIdInput);
         return dRef;
     }
 
