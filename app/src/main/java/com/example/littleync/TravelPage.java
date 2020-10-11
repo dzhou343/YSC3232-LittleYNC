@@ -19,9 +19,5 @@ public class TravelPage extends AppCompatActivity {
     public void cendanaForestButton(View view) {
         Intent intent = new Intent(this, CendanaForestActivity.class);
         startActivity(intent);
-        OnlineDatabase dbb = new OnlineDatabase();
-        ///Read the DocumentReference
-        System.out.println(dbb.userRead("VMkxZndQx7gh4jGI4GDE").get());
-        ///TODO: Parse the Document...
     }
 }
