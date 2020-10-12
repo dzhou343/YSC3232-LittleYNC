@@ -23,7 +23,7 @@ public class CendanaForestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final OnlineDatabase dbb = new OnlineDatabase();
+        OnlineDatabase dbb = new OnlineDatabase();
         ///Read the DocumentReference
         System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
 //        dbb.userRead("random","users")
@@ -67,8 +67,8 @@ public class CendanaForestActivity extends AppCompatActivity {
         toto.put("Yay","HAPPY DAY");
         toto.put("Hi Mark!","HAPPY DAY");
 
-        dbb.userWrite("hMYfocWEMPeheG4CD7Re","playground").update("test",toto);
-        dbb.userWrite("hMYfocWEMPeheG4CD7Re","playground").update("test",toto);
+        dbb.userWrite("hMYfocWEMPeheG4CD7Re","playground", toto);
+        dbb.userUpdate("hMYfocWEMPeheG4CD7Re","playground", "hello",toto);
         setContentView(R.layout.cendana_forest);
     }
 }
