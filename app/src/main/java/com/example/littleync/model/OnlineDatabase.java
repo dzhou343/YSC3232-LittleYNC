@@ -20,6 +20,7 @@ public class OnlineDatabase {
         DocumentReference dRef = db.collection(collection).document(userIdInput);
         return dRef;
     }
+
     public DocumentReference userWrite(String userIdInput, String collection){
         this.userID = userIdInput;
         System.out.println(userIdInput + userID);
