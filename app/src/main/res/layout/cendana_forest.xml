@@ -5,7 +5,7 @@
     android:id="@+id/cendana_forest"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".CendanaForestActivity"
     android:background="@android:color/background_dark"
     android:orientation="vertical">
 
@@ -161,6 +161,18 @@
         android:textAlignment="center">
     </TextView>
 
+    <TextView
+        android:id="@+id/stamina_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="@string/Stamina"
+        android:textAlignment="center"
+        android:textColor="#C89FFD"
+        android:textSize="20dp">
+
+    </TextView>
+
     <LinearLayout
         android:id="@+id/timer_section"
         android:layout_width="wrap_content"
@@ -204,6 +216,7 @@
             android:layout_height="60dp"
             android:layout_marginHorizontal="15dp"
             app:srcCompat="@drawable/ic_baseline_play_circle_filled_24"
+            android:onClick="modifyStaminaTest"
             android:tint="#C89FFD">
         </ImageView>
 
@@ -218,17 +231,5 @@
 
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/stamina_section"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:text="Stamina: 28/50"
-        android:textColor="#C89FFD"
-        android:textAlignment="center"
-        android:textSize="20dp">
-
-    </TextView>
 
 </LinearLayout>
