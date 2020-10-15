@@ -12,7 +12,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.login_page);
     }
 
     /** Called when the user taps the Login button */
@@ -24,7 +24,13 @@ public class MainActivity extends AppCompatActivity {
 
     // Called when the user presses the sign-up text.
     public void signUp(View view) {
-        Intent intent = new Intent(this, SignUpActivity.class);
+        Intent intent = new Intent(this, SignupActivity.class);
         startActivity(intent);
     }
+
+    public void goToRandomPage(View view){
+        Intent intent = new Intent(this, RandomPage.class);
+        startActivity(intent);
+    }
+
 }
