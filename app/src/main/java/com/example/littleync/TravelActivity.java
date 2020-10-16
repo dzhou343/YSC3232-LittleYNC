@@ -11,7 +11,7 @@ public class TravelActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_travel_page);
+        setContentView(R.layout.travel_page);
     }
 
     public void cendanaForestButton(View view) {
