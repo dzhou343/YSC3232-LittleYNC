@@ -43,22 +43,38 @@ public class CendanaForestActivity extends AppCompatActivity {
 //                }
 //        );
 
+        final ArrayList<User> m = new ArrayList<User>();
         dbb.userRead("random", "users")
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                           @Override
                                           public void onSuccess(DocumentSnapshot documentSnapshot) {
                                               User test = documentSnapshot.toObject(User.class);
+                                              m.add(test);
+                                              System.out.println(m.get(0));
+                                              System.out.println(m.get(0).getUserName());
                                               test.addTrade("another one shidoghaofg");
                                               test.writeToDatabase(dbb);
                                           }
                                       }
                 );
+
+        System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
+//        try {
+//            User test = m.get(0);
+//            test.addTrade("outside");
+//            test.writeToDatabase(dbb);
+//            System.out.println(test.getUserName());
+//        } finally {
+//            System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
+//        }
+
+
         System.out.println();
         ///TODO: Parse the Document...
 
-//        User userTest = new User("newname", 1, 1, 1, 3,
-//                0, 0, 0, new ArrayList<String>(), 0);
+//        User userTest = new User("sighs", 1, 1, 1, 3,
+//                0, 0, 0, new ArrayList<String>(), 500000);
 //        userTest.addTrade("gold!");
 //        userTest.addTrade("silver");
 //        userTest.writeToDatabase(dbb);

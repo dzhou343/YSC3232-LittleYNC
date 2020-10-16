@@ -5,19 +5,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class User {
-    private final String COLLECTION = "users";
-    private String databaseID = "random";
+    final String COLLECTION = "users";
+    String databaseID = "random";
 
-    private String userName;
-    private int woodchoppingGearLevel;
-    private int fishingGearLevel;
-    private int combatGearLevel;
-    private int aggregateLevel;
-    private int wood;
-    private int fish;
-    private int gold;
-    private ArrayList<String> trades;
-    private int exp;
+    String userName;
+    int woodchoppingGearLevel;
+    int fishingGearLevel;
+    int combatGearLevel;
+    int aggregateLevel;
+    int wood;
+    int fish;
+    int gold;
+    ArrayList<String> trades;
+    int exp;
 
     public User(String userName, int woodchoppingGearLevel, int fishingGearLevel,
                 int combatGearLevel, int aggregateLevel, int wood, int fish, int gold,
@@ -36,6 +36,50 @@ public class User {
 
     public User() {
 
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setDatabaseID(String databaseID) {
+        this.databaseID = databaseID;
+    }
+
+    public void setWoodchoppingGearLevel(int woodchoppingGearLevel) {
+        this.woodchoppingGearLevel = woodchoppingGearLevel;
+    }
+
+    public void setFishingGearLevel(int fishingGearLevel) {
+        this.fishingGearLevel = fishingGearLevel;
+    }
+
+    public void setCombatGearLevel(int combatGearLevel) {
+        this.combatGearLevel = combatGearLevel;
+    }
+
+    public void setAggregateLevel(int aggregateLevel) {
+        this.aggregateLevel = aggregateLevel;
+    }
+
+    public void setWood(int wood) {
+        this.wood = wood;
+    }
+
+    public void setFish(int fish) {
+        this.fish = fish;
+    }
+
+    public void setGold(int gold) {
+        this.gold = gold;
+    }
+
+    public void setTrades(ArrayList<String> trades) {
+        this.trades = trades;
+    }
+
+    public void setExp(int exp) {
+        this.exp = exp;
     }
 
     public void addTrade(String tradeID) {
@@ -86,7 +130,7 @@ public class User {
         Map<String, Object> docData = new HashMap<>();
         docData.put("userName", getUserName());
         docData.put("woodchoppingGearLevel", getWoodchoppingGearLevel());
-        docData.put("fishGearLevel", getFishingGearLevel());
+        docData.put("fishingGearLevel", getFishingGearLevel());
         docData.put("combatGearLevel", getCombatGearLevel());
         docData.put("aggregateLevel", getAggregateLevel());
         docData.put("wood", getWood());
