@@ -55,36 +55,36 @@ public class CendanaForestActivity extends AppCompatActivity {
 
 
     public void parseDS(Task<DocumentSnapshot> dss) {
+        lock.lock();
+        try {
+            dss.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                         @Override
+                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                             User test = documentSnapshot.toObject(User.class);
+                                             yay = "sighs";
+                                             for (int i = 0; i < 1000; i++) {
+                                                 System.out.println(i);
+                                             }
+                                             flag = true;
 
+                                             System.out.println("halp");
 
-        dss.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                     @Override
-                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                         User test = documentSnapshot.toObject(User.class);
-                                         yay = "sighs";
-                                         for (int i = 0; i < 1000; i++) {
-                                             System.out.println(i);
+                                             test.addTrade("another onebleh");
+                                             test.writeToDatabase(new OnlineDatabase());
+                                             System.out.println("halpp");
+                                             pir();
                                          }
-                                         flag = true;
-
-                                         System.out.println("halp");
-
-                                         test.addTrade("another onebleh");
-                                         test.writeToDatabase(new OnlineDatabase());
-                                         System.out.println("halpp");
-                                         pir();
                                      }
-                                 }
-        );
+            );
 
 
-        //System.out.println(m);
+            //System.out.println(m);
 
-        System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
+            System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
 
 
-        System.out.println();
-        ///TODO: Parse the Document...
+            System.out.println();
+            ///TODO: Parse the Document...
 
 //        User userTest = new User("sighs", 1, 1, 1, 3,
 //                0, 0, 0, new ArrayList<String>(), 500000);
@@ -92,11 +92,13 @@ public class CendanaForestActivity extends AppCompatActivity {
 //        userTest.addTrade("silver");
 //        userTest.writeToDatabase(dbb);
 
-        Map<String, String> toto = new HashMap<String, String>();
-        toto.put("Yay", "HAPPY DAY");
-        toto.put("Hi Mark!", "HAPPY DAY");
-
-
+            Map<String, String> toto = new HashMap<String, String>();
+            toto.put("Yay", "HAPPY DAY");
+            toto.put("Hi Mark!", "HAPPY DAY");
+        }
+        finally {
+            lock.unlock();
+        }
     }
 
 
@@ -108,16 +110,8 @@ public class CendanaForestActivity extends AppCompatActivity {
         yay = "notUpdated";
         flag = false;
         setContentView(R.layout.cendana_forest);
-        lock.lock();
-        try {
-            parseDS(readTask());
-        } finally {
-            lock.unlock();
-        }
-
+        parseDS(readTask());
         pir();
-
-
     }
 
     public void pir() {
@@ -131,13 +125,6 @@ public class CendanaForestActivity extends AppCompatActivity {
         } finally {
             lock.unlock();
         }
-
-//        while (!flag) {
-//            System.out.println("waiting");
-//        }
-//        System.out.println(yay);
-
-
     }
 
 
