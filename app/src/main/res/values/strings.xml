@@ -9,4 +9,6 @@
     <string name="Gear_Shop">DoS Armoury</string>
     <string name="Marketplace">Buttery Trading Hub</string>
     <string name="Login">Login</string>
+    <string name="Stamina">Stamina: %s / 50</string>
+    <string name="avatar_description">go to the random page for testing purpose</string>
 </resources>
