@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, TravelActivity.class);
         startActivity(intent);
 
+        
     }
 
     // Called when the user presses the sign-up text.
