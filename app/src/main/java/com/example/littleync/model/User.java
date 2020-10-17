@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class User {
-    final String COLLECTION = "users";
     String databaseID = "random";
 
     String userName;
@@ -139,18 +138,7 @@ public class User {
         docData.put("trades", getTrades());
         docData.put("exp", getExp());
 
-        db.userWrite(databaseID, COLLECTION).set(docData);
-
-//        db.userWrite(userID, collection).update("userName", getUserName());
-//        db.userWrite(userID, collection).update("woodchoppingGearLevel", getWoodchoppingGearLevel());
-//        db.userWrite(userID, collection).update("fishingGearLevel", getFishingGearLevel());
-//        db.userWrite(userID, collection).update("combatGearLevel", getCombatGearLevel());
-//        db.userWrite(userID, collection).update("aggregateLevel", getAggregateLevel());
-//        db.userWrite(userID, collection).update("wood", getWood());
-//        db.userWrite(userID, collection).update("fish", getFish());
-//        db.userWrite(userID, collection).update("gold", getGold());
-//        db.userWrite(userID, collection).update("trades", getTrades());
-//        db.userWrite(userID, collection).update("exp", getExp());
+        db.userReadWrite().set(docData);
     }
 
 }

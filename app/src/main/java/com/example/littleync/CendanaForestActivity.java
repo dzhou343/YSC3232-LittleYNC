@@ -12,48 +12,22 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class CendanaForestActivity extends AppCompatActivity {
-    volatile String yay = "notUpdated";
-    volatile Boolean flag = false;
-    Task<DocumentSnapshot> ds;
-    ReentrantLock lock = new ReentrantLock();
+    private String yay = "notUpdated";
+    private Boolean flag = false;
+    private OnlineDatabase db;
+    private final ReentrantLock lock = new ReentrantLock();
 
     public Task<DocumentSnapshot> readTask() {
-        final OnlineDatabase dbb = new OnlineDatabase();
-        ///Read the DocumentReference
-        System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-//        dbb.userRead("random","users")
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            DocumentSnapshot doc = task.getResult();
-//                            //Map n = task.getResult().getData();
-//                            //System.out.println(n.keySet());
-//                        } else {
-//                            System.out.println("ERRORERRORERRORERROR");
-//                        }
-//                    }
-//
-//                }
-//        );
-
-
-        ds = dbb.userRead("random", "users")
-                .get();
-        return ds;
+        return db.userReadWrite().get();
     }
 
-
-    public void parseDS(Task<DocumentSnapshot> dss) {
+    public void parseDS(Task<DocumentSnapshot> ds) {
         lock.lock();
         try {
-            dss.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                          @Override
                                          public void onSuccess(DocumentSnapshot documentSnapshot) {
                                              User test = documentSnapshot.toObject(User.class);
@@ -62,41 +36,41 @@ public class CendanaForestActivity extends AppCompatActivity {
                                                  System.out.println(i);
                                              }
                                              flag = true;
-
                                              System.out.println("halp");
-
-                                             test.addTrade("another onebleh");
-                                             test.writeToDatabase(new OnlineDatabase());
+                                             test.addTrade("another lock");
+                                             test.writeToDatabase(db);
                                              System.out.println("halpp");
                                              pir();
                                          }
                                      }
             );
 
-
-            //System.out.println(m);
-
             System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-
-
             System.out.println();
-            ///TODO: Parse the Document...
 
 //        User userTest = new User("sighs", 1, 1, 1, 3,
 //                0, 0, 0, new ArrayList<String>(), 500000);
 //        userTest.addTrade("gold!");
 //        userTest.addTrade("silver");
 //        userTest.writeToDatabase(dbb);
-
-            Map<String, String> toto = new HashMap<String, String>();
-            toto.put("Yay", "HAPPY DAY");
-            toto.put("Hi Mark!", "HAPPY DAY");
         }
         finally {
             lock.unlock();
         }
     }
 
+    public void pir() {
+        lock.lock();
+        try {
+            if (flag) {
+                System.out.println(yay);
+            } else {
+                System.out.println("SHOULD NEVER REACH HERE");
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +81,7 @@ public class CendanaForestActivity extends AppCompatActivity {
         String staminaToDisplay = getString(R.string.Stamina, Integer.toString(0));
         stamina.setText(staminaToDisplay);
 
+        db = new OnlineDatabase("random");
         yay = "notUpdated";
         flag = false;
         parseDS(readTask());
@@ -130,19 +105,5 @@ public class CendanaForestActivity extends AppCompatActivity {
         // Changing value stored by textView
         stamina.setText(newStaminaToDisplay);
     }
-
-    public void pir() {
-        lock.lock();
-        try {
-            if (flag) {
-                System.out.println(yay);
-            } else {
-                System.out.println("other branch");
-            }
-        } finally {
-            lock.unlock();
-        }
-    }
-
 
 }

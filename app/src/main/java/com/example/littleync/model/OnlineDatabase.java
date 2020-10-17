@@ -1,19 +1,20 @@
 package com.example.littleync.model;
 
-///The following packages below are in preparation for reading and writing
-//import com.google.firebase.*;
-import androidx.annotation.NonNull;
-
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.*;
-import com.google.firebase.Timestamp;
-import com.google.android.gms.tasks.*;
-
-import java.util.Map;
-
 
 public class OnlineDatabase {
     String userID;
+    String USERCOLLECTION = "users";
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    public OnlineDatabase(String userID) {
+        this.userID = userID;
+    }
+
+    public DocumentReference userReadWrite() {
+        return db.collection(USERCOLLECTION).document(userID);
+    }
 
     ///Function to read user data
 //    public void userRead(String userIdInput, String collection){
@@ -46,21 +47,4 @@ public class OnlineDatabase {
 //        dRef.set(objToUpdate);
 //    }
 
-    public DocumentReference userRead(String userIdInput, String collection){
-        this.userID = userIdInput;
-        System.out.println(userIdInput + userID);
-        DocumentReference dRef = db.collection(collection).document(userIdInput);
-        return dRef;
-    }
-
-    public DocumentReference userWrite(String userIdInput, String collection){
-        this.userID = userIdInput;
-        System.out.println(userIdInput + userID);
-        DocumentReference dRef = db.collection(collection).document(userIdInput);
-        return dRef;
-    }
-
-    public OnlineDatabase() {
-
-    }
 }
