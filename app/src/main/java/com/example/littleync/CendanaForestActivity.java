@@ -17,12 +17,16 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class CendanaForestActivity extends AppCompatActivity {
+    volatile String yay = "notUpdated";
+    volatile Boolean flag = false;
+    Task<DocumentSnapshot> ds;
+    ReentrantLock lock = new ReentrantLock();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public Task<DocumentSnapshot> readTask() {
         final OnlineDatabase dbb = new OnlineDatabase();
         ///Read the DocumentReference
         System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
@@ -43,31 +47,40 @@ public class CendanaForestActivity extends AppCompatActivity {
 //                }
 //        );
 
-        final ArrayList<User> m = new ArrayList<User>();
-        dbb.userRead("random", "users")
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                          @Override
-                                          public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                              User test = documentSnapshot.toObject(User.class);
-                                              m.add(test);
-                                              System.out.println(m.get(0));
-                                              System.out.println(m.get(0).getUserName());
-                                              test.addTrade("another one shidoghaofg");
-                                              test.writeToDatabase(dbb);
-                                          }
-                                      }
-                );
+
+        ds = dbb.userRead("random", "users")
+                .get();
+        return ds;
+    }
+
+
+    public void parseDS(Task<DocumentSnapshot> dss) {
+
+
+        dss.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                     @Override
+                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                         User test = documentSnapshot.toObject(User.class);
+                                         yay = "sighs";
+                                         for (int i = 0; i < 1000; i++) {
+                                             System.out.println(i);
+                                         }
+                                         flag = true;
+
+                                         System.out.println("halp");
+
+                                         test.addTrade("another onebleh");
+                                         test.writeToDatabase(new OnlineDatabase());
+                                         System.out.println("halpp");
+                                         pir();
+                                     }
+                                 }
+        );
+
+
+        //System.out.println(m);
 
         System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-//        try {
-//            User test = m.get(0);
-//            test.addTrade("outside");
-//            test.writeToDatabase(dbb);
-//            System.out.println(test.getUserName());
-//        } finally {
-//            System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-//        }
 
 
         System.out.println();
@@ -79,12 +92,53 @@ public class CendanaForestActivity extends AppCompatActivity {
 //        userTest.addTrade("silver");
 //        userTest.writeToDatabase(dbb);
 
-        Map<String,String> toto = new HashMap<String,String>();
-        toto.put("Yay","HAPPY DAY");
-        toto.put("Hi Mark!","HAPPY DAY");
+        Map<String, String> toto = new HashMap<String, String>();
+        toto.put("Yay", "HAPPY DAY");
+        toto.put("Hi Mark!", "HAPPY DAY");
 
+
+    }
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         //dbb.userWrite("hMYfocWEMPeheG4CD7Re","playground", toto);
         //dbb.userUpdate("hMYfocWEMPeheG4CD7Re","playground", "hello",toto);
+        yay = "notUpdated";
+        flag = false;
         setContentView(R.layout.cendana_forest);
+        lock.lock();
+        try {
+            parseDS(readTask());
+        } finally {
+            lock.unlock();
+        }
+
+        pir();
+
+
     }
+
+    public void pir() {
+        lock.lock();
+        try {
+            if (flag) {
+                System.out.println(yay);
+            } else {
+                System.out.println("other branch");
+            }
+        } finally {
+            lock.unlock();
+        }
+
+//        while (!flag) {
+//            System.out.println("waiting");
+//        }
+//        System.out.println(yay);
+
+
+    }
+
+
 }
