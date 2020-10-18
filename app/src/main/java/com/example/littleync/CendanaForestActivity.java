@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.littleync.model.Monsters;
 import com.example.littleync.model.OnlineDatabase;
 import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -15,61 +16,50 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class CendanaForestActivity extends AppCompatActivity {
-    private String yay = "notUpdated";
-    private Boolean flag = false;
+    private volatile Boolean flag = false;
     private OnlineDatabase db;
-    private final ReentrantLock lock = new ReentrantLock();
+    private User user;
+    private Monsters monsters = new Monsters();
 
-    public Task<DocumentSnapshot> readTask() {
+    public synchronized Task<DocumentSnapshot> readTask() {
         return db.userReadWrite().get();
     }
 
-    public void parseDS(Task<DocumentSnapshot> ds) {
-        lock.lock();
-        try {
-            ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                         @Override
-                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                             User test = documentSnapshot.toObject(User.class);
-                                             yay = "sighs";
-                                             for (int i = 0; i < 1000; i++) {
-                                                 System.out.println(i);
-                                             }
-                                             flag = true;
-                                             System.out.println("halp");
-                                             test.addTrade("another lock");
-                                             test.writeToDatabase(db);
-                                             System.out.println("halpp");
-                                             pir();
-                                         }
-                                     }
-            );
-
-            System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-            System.out.println();
-
+    public synchronized void parseDS(Task<DocumentSnapshot> ds) {
+        ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        user = documentSnapshot.toObject(User.class);
+                                        for (int i = 0; i < 30; i++) {
+                                            System.out.println(i);
+                                        }
+                                        flag = true;
+                                    }
+                                }
+        );
 //        User userTest = new User("sighs", 1, 1, 1, 3,
 //                0, 0, 0, new ArrayList<String>(), 500000);
 //        userTest.addTrade("gold!");
 //        userTest.addTrade("silver");
 //        userTest.writeToDatabase(dbb);
-        }
-        finally {
-            lock.unlock();
-        }
+
     }
 
-    public void pir() {
-        lock.lock();
-        try {
-            if (flag) {
-                System.out.println(yay);
-            } else {
-                System.out.println("SHOULD NEVER REACH HERE");
+    public synchronized void fight() {
+        System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
+        if (flag) {
+            for (int i = 0; i < 10; i++) {
+                user.addExp(monsters.getExpYield("Prof. Wertz"));
+                user.addGold(monsters.getGoldYield("Prof. Bodin"));
+                System.out.println(user.getExp());
+                System.out.println(user.getGold());
+                System.out.println(user.getAggregateLevel());
             }
-        } finally {
-            lock.unlock();
+            user.writeToDatabase(db);
+        } else {
+            System.out.println("SHOULD NEVER REACH HERE");
         }
+        System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
     }
 
     @Override
@@ -82,13 +72,11 @@ public class CendanaForestActivity extends AppCompatActivity {
         stamina.setText(staminaToDisplay);
 
         db = new OnlineDatabase("random");
-        yay = "notUpdated";
         flag = false;
         parseDS(readTask());
-        pir();
     }
 
-    public void modifyStaminaTest(View v){
+    public void modifyStaminaTest(View v) {
         // Need to get a reference to the text view to access its values
         TextView stamina = (TextView) findViewById(R.id.stamina_section);
         // Here we are dynamically getting the current text being displayed by the TextView
@@ -98,12 +86,15 @@ public class CendanaForestActivity extends AppCompatActivity {
         // Getting the actual stamina value that we will change
         Integer currentValue = Integer.parseInt(splitted[1]);
         // Changing string value based on what it is
-        if(currentValue == 0) currentValue = 50;
-        else if(currentValue != 0) currentValue = currentValue - 1;
+        if (currentValue == 0) currentValue = 50;
+        else if (currentValue != 0) currentValue = currentValue - 1;
         // This is the new stamina that will be displayed after clicking the play button
-        String newStaminaToDisplay = getString(R.string.Stamina, Integer.toString( currentValue) );
+        String newStaminaToDisplay = getString(R.string.Stamina, Integer.toString(currentValue));
         // Changing value stored by textView
         stamina.setText(newStaminaToDisplay);
+
+        // Ignore for now, testing buttons to write to DB
+        fight();
     }
 
 }
