@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.example.littleync.model.Monsters;
 import com.example.littleync.model.OnlineDatabase;
+import com.example.littleync.model.Shop;
 import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -19,7 +20,8 @@ public class CendanaForestActivity extends AppCompatActivity {
     private volatile Boolean flag = false;
     private OnlineDatabase db;
     private User user;
-    private Monsters monsters = new Monsters();
+    private final Monsters MONSTERS = new Monsters();
+    private final Shop SHOP = new Shop();
 
     public synchronized Task<DocumentSnapshot> readTask() {
         return db.userReadWrite().get();
@@ -30,9 +32,6 @@ public class CendanaForestActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                         user = documentSnapshot.toObject(User.class);
-                                        for (int i = 0; i < 30; i++) {
-                                            System.out.println(i);
-                                        }
                                         flag = true;
                                     }
                                 }
@@ -42,15 +41,14 @@ public class CendanaForestActivity extends AppCompatActivity {
 //        userTest.addTrade("gold!");
 //        userTest.addTrade("silver");
 //        userTest.writeToDatabase(dbb);
-
     }
 
     public synchronized void fight() {
         System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
         if (flag) {
             for (int i = 0; i < 10; i++) {
-                user.addExp(monsters.getExpYield("Prof. Wertz"));
-                user.addGold(monsters.getGoldYield("Prof. Bodin"));
+                user.addExp(MONSTERS.getExpYield("Prof. Wertz"));
+                user.addGold(MONSTERS.getGoldYield("Prof. Bodin"));
                 System.out.println(user.getExp());
                 System.out.println(user.getGold());
                 System.out.println(user.getAggregateLevel());
@@ -60,6 +58,16 @@ public class CendanaForestActivity extends AppCompatActivity {
             System.out.println("SHOULD NEVER REACH HERE");
         }
         System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
+    }
+
+    public synchronized void chopWood() {
+        if (flag) {
+            System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+            user.addWood();
+            System.out.println(user.getWood());
+            System.out.println(user.getExp());
+            System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+        }
     }
 
     @Override
@@ -86,15 +94,18 @@ public class CendanaForestActivity extends AppCompatActivity {
         // Getting the actual stamina value that we will change
         Integer currentValue = Integer.parseInt(splitted[1]);
         // Changing string value based on what it is
-        if (currentValue == 0) currentValue = 50;
-        else if (currentValue != 0) currentValue = currentValue - 1;
+        if (currentValue == 0) {
+            currentValue = 50;
+        } else {
+            currentValue -= 1;
+        }
         // This is the new stamina that will be displayed after clicking the play button
         String newStaminaToDisplay = getString(R.string.Stamina, Integer.toString(currentValue));
         // Changing value stored by textView
         stamina.setText(newStaminaToDisplay);
 
         // Ignore for now, testing buttons to write to DB
-        fight();
+        chopWood();
     }
 
 }

@@ -4,3 +4,6 @@ This is a class project for YSC3232 - Software Engineering created by Mark Yuen,
 Please see the wiki for git workflow.
 
  
+Conventions used for this project:
+1) Snake_case for XML variables
+2) camelCase for Java classes
