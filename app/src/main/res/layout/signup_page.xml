@@ -6,11 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".SignupActivity">
 
+
+
     <EditText
-        android:id="@+id/textView"
+        android:id="@+id/sign_up_email"
         android:layout_width="209dp"
         android:layout_height="41dp"
-        android:text="@string/email_field"
+        android:hint="Email"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -18,37 +20,38 @@
         app:layout_constraintVertical_bias="0.274" />
 
     <EditText
-        android:id="@+id/textView3"
+        android:id="@+id/sign_up_password"
         android:layout_width="202dp"
         android:layout_height="52dp"
-        android:text="ENTER PASSWORD"
+        android:hint="ENTER PASSWORD"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/sign_up_email"
         app:layout_constraintVertical_bias="0.093" />
 
     <EditText
-        android:id="@+id/textView4"
+        android:id="@+id/sign_up_password2"
         android:layout_width="201dp"
         android:layout_height="44dp"
-        android:text="RE-ENTER PASSWORD"
+        android:hint="RE-ENTER PASSWORD"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3"
+        app:layout_constraintTop_toBottomOf="@+id/sign_up_password"
         app:layout_constraintVertical_bias="0.111" />
 
     <Button
-        android:id="@+id/button7"
+        android:id="@+id/submitSignUpButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="SIGN UP"
+        android:onClick="signUpSubmit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        app:layout_constraintTop_toBottomOf="@+id/sign_up_password2"
         app:layout_constraintVertical_bias="0.178" />
 </androidx.constraintlayout.widget.ConstraintLayout>
