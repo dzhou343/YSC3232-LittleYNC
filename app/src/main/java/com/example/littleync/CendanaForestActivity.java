@@ -19,7 +19,7 @@ public class CendanaForestActivity extends AppCompatActivity {
     private volatile Boolean flag = false;
     private OnlineDatabase db;
     private User user;
-    private Monsters monsters = new Monsters();
+    private final Monsters MONSTERS = new Monsters();
 
     public synchronized Task<DocumentSnapshot> readTask() {
         return db.userReadWrite().get();
@@ -49,8 +49,8 @@ public class CendanaForestActivity extends AppCompatActivity {
         System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
         if (flag) {
             for (int i = 0; i < 10; i++) {
-                user.addExp(monsters.getExpYield("Prof. Wertz"));
-                user.addGold(monsters.getGoldYield("Prof. Bodin"));
+                user.addExp(MONSTERS.getExpYield("Prof. Wertz"));
+                user.addGold(MONSTERS.getGoldYield("Prof. Bodin"));
                 System.out.println(user.getExp());
                 System.out.println(user.getGold());
                 System.out.println(user.getAggregateLevel());
