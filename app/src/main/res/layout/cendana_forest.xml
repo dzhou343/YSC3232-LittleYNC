@@ -165,7 +165,7 @@
         android:id="@+id/stamina_section"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginTop="20dp"
         android:text="@string/Stamina"
         android:textAlignment="center"
         android:textColor="#C89FFD"
@@ -173,61 +173,60 @@
 
     </TextView>
 
+
     <LinearLayout
-        android:id="@+id/timer_section"
+        android:id="@+id/time_section"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_gravity="center"
         android:layout_margin="15dp"
-        android:layout_gravity="center_horizontal">
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/timer_icon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="15dp"
-            app:srcCompat="@drawable/ic_baseline_timer_24"
-            android:tint="#C89FFD">
-        </ImageView>
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginHorizontal="5dp"
+            android:tint="#C89FFD"
+            app:srcCompat="@drawable/ic_baseline_timer_24"></ImageView>
 
         <TextView
             android:id="@+id/time_left"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="8s"
-            android:textSize="25sp"
+
             android:gravity="center"
-            android:textColor="#C89FFD">
-        </TextView>
+            android:text="5:09"
+            android:textColor="#C89FFD"
+            android:textSize="25sp"></TextView>
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/start_stop_buttons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-
-        android:layout_gravity="center_horizontal">
-
-        <ImageView
-            android:id="@+id/start_button"
+        <ImageButton
+            android:id="@+id/start_pause_resume_button"
             android:layout_width="60dp"
             android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
             android:layout_marginHorizontal="15dp"
-            app:srcCompat="@drawable/ic_baseline_play_circle_filled_24"
-            android:onClick="modifyStaminaTest"
-            android:tint="#C89FFD">
-        </ImageView>
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:padding="0dp"
+            android:scaleType="fitXY"
+            android:tint="#C89FFD"
+            app:srcCompat="@drawable/ic_baseline_play_circle_filled_24"></ImageButton>
 
-        <ImageView
-            android:id="@+id/stop_button"
+        <ImageButton
+            android:id="@+id/reset_button"
             android:layout_width="60dp"
             android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
             android:layout_marginHorizontal="15dp"
-            app:srcCompat="@drawable/ic_round_stop_24"
-            android:tint="#C89FFD">
-        </ImageView>
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:padding="0dp"
+            android:scaleType="fitXY"
+            android:tint="#C89FFD"
+            android:visibility="invisible"
+            app:srcCompat="@drawable/ic_baseline_refresh_24"></ImageButton>
 
 
     </LinearLayout>
