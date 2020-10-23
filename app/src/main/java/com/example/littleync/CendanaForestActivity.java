@@ -41,6 +41,7 @@ public class CendanaForestActivity extends AppCompatActivity {
     private TextView timeDisplay;
     private TextView staminaDisplay;
 
+
     public synchronized Task<DocumentSnapshot> readTask() {
         return db.userReadWrite().get();
     }
@@ -194,8 +195,12 @@ public class CendanaForestActivity extends AppCompatActivity {
 
         String stamina_left_formatted = String.format(Locale.getDefault(), "Stamina: %s / %s", staminaLeft, TOTAL_STAMINA);
         staminaDisplay.setText(stamina_left_formatted);
+
         // Ignore for now, testing buttons to write to DB
         chopWood();
+
+
+
     }
 
 }
