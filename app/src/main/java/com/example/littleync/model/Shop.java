@@ -1,16 +1,14 @@
 package com.example.littleync.model;
 
-import java.lang.Math;
-
 public class Shop {
 
     // Formula for primary resource: 5 * level ^ 1.4
-    private int requiredPrimaryResource(int level) {
+    public int requiredPrimaryResource(int level) {
         return (int)(5 * Math.pow(level, 1.4));
     }
 
     // Formula for secondary resource: 5 * level ^ 1.2
-    private int requiredSecondaryResource(int level) {
+    public int requiredSecondaryResource(int level) {
         return (int)(5 * Math.pow(level, 1.2));
     }
 
