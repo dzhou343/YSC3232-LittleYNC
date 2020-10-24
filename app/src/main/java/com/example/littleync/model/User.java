@@ -1,5 +1,7 @@
 package com.example.littleync.model;
 
+import com.google.firebase.firestore.DocumentReference;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -86,7 +88,7 @@ public class User {
         setExp(getExp() + exp);
     }
 
-    public void writeToDatabase(OnlineDatabase db) {
+    public void writeToDatabase(DocumentReference userDoc) {
         Map<String, Object> docData = new HashMap<>();
         docData.put("userName", getUserName());
         docData.put("woodchoppingGearLevel", getWoodchoppingGearLevel());
@@ -98,7 +100,7 @@ public class User {
         docData.put("gold", getGold());
         docData.put("trades", getTrades());
         docData.put("exp", getExp());
-        db.userReadWrite().set(docData);
+        userDoc.set(docData);
     }
 
     public void setUserName(String userName) {
