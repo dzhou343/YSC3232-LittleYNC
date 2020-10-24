@@ -10,25 +10,26 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.littleync.model.Monsters;
-import com.example.littleync.model.OnlineDatabase;
-import com.example.littleync.model.Shop;
-import com.example.littleync.model.Trade;
 import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Locale;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class CendanaForestActivity extends AppCompatActivity {
-    private volatile Boolean userLoaded = false;
-    private OnlineDatabase db;
-    private User user;
-    private final Monsters MONSTERS = new Monsters();
-    private final Shop SHOP = new Shop();
+    // To print to log instead of console
     private final static String TAG = "CendanaForestActivity";
 
+    // DB attributes
+    private final FirebaseFirestore fs = FirebaseFirestore.getInstance();
+    private DocumentReference userDoc;
+    private User user;
+    private volatile Boolean userLoaded = false;
+
+    // Timer attributes
     //    time (in milliseconds) taken to deplete one unit of stamina = 3s
     private static final long TIME_PER_STAMINA = 5000;
     private static final int TOTAL_STAMINA = 50;
@@ -38,71 +39,20 @@ public class CendanaForestActivity extends AppCompatActivity {
     //    total time left in the session
     private long timeLeft = TOTAL_TIME_PER_SESSION;
 
+    // TODO: idk what are these?
     private ImageButton startPauseResumeBtn;
     private ImageButton resetBtn;
     private CountDownTimer myTimer;
     private TextView timeDisplay;
     private TextView staminaDisplay;
 
-    public synchronized Task<DocumentSnapshot> readTask() {
-        return db.userReadWrite().get();
-    }
-
-    public synchronized void parseDS(Task<DocumentSnapshot> ds) {
-        ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        user = documentSnapshot.toObject(User.class);
-                                        userLoaded = true;
-                                    }
-                                }
-        );
-//        User userTest = new User("sighs", 1, 1, 1, 3,
-//                0, 0, 0, new ArrayList<String>(), 500000);
-//        userTest.addTrade("gold!");
-//        userTest.addTrade("silver");
-//        userTest.writeToDatabase(dbb);
-    }
-
-    public synchronized void fight() {
-        System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-        if (userLoaded) {
-            for (int i = 0; i < 10; i++) {
-                user.addExp(MONSTERS.getExpYield("Prof. Wertz"));
-                user.addGold(MONSTERS.getGoldYield("Prof. Bodin"));
-
-                //Log.d(TAG, String.valueOf(user.getExp()));
-
-                System.out.println(user.getExp());
-                System.out.println(user.getGold());
-                System.out.println(user.getAggregateLevel());
-            }
-            user.writeToDatabase(db);
-        } else {
-            System.out.println("SHOULD NEVER REACH HERE");
-        }
-        System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-    }
-
-    public synchronized void chopWood() {
-        if (userLoaded) {
-            System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-            user.addWood();
-            System.out.println(user.getWood());
-            System.out.println(user.getExp());
-            System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-        }
-    }
-
-    public synchronized void postTrade() {
-        if (userLoaded) {
-            System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-            Trade t = new Trade("test1", "wood", "fish", 100, 200);
-            t.writeToDatabase(db);
-            System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-        }
-    }
-
+    /**
+     * Update stamina view
+     * Create timer
+     * Read user from DB
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,7 +68,7 @@ public class CendanaForestActivity extends AppCompatActivity {
         resetBtn = findViewById(R.id.reset_button);
         timeDisplay = findViewById(R.id.time_left);
 
-//        set the onClickListeners for the two buttons
+        // set the onClickListeners for the two buttons
         startPauseResumeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,13 +89,51 @@ public class CendanaForestActivity extends AppCompatActivity {
         updateCountdownText();
         updateStamina();
 
-        db = new OnlineDatabase("random");
+        // Read the user from the database and store it
+        // locally in this Activity
+        // I believe onCreate() will only complete once
+        // the user has been loaded in
+        // TODO: Pass in the correct userID
+        String userID = "random";
+        // Flag just to be sure the reading was successful
         userLoaded = false;
-        parseDS(readTask());
+        userDoc = fs.collection("users").document(userID);
+        readUser(userDoc.get());
     }
 
+    /**
+     * Write the local User and any updates made to it back to the DB
+     * This is called when we press the back button to return to the Main Activity
+     */
+    @Override
+    public void onDestroy() {
+        user.writeToDatabase(userDoc);
+        Log.d(TAG, "Wrote to DB");
+        super.onDestroy();
+    }
 
-//    FROM HERE: TIMER STUFF
+    public void readUser(Task<DocumentSnapshot> ds) {
+        ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        user = documentSnapshot.toObject(User.class);
+                                        userLoaded = true;
+                                    }
+                                }
+        );
+    }
+
+    public void chopWood() {
+        if (userLoaded) {
+            Log.d(TAG, "hhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+            user.addWood();
+            // Both should increment by woodchoppingLevel
+            Log.d(TAG, String.valueOf(user.getWood()));
+            Log.d(TAG, String.valueOf(user.getExp()));
+        }
+    }
+
+    //    FROM HERE: TIMER STUFF
     private void startTimer(){
         myTimer = new CountDownTimer(TOTAL_TIME_PER_SESSION, 1000) {
             @Override
@@ -197,21 +185,42 @@ public class CendanaForestActivity extends AppCompatActivity {
     }
 
     //    better update with an if condition, i.e. compute stamina now and only update when stamina_now is
-//    different from stamina_left (the previous stamina till now).
+    //    different from stamina_left (the previous stamina till now).
     private void updateStamina(){
         int quotient = (int) (timeLeft / TIME_PER_STAMINA);
 //        System.out.println(String.format(Locale.getDefault(), "%d, %d", (int) (time_left / 1000) % 60, (int) (time_left / 1000) % (time_per_stamina / 1000)));
         if ((int) (timeLeft / 1000) % (TIME_PER_STAMINA / 1000) == 0) {
             staminaLeft = quotient;
+            // For each unit of stamina consumed we want to chop wood
+            chopWood();
         } else {
             staminaLeft = quotient + 1;
         }
 
         String stamina_left_formatted = String.format(Locale.getDefault(), "Stamina: %s / %s", staminaLeft, TOTAL_STAMINA);
         staminaDisplay.setText(stamina_left_formatted);
+    }
 
-        // Ignore for now, testing buttons to write to DB
-        postTrade();
+    // TODO: WILL BE SHIFTED TO FIGHTING PAGE LATER
+    private final Monsters MONSTERS = new Monsters();
+    public synchronized void fight() {
+        System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
+        if (userLoaded) {
+            for (int i = 0; i < 10; i++) {
+                user.addExp(MONSTERS.getExpYield("Prof. Wertz"));
+                user.addGold(MONSTERS.getGoldYield("Prof. Bodin"));
+
+                //Log.d(TAG, String.valueOf(user.getExp()));
+
+                System.out.println(user.getExp());
+                System.out.println(user.getGold());
+                System.out.println(user.getAggregateLevel());
+            }
+            user.writeToDatabase(userDoc);
+        } else {
+            System.out.println("SHOULD NEVER REACH HERE");
+        }
+        System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
     }
 
 }
