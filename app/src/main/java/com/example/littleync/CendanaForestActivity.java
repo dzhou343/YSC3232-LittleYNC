@@ -41,7 +41,6 @@ public class CendanaForestActivity extends AppCompatActivity {
     private TextView timeDisplay;
     private TextView staminaDisplay;
 
-
     public synchronized Task<DocumentSnapshot> readTask() {
         return db.userReadWrite().get();
     }
@@ -198,8 +197,6 @@ public class CendanaForestActivity extends AppCompatActivity {
 
         // Ignore for now, testing buttons to write to DB
         chopWood();
-
-
 
     }
 
