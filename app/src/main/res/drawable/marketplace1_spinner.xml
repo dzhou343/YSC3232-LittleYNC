@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="#FFF9C4"></solid>
+                    <corners android:radius="5dp"/>
+                    <padding android:left="5dp"/>
+                </shape>
+            </item>
+            <item>
+                <bitmap app:srcCompat="@drawable/ic_marketplace1_spinner" android:gravity="center">
+                </bitmap>
+                <color android:color="#FFF9C4"></color>
+            </item>
+        </layer-list>
+
+    </item>
+</selector>
+
+<TextView
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:textSize="2sp"
+android:gravity="left"
+android:textColor="#FF0000"
+android:padding="5dip"
+    />

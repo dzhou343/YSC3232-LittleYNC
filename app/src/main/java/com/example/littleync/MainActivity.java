@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
          */
         FirebaseUser user = log.getMyAuthInstance().getCurrentUser();
         if (user == null) {
+            Intent intent = new Intent(this, TravelActivity.class);
+            startActivity(intent);
             System.out.println("User Not logged in");
         }
 
