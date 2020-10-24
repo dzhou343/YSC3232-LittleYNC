@@ -11,4 +11,7 @@
     <string name="Login">Login</string>
     <string name="Stamina">Stamina: %s / 50</string>
     <string name="avatar_description">go to the random page for testing purpose</string>
+    <string name="go_to_random_page_for_testing_purpose">Go to random page for testing purpose</string>
+    <string name="email">EMAIL</string>
+    <string name="password">PASSWORD</string>
 </resources>
