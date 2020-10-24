@@ -3,6 +3,7 @@ package com.example.littleync;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.ImageButton;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.example.littleync.model.Monsters;
 import com.example.littleync.model.OnlineDatabase;
 import com.example.littleync.model.Shop;
+import com.example.littleync.model.Trade;
 import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -20,11 +22,12 @@ import java.util.Locale;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class CendanaForestActivity extends AppCompatActivity {
-    private volatile Boolean flag = false;
+    private volatile Boolean userLoaded = false;
     private OnlineDatabase db;
     private User user;
     private final Monsters MONSTERS = new Monsters();
     private final Shop SHOP = new Shop();
+    private final static String TAG = "CendanaForestActivity";
 
     //    time (in milliseconds) taken to deplete one unit of stamina = 3s
     private static final long TIME_PER_STAMINA = 5000;
@@ -50,7 +53,7 @@ public class CendanaForestActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                         user = documentSnapshot.toObject(User.class);
-                                        flag = true;
+                                        userLoaded = true;
                                     }
                                 }
         );
@@ -63,10 +66,13 @@ public class CendanaForestActivity extends AppCompatActivity {
 
     public synchronized void fight() {
         System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-        if (flag) {
+        if (userLoaded) {
             for (int i = 0; i < 10; i++) {
                 user.addExp(MONSTERS.getExpYield("Prof. Wertz"));
                 user.addGold(MONSTERS.getGoldYield("Prof. Bodin"));
+
+                //Log.d(TAG, String.valueOf(user.getExp()));
+
                 System.out.println(user.getExp());
                 System.out.println(user.getGold());
                 System.out.println(user.getAggregateLevel());
@@ -79,12 +85,21 @@ public class CendanaForestActivity extends AppCompatActivity {
     }
 
     public synchronized void chopWood() {
-        if (flag) {
+        if (userLoaded) {
             System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhh");
             user.addWood();
             System.out.println(user.getWood());
             System.out.println(user.getExp());
             System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+        }
+    }
+
+    public synchronized void postTrade() {
+        if (userLoaded) {
+            System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
+            Trade t = new Trade("test1", "wood", "fish", 100, 200);
+            t.writeToDatabase(db);
+            System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
         }
     }
 
@@ -125,7 +140,7 @@ public class CendanaForestActivity extends AppCompatActivity {
         updateStamina();
 
         db = new OnlineDatabase("random");
-        flag = false;
+        userLoaded = false;
         parseDS(readTask());
     }
 
@@ -196,8 +211,7 @@ public class CendanaForestActivity extends AppCompatActivity {
         staminaDisplay.setText(stamina_left_formatted);
 
         // Ignore for now, testing buttons to write to DB
-        chopWood();
-
+        postTrade();
     }
 
 }

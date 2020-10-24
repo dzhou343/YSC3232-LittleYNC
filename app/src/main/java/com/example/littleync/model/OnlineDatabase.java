@@ -1,19 +1,54 @@
 package com.example.littleync.model;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class OnlineDatabase {
     String userID;
-    String USERCOLLECTION = "users";
+    String USER_COLLECTION = "users";
+    String TRADE_COLLECTION = "trades";
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private Map<String, Trade> trades = new HashMap<String, Trade>();
 
     public OnlineDatabase(String userID) {
         this.userID = userID;
     }
 
     public DocumentReference userReadWrite() {
-        return db.collection(USERCOLLECTION).document(userID);
+        return db.collection(USER_COLLECTION).document(userID);
+    }
+
+    public DocumentReference tradeReadWrite(String documentID) {
+        return db.collection(TRADE_COLLECTION).document(documentID);
+    }
+
+    // ASYNC ISSUE
+    public Map<String, Trade> readAllTrades() {
+        trades.clear();
+        CollectionReference tradesRef = db.collection(TRADE_COLLECTION);
+        tradesRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Trade t = document.toObject(Trade.class);
+                        System.out.println(t.getTradeID());
+                        trades.put(t.getTradeID(), t);
+                    }
+                }
+            }
+        });
+        for (String t : trades.keySet()) {
+            System.out.println(t);
+            System.out.println("hi");
+        }
+        return trades;
     }
 
     ///Function to read user data

@@ -3,10 +3,9 @@ package com.example.littleync.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.lang.Math;
 
 public class User {
-    private String databaseID = "random";
+    //private String databaseID = "random";
 
     private String userName;
     private int woodchoppingGearLevel;
@@ -87,13 +86,28 @@ public class User {
         setExp(getExp() + exp);
     }
 
+    public void writeToDatabase(OnlineDatabase db) {
+        Map<String, Object> docData = new HashMap<>();
+        docData.put("userName", getUserName());
+        docData.put("woodchoppingGearLevel", getWoodchoppingGearLevel());
+        docData.put("fishingGearLevel", getFishingGearLevel());
+        docData.put("combatGearLevel", getCombatGearLevel());
+        docData.put("aggregateLevel", getAggregateLevel());
+        docData.put("wood", getWood());
+        docData.put("fish", getFish());
+        docData.put("gold", getGold());
+        docData.put("trades", getTrades());
+        docData.put("exp", getExp());
+        db.userReadWrite().set(docData);
+    }
+
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
-    public void setDatabaseID(String databaseID) {
-        this.databaseID = databaseID;
-    }
+//    public void setDatabaseID(String databaseID) {
+//        this.databaseID = databaseID;
+//    }
 
     public void setWoodchoppingGearLevel(int woodchoppingGearLevel) {
         this.woodchoppingGearLevel = woodchoppingGearLevel;
@@ -169,21 +183,6 @@ public class User {
 
     public int getExp() {
         return this.exp;
-    }
-
-    public void writeToDatabase(OnlineDatabase db) {
-        Map<String, Object> docData = new HashMap<>();
-        docData.put("userName", getUserName());
-        docData.put("woodchoppingGearLevel", getWoodchoppingGearLevel());
-        docData.put("fishingGearLevel", getFishingGearLevel());
-        docData.put("combatGearLevel", getCombatGearLevel());
-        docData.put("aggregateLevel", getAggregateLevel());
-        docData.put("wood", getWood());
-        docData.put("fish", getFish());
-        docData.put("gold", getGold());
-        docData.put("trades", getTrades());
-        docData.put("exp", getExp());
-        db.userReadWrite().set(docData);
     }
 
 }
