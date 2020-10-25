@@ -142,7 +142,7 @@
     </TextView>
 
     <ImageView
-        android:id="@+id/forest_img"
+        android:id="@+id/monster_img"
         android:layout_width="match_parent"
         android:layout_height="180dp"
         app:srcCompat="@drawable/ic_tree"

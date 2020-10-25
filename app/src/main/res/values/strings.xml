@@ -12,8 +12,17 @@
     <string name="Stamina">Stamina: %s / 50</string>
     <string name="avatar_description">go to the random page for testing purpose</string>
     <string-array name="enemies">
-        <item>Prof Bruno</item>
-        <item>Prof Wertz</item>
-        <item>Prof Maria</item>
+        <item>Prof. Sergey</item>
+        <item>Prof. Stamps</item>
+        <item>Prof. Danvy</item>
+        <item>Prof. Wertz</item>
+        <item>Prof. Cheung</item>
+        <item>Prof. Field</item>
+        <item>Prof. Liu</item>
+        <item>Prof. De Iorio</item>
+        <item>Prof. Tolwinski</item>
+        <item>Prof. Comaroff</item>
+        <item>Prof. Hobor</item>
+        <item>Prof. Bodin</item>
     </string-array>
 </resources>

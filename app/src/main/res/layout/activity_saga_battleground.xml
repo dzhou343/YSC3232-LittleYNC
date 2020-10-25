@@ -147,11 +147,10 @@
         </TextView>
 
         <ImageView
-            android:id="@+id/forest_img"
+            android:id="@+id/monster_img"
             android:layout_width="match_parent"
             android:layout_height="180dp"
-            android:tint="#C89FFD"
-            app:srcCompat="@drawable/ic_tree">
+            app:srcCompat="@drawable/battle_bruno">
 
         </ImageView>
 
@@ -170,16 +169,16 @@
                 android:popupBackground="@android:color/transparent"/>
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/health_display"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_weight="1"
-                android:text="Health 0 / 500"
+                android:text="Health "
                 android:textAlignment="center"
                 android:textColor="#C89FFD"
                 android:textSize="20dp"
-                tools:text="Health 0 / 500" />
+                tools:text="Health Loading" />
         </LinearLayout>
 
         <TextView
