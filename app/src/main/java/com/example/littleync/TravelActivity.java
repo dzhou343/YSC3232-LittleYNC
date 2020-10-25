@@ -23,4 +23,9 @@ public class TravelActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ArmoryActivity.class);
         startActivity(intent);
     }
+
+    public void battleButton(View view){
+        Intent intent = new Intent(this, SagaBattlegroundActivity.class);
+        startActivity(intent);
+    }
 }

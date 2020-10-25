@@ -4,11 +4,11 @@
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:hardwareAccelerated="false"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -36,6 +36,15 @@
                 android:value=".TravelActivity" />
         </activity>
         <activity
+            android:name=".SagaBattlegroundActivity"
+            android:parentActivityName=".TravelActivity">
+
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TravelActivity" />
+        </activity>
+        <activity
             android:name=".SignupActivity"
             android:parentActivityName=".MainActivity">
 
@@ -44,7 +53,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
         <activity
             android:name=".RandomPage"
             android:parentActivityName=".MainActivity">
@@ -54,7 +62,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
         <activity
             android:name=".ArmoryActivity"
             android:parentActivityName=".TravelActivity">
