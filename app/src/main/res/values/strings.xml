@@ -3,7 +3,19 @@
     <string name="email_field">Email</string>
     <string name="password_field">Password</string>
     <string name="sign_up">Don\'t have an account? Sign up here.</string>
+
+    <!-- For CendanaForestActivity -->
     <string name="Woodcutting_Place">Cendana Forest</string>
+    <string name="Cendana_wood_res">Wood: %s</string>
+    <string name="Cendana_wood_gear_level">Wood Gear Level: %s</string>
+    <string name="Cendana_fish_res">Fish: %s</string>
+    <string name="Cendana_fish_gear_level">Fish Gear Level: %s</string>
+    <string name="Cendana_gold_res">Gold: %s</string>
+    <string name="Cendana_combat_gear_level">Combat Gear Level: %s</string>
+    <string name="Cendana_agg_level">Aggregate Level: %s</string>
+    <string name="Cendana_agg_level_progress">%s / %s</string>
+    <string name="Cendana_toast_msg">+%s Wood and +%s Exp</string>
+
     <string name="Fishing_Place">Eco Pond</string>
     <string name="Combat_Place">Saga Battleground</string>
     <string name="Gear_Shop">DoS Armoury</string>
