@@ -185,7 +185,7 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
                                         fishingGearLevelDisplay.setText(fishGearLevel);
                                         String goldRes = String.format(Locale.getDefault(), "Gold: %s", user.getGold());
                                         goldDisplay.setText(goldRes);
-                                        String combatGearLevel = String.format(Locale.getDefault(), "Wood Gear Level: %s", user.getCombatGearLevel());
+                                        String combatGearLevel = String.format(Locale.getDefault(), "Combat Gear Level: %s", user.getCombatGearLevel());
                                         combatGearLevelDisplay.setText(combatGearLevel);
                                         String aggLevel = String.format(Locale.getDefault(), "Aggregate Level: %s", user.getAggregateLevel());
                                         aggLevelDisplay.setText(aggLevel);
@@ -225,8 +225,8 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         }
     }
 
-    private void changeMonsterImage(){
-        switch(currentMonster){
+    private void changeMonsterImage() {
+        switch(currentMonster) {
             case "Prof. Bodin":
                 monsterDisplay.setImageResource(R.drawable.battle_bruno);
                 break;
@@ -264,7 +264,6 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
                 monsterDisplay.setImageResource(R.drawable.battle_liu);
                 break;
         }
-
     }
 
     // TIMER STUFF
@@ -320,7 +319,9 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         if ((int) (timeLeft / 1000) % (TIME_PER_STAMINA / 1000) == 0) {
             staminaLeft = quotient;
             // For each unit of stamina consumed we want to attack the monster
-            fight();
+            if (staminaLeft < TOTAL_STAMINA) {
+                fight();
+            }
         } else {
             staminaLeft = quotient + 1;
         }

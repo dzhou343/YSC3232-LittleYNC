@@ -157,7 +157,7 @@ public class CendanaForestActivity extends AppCompatActivity {
                                         fishingGearLevelDisplay.setText(fishGearLevel);
                                         String goldRes = String.format(Locale.getDefault(), "Gold: %s", user.getGold());
                                         goldDisplay.setText(goldRes);
-                                        String combatGearLevel = String.format(Locale.getDefault(), "Wood Gear Level: %s", user.getCombatGearLevel());
+                                        String combatGearLevel = String.format(Locale.getDefault(), "Combat Gear Level: %s", user.getCombatGearLevel());
                                         combatGearLevelDisplay.setText(combatGearLevel);
                                         String aggLevel = String.format(Locale.getDefault(), "Aggregate Level: %s", user.getAggregateLevel());
                                         aggLevelDisplay.setText(aggLevel);
@@ -249,7 +249,9 @@ public class CendanaForestActivity extends AppCompatActivity {
         if ((int) (timeLeft / 1000) % (TIME_PER_STAMINA / 1000) == 0) {
             staminaLeft = quotient;
             // For each unit of stamina consumed we want to chop wood
-            chopWood();
+            if (staminaLeft < TOTAL_STAMINA) {
+                chopWood();
+            }
         } else {
             staminaLeft = quotient + 1;
         }
