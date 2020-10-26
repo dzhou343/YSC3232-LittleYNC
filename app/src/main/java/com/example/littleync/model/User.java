@@ -39,14 +39,14 @@ public class User {
     public User() {}
 
     // Formula for level: 50 * level ^ 1.8
-    private int requiredExperience(int level) {
+    public int requiredExperience(int level) {
         return (int)(50 * Math.pow(level, 1.8));
     }
 
     private int computeAggregateLevelIndex() {
         int index = getAggregateLevel();
         int exp = getExp();
-        while (index < 200 && exp >= requiredExperience(index)) {
+        while (exp >= requiredExperience(index)) {
             index++;
         }
         return index;
