@@ -12,7 +12,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.littleync.model.Monsters;
 import com.example.littleync.model.User;
@@ -25,32 +24,46 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Locale;
 
 public class SagaBattlegroundActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    private final Monsters monsters = new Monsters();
-
     // To print to log instead of console
     private final static String TAG = "SagaBattleActivity";
 
+    // DB attributes
+    private final FirebaseFirestore fs = FirebaseFirestore.getInstance();
+    private DocumentReference userDoc;
+    private User user;
+    private volatile Boolean userLoaded = false;
+
+    // To update User stats at top of page
+    private TextView woodDisplay;
+    private TextView woodchoppingGearLevelDisplay;
+    private TextView fishDisplay;
+    private TextView fishingGearLevelDisplay;
+    private TextView goldDisplay;
+    private TextView combatGearLevelDisplay;
+    private TextView aggLevelDisplay;
+    private TextView aggLevelProgressDisplay;
+    private TextView woodAndExpGainDisplay;
 
     // Timer attributes
-    //    time (in milliseconds) taken to deplete one unit of stamina = 3s
     private static final long TIME_PER_STAMINA = 5000;
     private static final int TOTAL_STAMINA = 50;
     private int staminaLeft = TOTAL_STAMINA;
     private static final long TOTAL_TIME_PER_SESSION = TIME_PER_STAMINA * TOTAL_STAMINA;
     private boolean timerRunning;
-    //    total time left in the session
     private long timeLeft = TOTAL_TIME_PER_SESSION;
-
-    // TODO: idk what are these?
     private ImageButton startPauseResumeBtn;
     private ImageButton resetBtn;
     private CountDownTimer myTimer;
     private TextView timeDisplay;
     private TextView staminaDisplay;
+
+    // Monster attributes
+    private final Monsters MONSTERS = new Monsters();
+    private String currentMonster;
+    private int currentHP;
     private TextView healthDisplay;
     private ImageView monsterDisplay;
     private Spinner enemySpinner;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +77,7 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         ArrayAdapter<String> enemyAdapter = new ArrayAdapter<String>(
                 SagaBattlegroundActivity.this,
                 R.layout.battle_spinner,
-                getResources().getStringArray(R.array.enemies));
+                getResources().getStringArray(R.array.monster_names));
         // Creates the list of data
         enemyAdapter.setDropDownViewResource(R.layout.battle_spinner_dropdown);
         // Allows the spinner to show the data within the spinner.
@@ -73,12 +86,7 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         enemySpinner.setOnItemSelectedListener(this);
         // END OF SPINNER INITIALIZATION
 
-        // By default, initialize stamina to full when the activity is created
         staminaDisplay = (TextView) findViewById(R.id.stamina_section);
-//        String stamina_text = getString(R.string.Stamina, Integer.toString(0));
-//        stamina_display.setText(stamina_text);
-//        initialize the 1) start/pause/resume button, 2) the reset button and 3) the dynamic time
-//        display textview. By default, the reset button is initialized to invisible.
         startPauseResumeBtn = findViewById(R.id.start_pause_resume_button);
         resetBtn = findViewById(R.id.reset_button);
         timeDisplay = findViewById(R.id.time_left);
@@ -88,9 +96,11 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
             @Override
             public void onClick(View v) {
                 if (timerRunning) {
-                    pauseTimer();}
-                else{
-                    startTimer();}
+                    pauseTimer();
+                }
+                else {
+                    startTimer();
+                }
             }
         });
 
@@ -104,45 +114,126 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         updateCountdownText();
         updateStamina();
 
-
         healthDisplay = (TextView) findViewById(R.id.health_display);
         monsterDisplay = (ImageView) findViewById(R.id.monster_img);
 
+        // All other text views
+        woodDisplay = findViewById(R.id.wood_res);
+        woodchoppingGearLevelDisplay = findViewById(R.id.wood_gear_level);
+        fishDisplay = findViewById(R.id.fish_res);
+        fishingGearLevelDisplay = findViewById(R.id.fish_gear_level);
+        goldDisplay = findViewById(R.id.gold_res);
+        combatGearLevelDisplay = findViewById(R.id.combat_gear_level);
+        aggLevelDisplay = findViewById(R.id.agg_level);
+        aggLevelProgressDisplay = findViewById(R.id.agg_level_progress);
+        woodAndExpGainDisplay = findViewById(R.id.toast_msg);
+
+        // TODO: Pass in the correct userID
+        String userID = "random";
+        userLoaded = false;
+        userDoc = fs.collection("users").document(userID);
+        readUser(userDoc.get());
     }
 
+    /**
+     * Write the local User and any updates made to it back to the DB
+     * This is called when we press the back button to return to the Main Activity
+     */
+    @Override
+    public void onDestroy() {
+        user.writeToDatabase(userDoc);
+        Log.d(TAG, "Wrote to DB");
+        super.onDestroy();
+    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String currentChoice = parent.getItemAtPosition(position).toString();
-        initializeHealthPoints(currentChoice);
-        changeMonsterImage(currentChoice);
-        // nothing happens if a user selects the monster they are currently fighting.
-
+        // Set current Monster and HP, then update its textViews and image
+        currentMonster = parent.getItemAtPosition(position).toString();
+        currentHP = MONSTERS.getMonsterHitpoints(currentMonster);
+        String healthMaxFormatted = String.format(Locale.getDefault(),
+                "HP: %s / %s", currentHP, MONSTERS.getMonsterHitpoints(currentMonster));
+        healthDisplay.setText(healthMaxFormatted);
+        String toastMsg = String.format(Locale.getDefault(),
+                "+%s Gold and +%s Exp", MONSTERS.getGoldYield(currentMonster), MONSTERS.getExpYield(currentMonster));
+        woodAndExpGainDisplay.setText(toastMsg);
+        changeMonsterImage();
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
+    public void onNothingSelected(AdapterView<?> parent) {}
 
+    /**
+     * Read in User by userID, update all the textViews at top of page
+     *
+     * @param ds
+     */
+    public void readUser(Task<DocumentSnapshot> ds) {
+        ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        user = documentSnapshot.toObject(User.class);
+                                        userLoaded = true;
+                                        // Assign User attributes to textViews
+                                        String woodRes = String.format(Locale.getDefault(), "Wood: %s", user.getWood());
+                                        woodDisplay.setText(woodRes);
+                                        String woodGearLevel = String.format(Locale.getDefault(), "Wood Gear Level: %s", user.getWoodchoppingGearLevel());
+                                        woodchoppingGearLevelDisplay.setText(woodGearLevel);
+                                        String fishRes = String.format(Locale.getDefault(), "Fish: %s", user.getFish());
+                                        fishDisplay.setText(fishRes);
+                                        String fishGearLevel = String.format(Locale.getDefault(), "Fish Gear Level: %s", user.getFishingGearLevel());
+                                        fishingGearLevelDisplay.setText(fishGearLevel);
+                                        String goldRes = String.format(Locale.getDefault(), "Gold: %s", user.getGold());
+                                        goldDisplay.setText(goldRes);
+                                        String combatGearLevel = String.format(Locale.getDefault(), "Wood Gear Level: %s", user.getCombatGearLevel());
+                                        combatGearLevelDisplay.setText(combatGearLevel);
+                                        String aggLevel = String.format(Locale.getDefault(), "Aggregate Level: %s", user.getAggregateLevel());
+                                        aggLevelDisplay.setText(aggLevel);
+                                        String aggLevelProgress = String.format(Locale.getDefault(),
+                                                "%s / %s", user.getExp(), user.requiredExperience(user.getAggregateLevel() + 1));
+                                        aggLevelProgressDisplay.setText(aggLevelProgress);
+                                    }
+                                }
+        );
     }
 
-    // This function is used to display the full hp of a monster when it is chosen.
-    private void initializeHealthPoints(String monsterName){
-        Integer monsterHealthToDisplay = monsters.getMonsterHitpoints(monsterName);
-        String monsterHealthString = monsterHealthToDisplay.toString();
-        String healthMaxFormatted = String.format(Locale.getDefault(), "Health: 0 / %s", monsterHealthString);
-        healthDisplay.setText(healthMaxFormatted);
+    public void fight() {
+        if (userLoaded) {
+            // Deal damage to monster
+            currentHP -= user.getCombatGearLevel();
+            if (currentHP <= 0) {
+                // If monster is dead, then increment gold and exp
+                user.addGold(MONSTERS.getGoldYield(currentMonster));
+                user.addExp(MONSTERS.getExpYield(currentMonster));
+                // Update textViews
+                String goldRes = String.format(Locale.getDefault(), "Gold: %s", user.getGold());
+                goldDisplay.setText(goldRes);
+                String aggLevel = String.format(Locale.getDefault(), "Aggregate Level: %s", user.getAggregateLevel());
+                aggLevelDisplay.setText(aggLevel);
+                String aggLevelProgress = String.format(Locale.getDefault(),
+                        "%s / %s", user.getExp(), user.requiredExperience(user.getAggregateLevel() + 1));
+                aggLevelProgressDisplay.setText(aggLevelProgress);
+                // Reset monster HP to fight again
+                currentHP = MONSTERS.getMonsterHitpoints(currentMonster);
+            }
+            // Otherwise, always update the textView to reflect damage dealt
+            String healthMaxFormatted = String.format(Locale.getDefault(),
+                    "HP: %s / %s", currentHP, MONSTERS.getMonsterHitpoints(currentMonster));
+            healthDisplay.setText(healthMaxFormatted);
+        } else {
+            Log.d(TAG, "User not yet loaded");
+        }
     }
 
-    private void changeMonsterImage(String monsterName){
-        if (monsterName == "Prof. Bodin"){
+    private void changeMonsterImage(){
+        if (currentMonster.equals("Prof. Bodin")){
             monsterDisplay.setImageResource(R.drawable.battle_bruno);
-        } else if (monsterName == "Prof. Wertz"){
+        } else if (currentMonster.equals("Prof. Wertz")){
             monsterDisplay.setImageResource(R.drawable.battle_wertz);
         }
     }
 
-
-
+    // TIMER STUFF
     private void startTimer(){
         myTimer = new CountDownTimer(TOTAL_TIME_PER_SESSION, 1000) {
             @Override
@@ -172,7 +263,6 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         timerRunning = false;
         resetBtn.setVisibility(View.VISIBLE);
         startPauseResumeBtn.setImageResource(R.drawable.ic_baseline_play_circle_filled_24);
-
     }
 
     private void resetTimer(){
@@ -185,32 +275,24 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
     }
 
     private void updateCountdownText(){
-//        conversion from milliseconds to minutes and seconds
         int minutes = (int) (timeLeft / 1000) / 60;
         int seconds = (int) (timeLeft / 1000) % 60;
-
-        String time_left_formatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
-        timeDisplay.setText(time_left_formatted);
+        String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
+        timeDisplay.setText(timeLeftFormatted);
     }
 
-    //    better update with an if condition, i.e. compute stamina now and only update when stamina_now is
-    //    different from stamina_left (the previous stamina till now).
     private void updateStamina(){
         int quotient = (int) (timeLeft / TIME_PER_STAMINA);
-//        System.out.println(String.format(Locale.getDefault(), "%d, %d", (int) (time_left / 1000) % 60, (int) (time_left / 1000) % (time_per_stamina / 1000)));
         if ((int) (timeLeft / 1000) % (TIME_PER_STAMINA / 1000) == 0) {
             staminaLeft = quotient;
-            // For each unit of stamina consumed we want to chop wood
-
-            // WE NEED TO CALL fight() function here.
-
-
+            // For each unit of stamina consumed we want to attack the monster
+            fight();
         } else {
             staminaLeft = quotient + 1;
         }
 
-        String stamina_left_formatted = String.format(Locale.getDefault(), "Stamina: %s / %s", staminaLeft, TOTAL_STAMINA);
-        staminaDisplay.setText(stamina_left_formatted);
+        String staminaLeftFormatted = String.format(Locale.getDefault(), "Stamina: %s / %s", staminaLeft, TOTAL_STAMINA);
+        staminaDisplay.setText(staminaLeftFormatted);
     }
 
 }

@@ -58,22 +58,26 @@ public class User {
 
     public void addGold(int gold) {
         setGold(getGold() + gold);
-        addExp(gold);
-        if (checkNextLevel()) {
-            setAggregateLevel(computeAggregateLevelIndex());
-        }
     }
 
-    public void addWood() {
-        setWood(getWood() + getWoodchoppingGearLevel());
+    public void addWood(int wood) {
+        setWood(getWood() + wood);
+    }
+
+    public void addFish(int fish) {
+        setFish(getFish() + fish);
+    }
+
+    public void chopWood() {
+        addWood(getWoodchoppingGearLevel());
         addExp(getWoodchoppingGearLevel());
         if (checkNextLevel()) {
             setAggregateLevel(computeAggregateLevelIndex());
         }
     }
 
-    public void addFish() {
-        setFish(getFish() + getFishingGearLevel());
+    public void fishFish() {
+        addFish(getFishingGearLevel());
         addExp(getFishingGearLevel());
         if (checkNextLevel()) {
             setAggregateLevel(computeAggregateLevelIndex());

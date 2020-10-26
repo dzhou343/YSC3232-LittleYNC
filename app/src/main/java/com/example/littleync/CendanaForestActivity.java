@@ -29,23 +29,6 @@ public class CendanaForestActivity extends AppCompatActivity {
     private User user;
     private volatile Boolean userLoaded = false;
 
-    // Timer attributes
-    //    time (in milliseconds) taken to deplete one unit of stamina = 3s
-    private static final long TIME_PER_STAMINA = 5000;
-    private static final int TOTAL_STAMINA = 50;
-    private int staminaLeft = TOTAL_STAMINA;
-    private static final long TOTAL_TIME_PER_SESSION = TIME_PER_STAMINA * TOTAL_STAMINA;
-    private boolean timerRunning;
-    //    total time left in the session
-    private long timeLeft = TOTAL_TIME_PER_SESSION;
-
-    // TODO: idk what are these?
-    private ImageButton startPauseResumeBtn;
-    private ImageButton resetBtn;
-    private CountDownTimer myTimer;
-    private TextView timeDisplay;
-    private TextView staminaDisplay;
-
     // To update User stats at top of page
     private TextView woodDisplay;
     private TextView woodchoppingGearLevelDisplay;
@@ -56,6 +39,21 @@ public class CendanaForestActivity extends AppCompatActivity {
     private TextView aggLevelDisplay;
     private TextView aggLevelProgressDisplay;
     private TextView woodAndExpGainDisplay;
+
+    // Timer attributes
+    //    time (in milliseconds) taken to deplete one unit of stamina = 3s
+    private static final long TIME_PER_STAMINA = 5000;
+    private static final int TOTAL_STAMINA = 50;
+    private int staminaLeft = TOTAL_STAMINA;
+    private static final long TOTAL_TIME_PER_SESSION = TIME_PER_STAMINA * TOTAL_STAMINA;
+    private boolean timerRunning;
+    //    total time left in the session
+    private long timeLeft = TOTAL_TIME_PER_SESSION;
+    private ImageButton startPauseResumeBtn;
+    private ImageButton resetBtn;
+    private CountDownTimer myTimer;
+    private TextView timeDisplay;
+    private TextView staminaDisplay;
 
     /**
      * Update stamina view
@@ -85,9 +83,11 @@ public class CendanaForestActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (timerRunning) {
-                    pauseTimer();}
-                else{
-                    startTimer();}
+                    pauseTimer();
+                }
+                else {
+                    startTimer();
+                }
             }
         });
 
@@ -147,45 +147,47 @@ public class CendanaForestActivity extends AppCompatActivity {
                                         user = documentSnapshot.toObject(User.class);
                                         userLoaded = true;
                                         // Assign User attributes to textViews
-                                        String wood_res = String.format(Locale.getDefault(), "Wood: %s", user.getWood());
-                                        woodDisplay.setText(wood_res);
-                                        String wood_gear_level = String.format(Locale.getDefault(), "Wood Gear Level: %s", user.getWoodchoppingGearLevel());
-                                        woodchoppingGearLevelDisplay.setText(wood_gear_level);
-                                        String fish_res = String.format(Locale.getDefault(), "Fish: %s", user.getFish());
-                                        fishDisplay.setText(fish_res);
-                                        String fish_gear_level = String.format(Locale.getDefault(), "Fish Gear Level: %s", user.getFishingGearLevel());
-                                        fishingGearLevelDisplay.setText(fish_gear_level);
-                                        String gold_res = String.format(Locale.getDefault(), "Gold: %s", user.getGold());
-                                        goldDisplay.setText(gold_res);
-                                        String combat_gear_level = String.format(Locale.getDefault(), "Wood Gear Level: %s", user.getCombatGearLevel());
-                                        combatGearLevelDisplay.setText(combat_gear_level);
-                                        String agg_level = String.format(Locale.getDefault(), "Aggregate Level: %s", user.getAggregateLevel());
-                                        aggLevelDisplay.setText(agg_level);
-                                        String agg_level_progress = String.format(Locale.getDefault(),
+                                        String woodRes = String.format(Locale.getDefault(), "Wood: %s", user.getWood());
+                                        woodDisplay.setText(woodRes);
+                                        String woodGearLevel = String.format(Locale.getDefault(), "Wood Gear Level: %s", user.getWoodchoppingGearLevel());
+                                        woodchoppingGearLevelDisplay.setText(woodGearLevel);
+                                        String fishRes = String.format(Locale.getDefault(), "Fish: %s", user.getFish());
+                                        fishDisplay.setText(fishRes);
+                                        String fishGearLevel = String.format(Locale.getDefault(), "Fish Gear Level: %s", user.getFishingGearLevel());
+                                        fishingGearLevelDisplay.setText(fishGearLevel);
+                                        String goldRes = String.format(Locale.getDefault(), "Gold: %s", user.getGold());
+                                        goldDisplay.setText(goldRes);
+                                        String combatGearLevel = String.format(Locale.getDefault(), "Wood Gear Level: %s", user.getCombatGearLevel());
+                                        combatGearLevelDisplay.setText(combatGearLevel);
+                                        String aggLevel = String.format(Locale.getDefault(), "Aggregate Level: %s", user.getAggregateLevel());
+                                        aggLevelDisplay.setText(aggLevel);
+                                        String aggLevelProgress = String.format(Locale.getDefault(),
                                                 "%s / %s", user.getExp(), user.requiredExperience(user.getAggregateLevel() + 1));
-                                        aggLevelProgressDisplay.setText(agg_level_progress);
-                                        String toast_msg = String.format(Locale.getDefault(),
+                                        aggLevelProgressDisplay.setText(aggLevelProgress);
+                                        String toastMsg = String.format(Locale.getDefault(),
                                                 "+%s Wood and +%s Exp", user.getWoodchoppingGearLevel(), user.getWoodchoppingGearLevel());
-                                        woodAndExpGainDisplay.setText(toast_msg);
+                                        woodAndExpGainDisplay.setText(toastMsg);
                                     }
                                 }
         );
     }
 
     /**
-     * Call the addWood() method, which updates wood and exp, and has the potential
+     * Call the chopWood() method, which updates wood and exp, and has the potential
      * to update the aggregateLevel
      */
     public void chopWood() {
         if (userLoaded) {
-            user.addWood();
-            String wood_res = String.format(Locale.getDefault(), "Wood: %s", user.getWood());
-            woodDisplay.setText(wood_res);
-            String agg_level = String.format(Locale.getDefault(), "Aggregate Level: %s", user.getAggregateLevel());
-            aggLevelDisplay.setText(agg_level);
-            String agg_level_progress = String.format(Locale.getDefault(),
+            user.chopWood();
+            String woodRes = String.format(Locale.getDefault(), "Wood: %s", user.getWood());
+            woodDisplay.setText(woodRes);
+            String aggLevel = String.format(Locale.getDefault(), "Aggregate Level: %s", user.getAggregateLevel());
+            aggLevelDisplay.setText(aggLevel);
+            String aggLevelProgress = String.format(Locale.getDefault(),
                     "%s / %s", user.getExp(), user.requiredExperience(user.getAggregateLevel() + 1));
-            aggLevelProgressDisplay.setText(agg_level_progress);
+            aggLevelProgressDisplay.setText(aggLevelProgress);
+        } else {
+            Log.d(TAG, "User not yet loaded");
         }
     }
 
@@ -235,9 +237,8 @@ public class CendanaForestActivity extends AppCompatActivity {
 //        conversion from milliseconds to minutes and seconds
         int minutes = (int) (timeLeft / 1000) / 60;
         int seconds = (int) (timeLeft / 1000) % 60;
-
-        String time_left_formatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
-        timeDisplay.setText(time_left_formatted);
+        String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
+        timeDisplay.setText(timeLeftFormatted);
     }
 
     //    better update with an if condition, i.e. compute stamina now and only update when stamina_now is
@@ -253,30 +254,8 @@ public class CendanaForestActivity extends AppCompatActivity {
             staminaLeft = quotient + 1;
         }
 
-        String stamina_left_formatted = String.format(Locale.getDefault(), "Stamina: %s / %s", staminaLeft, TOTAL_STAMINA);
-        staminaDisplay.setText(stamina_left_formatted);
-    }
-
-    // TODO: WILL BE SHIFTED TO FIGHTING PAGE LATER
-    private final Monsters MONSTERS = new Monsters();
-    public synchronized void fight() {
-        System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-        if (userLoaded) {
-            for (int i = 0; i < 10; i++) {
-                user.addExp(MONSTERS.getExpYield("Prof. Wertz"));
-                user.addGold(MONSTERS.getGoldYield("Prof. Bodin"));
-
-                //Log.d(TAG, String.valueOf(user.getExp()));
-
-                System.out.println(user.getExp());
-                System.out.println(user.getGold());
-                System.out.println(user.getAggregateLevel());
-            }
-            user.writeToDatabase(userDoc);
-        } else {
-            System.out.println("SHOULD NEVER REACH HERE");
-        }
-        System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
+        String staminaLeftFormatted = String.format(Locale.getDefault(), "Stamina: %s / %s", staminaLeft, TOTAL_STAMINA);
+        staminaDisplay.setText(staminaLeftFormatted);
     }
 
 }

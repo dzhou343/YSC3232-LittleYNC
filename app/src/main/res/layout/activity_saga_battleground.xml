@@ -35,7 +35,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="sans-serif"
-                    android:text="FISH RESOURCE: 187"
+                    android:text="@string/fish_res"
                     android:textColor="#8CEAFF" />
 
                 <TextView
@@ -44,7 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="sans-serif"
-                    android:text="FISH GEAR LEVEL: 2"
+                    android:text="@string/fish_gear_level"
                     android:textColor="#8CEAFF" />
 
             </LinearLayout>
@@ -62,7 +62,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
                     android:fontFamily="sans-serif"
-                    android:text="WOOD RESOURCE: 187"
+                    android:text="@string/wood_res"
                     android:textColor="#8FFF7C" />
 
                 <TextView
@@ -70,7 +70,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
-                    android:text="WOOD GEAR LEVEL: 2"
+                    android:text="@string/wood_gear_level"
                     android:textColor="#8FFF7C" />
             </LinearLayout>
 
@@ -89,7 +89,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
                     android:fontFamily="sans-serif"
-                    android:text="GOLD: 187"
+                    android:text="@string/gold_res"
                     android:textColor="#CCA533" />
 
                 <TextView
@@ -97,7 +97,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
-                    android:text="COMBAT GEAR LEVEL: 2"
+                    android:text="@string/combat_gear_level"
                     android:textColor="#CCA533" />
             </LinearLayout>
 
@@ -113,21 +113,26 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="AGG: 1087"
-                    android:textColor="#FF9999">
+                    android:text="@string/agg_level"
+                    android:textColor="#FF9999" />
 
-                </TextView>
-
-                <ProgressBar
-                    android:id="@+id/pg_bar"
-                    style="@android:style/Widget.ProgressBar.Horizontal"
+                <TextView
+                    android:id="@+id/agg_level_progress"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
                     android:layout_weight="1"
-                    android:progress="25">
+                    android:text="@string/agg_level_progress"
+                    android:textColor="#FF9999" />
 
-                </ProgressBar>
+<!--                <ProgressBar-->
+<!--                    android:id="@+id/pg_bar"-->
+<!--                    style="@android:style/Widget.ProgressBar.Horizontal"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginHorizontal="10dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:progress="25">-->
+<!--                </ProgressBar>-->
 
             </LinearLayout>
 
@@ -165,8 +170,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_weight="1"
-                android:entries="@array/enemies"
-                android:popupBackground="@android:color/transparent"/>
+                android:entries="@array/monster_names"
+                android:popupBackground="@android:color/transparent" />
 
             <TextView
                 android:id="@+id/health_display"
@@ -174,11 +179,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_weight="1"
-                android:text="Health "
-                android:textAlignment="center"
+                android:text="@string/monster_hp"
                 android:textColor="#C89FFD"
-                android:textSize="20dp"
-                tools:text="Health Loading" />
+                android:textSize="20dp" />
         </LinearLayout>
 
         <TextView
@@ -186,7 +189,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:text="+5 Wood and +10 EXP"
+            android:text="@string/toast_msg"
             android:textAlignment="center"
             android:textColor="#C89FFD"
             android:textSize="20dp"></TextView>
@@ -196,7 +199,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="@string/Stamina"
+            android:text="@string/stamina"
             android:textAlignment="center"
             android:textColor="#C89FFD"
             android:textSize="20dp">
