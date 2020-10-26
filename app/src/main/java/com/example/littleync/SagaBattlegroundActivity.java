@@ -226,11 +226,45 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
     }
 
     private void changeMonsterImage(){
-        if (currentMonster.equals("Prof. Bodin")){
-            monsterDisplay.setImageResource(R.drawable.battle_bruno);
-        } else if (currentMonster.equals("Prof. Wertz")){
-            monsterDisplay.setImageResource(R.drawable.battle_wertz);
+        switch(currentMonster){
+            case "Prof. Bodin":
+                monsterDisplay.setImageResource(R.drawable.battle_bruno);
+                break;
+            case "Prof. Wertz":
+                monsterDisplay.setImageResource(R.drawable.battle_wertz);
+                break;
+            case "Prof. Cheung":
+                monsterDisplay.setImageResource(R.drawable.battle_cheung);
+                break;
+            case "Prof. Comaroff":
+                monsterDisplay.setImageResource(R.drawable.battle_comaroff);
+                break;
+            case "Prof. Danvy":
+                monsterDisplay.setImageResource(R.drawable.battle_danvy);
+                break;
+            case "Prof. Field":
+                monsterDisplay.setImageResource(R.drawable.battle_field);
+                break;
+            case "Prof. Hobor":
+                monsterDisplay.setImageResource(R.drawable.battle_hobor);
+                break;
+            case "Prof. De Iorio":
+                monsterDisplay.setImageResource(R.drawable.battle_iorio);
+                break;
+            case "Prof. Sergey":
+                monsterDisplay.setImageResource(R.drawable.battle_sergey);
+                break;
+            case "Prof. Stamps":
+                monsterDisplay.setImageResource(R.drawable.battle_stamps);
+                break;
+            case "Prof. Tolwinski":
+                monsterDisplay.setImageResource(R.drawable.battle_tolwinski);
+                break;
+            case "Prof. Liu":
+                monsterDisplay.setImageResource(R.drawable.battle_liu);
+                break;
         }
+
     }
 
     // TIMER STUFF
