@@ -28,4 +28,9 @@ public class TravelActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SagaBattlegroundActivity.class);
         startActivity(intent);
     }
+
+    public void fishButton(View view){
+        Intent intent = new Intent(this, EcopondActivity.class);
+        startActivity(intent);
+    }
 }

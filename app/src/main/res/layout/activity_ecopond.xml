@@ -118,15 +118,15 @@
                 android:text="@string/agg_level_progress"
                 android:textColor="#FF9999" />
 
-<!--            <ProgressBar-->
-<!--                android:id="@+id/pg_bar"-->
-<!--                style="@android:style/Widget.ProgressBar.Horizontal"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginHorizontal="10dp"-->
-<!--                android:layout_weight="1"-->
-<!--                android:progress="25">-->
-<!--            </ProgressBar>-->
+            <!--            <ProgressBar-->
+            <!--                android:id="@+id/pg_bar"-->
+            <!--                style="@android:style/Widget.ProgressBar.Horizontal"-->
+            <!--                android:layout_width="0dp"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginHorizontal="10dp"-->
+            <!--                android:layout_weight="1"-->
+            <!--                android:progress="25">-->
+            <!--            </ProgressBar>-->
 
         </LinearLayout>
 
@@ -137,7 +137,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:text="CENDANA FOREST"
+        android:text="ECO POND"
         android:textColor="#C89FFD"
         android:textAlignment="center"
         android:textSize="25dp"
@@ -149,8 +149,8 @@
         android:id="@+id/monster_img"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        app:srcCompat="@drawable/ic_tree"
-        android:tint="#8FFF7C">
+        app:srcCompat="@drawable/ic_fishing"
+        android:tint="#8CEAFF">
 
     </ImageView>
 
