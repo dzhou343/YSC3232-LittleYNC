@@ -191,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
             //}
 
         } catch (Exception e) {
+            loginButton.clearFocus();
             System.out.println(e);
             emailLogin.setError(e.getMessage());
             passwordLogin.setError(e.getMessage());
