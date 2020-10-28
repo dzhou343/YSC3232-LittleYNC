@@ -22,8 +22,8 @@ import com.google.firebase.auth.*;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static EditText emailLogin;
-    public static EditText passwordLogin;
+    private EditText emailLogin;
+    private EditText passwordLogin;
     public static String UID = null;
     private Boolean _b = true;
 
@@ -46,9 +46,9 @@ public class MainActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.login_page);
 
-            final EditText emailLogin = findViewById(R.id.input_email);
-            final EditText passwordLogin = findViewById(R.id.input_password);
-            emailLogin.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            emailLogin = findViewById(R.id.input_email);
+            passwordLogin = findViewById(R.id.input_password);
+            /*emailLogin.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (hasFocus) {
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }
-            });
+            });*/
 
 
 
@@ -152,31 +152,34 @@ public class MainActivity extends AppCompatActivity {
             //final String user = log.getMyAuthInstance().getUid().toString();
 
 
-            if (!emailLogin.equals(null) && !passwordLogin.equals(null)) {
-                log.getMyAuthInstance().signInWithEmailAndPassword(emailLogin.getText().toString(), passwordLogin.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            final String user = log.getMyAuthInstance().getUid().toString();
-                            System.out.println("successfully signed in!");
-                            System.out.println(String.format("UID is %s", user));
-                            UID = user;
-                            Intent intent = new Intent(MainActivity.this, TravelActivity.class);
-                            startActivity(intent);
-                        } else {
-                            System.out.println("nope! Didn't sign in!");
-                            System.out.println(task.getException().toString());
-                            emailLogin.setError(task.getException().toString());
-                            passwordLogin.setError(task.getException().toString());
-                        }
-
+            //if (!emailLogin.equals(null) && !passwordLogin.equals(null)) {
+            log.getMyAuthInstance().signInWithEmailAndPassword(emailLogin.getText().toString(), passwordLogin.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        final String user = log.getMyAuthInstance().getUid().toString();
+                        System.out.println("successfully signed in!");
+                        System.out.println(String.format("UID is %s", user));
+                        UID = user;
+                        Intent intent = new Intent(MainActivity.this, TravelActivity.class);
+                        startActivity(intent);
+                    } else {
+                        System.out.println("nope! Didn't sign in!");
+                        System.out.println(task.getException().toString());
+                        emailLogin.setError(task.getException().toString());
+                        passwordLogin.setError(task.getException().toString());
                     }
-                });
 
-            }
+                }
+            });
+
+        //}
 
         } catch (Exception e) {
             System.out.println(e);
+            emailLogin.setError(e.toString());
+            passwordLogin.setError(e.toString());
+
         }
         /**
          * Move to new Travel Activity page
