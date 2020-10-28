@@ -1,18 +1,13 @@
 package com.example.littleync;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.text.Editable;
-import android.text.TextWatcher;
-
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 
@@ -21,12 +16,12 @@ import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.*;
-import com.example.littleync.MarketplaceActivity;
 
 public class MainActivity extends AppCompatActivity {
 
     private EditText emailLogin;
     private EditText passwordLogin;
+    private Button loginButton;
     public static String UID = null;
     private Boolean _b = true;
     static User loggedInUser;
@@ -50,13 +45,13 @@ public class MainActivity extends AppCompatActivity {
             setContentView(R.layout.travel_page);
         } else {
             setContentView(R.layout.login_page);
-
+            loginButton = findViewById(R.id.login_btn);
             emailLogin = findViewById(R.id.input_email);
             passwordLogin = findViewById(R.id.input_password);
 
             /**TODO: figure out the UI
              *
-              */
+             */
             /*emailLogin.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
@@ -106,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
             });*/
 
 
-
         }
     }
 
@@ -146,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
      * Called when the user taps the Login button
      *
      * @param view
-     *
      */
     public void loginButton(View view) {
         /**
@@ -171,35 +164,50 @@ public class MainActivity extends AppCompatActivity {
                         /**
                          * Creates a user object
                          */
-                        final String user = log.getMyAuthInstance().getUid().toString();
+                        final String user = log.getMyAuthInstance().getUid();
                         System.out.println();
-                        Log.d("Login results:","successfully signed in!");
-                        Log.d("UID is",String.format(user));
+                        Log.d("Login results:", "successfully signed in!");
+                        Log.d("UID is", String.format(user));
                         UID = user;
+
+
+                        /**
+                         * Move to new Travel Activity page
+                         */
+
                         Intent intent = new Intent(MainActivity.this, TravelActivity.class);
                         startActivity(intent);
                     } else {
-                        Log.d("Login results:","nope! Didn't sign in!");
-                        Log.d("Exception",task.getException().toString());
-                        emailLogin.setError(task.getException().toString());
-                        passwordLogin.setError(task.getException().toString());
+                        loginButton.clearFocus();
+                        Log.d("Login results:", "nope! Didn't sign in!");
+                        Log.d("Exception", task.getException().toString());
+                        emailLogin.setError(task.getException().getMessage());
+                        passwordLogin.setError(task.getException().getMessage());
                     }
 
                 }
             });
 
-        //}
+            //}
 
         } catch (Exception e) {
             System.out.println(e);
-            emailLogin.setError(e.toString());
-            passwordLogin.setError(e.toString());
+            emailLogin.setError(e.getMessage());
+            passwordLogin.setError(e.getMessage());
 
         }
-        /**
-         * Move to new Travel Activity page
-         */
 
+    }
+
+    /**
+     * forgotPassword()
+     *
+     * @param view
+     * @return new screen for forgot password
+     */
+    public void forgotPasswordScreen(View view) {
+        Intent intent = new Intent(this, ForgotPassword.class);
+        startActivity(intent);
     }
 
     // Called when the user presses the sign-up text.
