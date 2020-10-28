@@ -11,6 +11,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.concurrent.Executor;
 
 /**
+ * THIS CLASS IS DEPRECATED
+ *
  * Title:
  * <p>
  * <p>

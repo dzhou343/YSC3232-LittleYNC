@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -170,14 +171,15 @@ public class MainActivity extends AppCompatActivity {
                          * Creates a user object
                          */
                         final String user = log.getMyAuthInstance().getUid().toString();
-                        System.out.println("successfully signed in!");
-                        System.out.println(String.format("UID is %s", user));
+                        System.out.println();
+                        Log.d("Login results:","successfully signed in!");
+                        Log.d("UID is",String.format(user));
                         UID = user;
                         Intent intent = new Intent(MainActivity.this, TravelActivity.class);
                         startActivity(intent);
                     } else {
-                        System.out.println("nope! Didn't sign in!");
-                        System.out.println(task.getException().toString());
+                        Log.d("Login results:","nope! Didn't sign in!");
+                        Log.d("Exception",task.getException().toString());
                         emailLogin.setError(task.getException().toString());
                         passwordLogin.setError(task.getException().toString());
                     }

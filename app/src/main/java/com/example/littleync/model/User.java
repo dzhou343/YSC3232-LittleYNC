@@ -21,7 +21,6 @@ public class User {
     private ArrayList<String> trades;
     private int exp;
     private String UID;
-    private FirebaseAuth firebaseObject;
 
     public User(String userName, int woodchoppingGearLevel, int fishingGearLevel,
                 int combatGearLevel, int aggregateLevel, int wood, int fish, int gold,
@@ -39,8 +38,8 @@ public class User {
     }
 
     // Needed to automatically parse DB
-    public User(FirebaseAuth auth) {
-        this.firebaseObject = auth;
+    public User() {
+
     }
 
     // Formula for level: 50 * level ^ 1.8

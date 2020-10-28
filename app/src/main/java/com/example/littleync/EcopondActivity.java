@@ -9,9 +9,11 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.littleync.model.OnlineDatabase;
 import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -116,7 +118,7 @@ public class EcopondActivity extends AppCompatActivity {
         // I believe onCreate() will only complete once
         // the user has been loaded in
         // TODO: Pass in the correct userID
-        String userID = "random";
+        String userID = FirebaseAuth.getInstance().getUid().toString();
         // Flag just to be sure the reading was successful
         userLoaded = false;
         userDoc = fs.collection("users").document(userID);
