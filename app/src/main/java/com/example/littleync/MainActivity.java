@@ -33,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+
         /**
          * set the logout
          */
@@ -44,10 +47,8 @@ public class MainActivity extends AppCompatActivity {
          * Check if the user is already logged in
          */
         if (log.getMyAuthInstance().getCurrentUser() != null) {
-            super.onCreate(savedInstanceState);
             setContentView(R.layout.travel_page);
         } else {
-            super.onCreate(savedInstanceState);
             setContentView(R.layout.login_page);
 
             emailLogin = findViewById(R.id.input_email);
@@ -199,9 +200,6 @@ public class MainActivity extends AppCompatActivity {
          * Move to new Travel Activity page
          */
 
-    }
-
-    public void clearText(View view) {
     }
 
     // Called when the user presses the sign-up text.

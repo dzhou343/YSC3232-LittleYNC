@@ -11,10 +11,10 @@ public class User {
     //private String databaseID = "random";
 
     private String userName;
-    private int woodchoppingGearLevel;
-    private int fishingGearLevel;
-    private int combatGearLevel;
-    private int aggregateLevel;
+    private int woodchoppingGearLevel = 1;
+    private int fishingGearLevel = 1;
+    private int combatGearLevel = 1;
+    private int aggregateLevel = 1;
     private int wood;
     private int fish;
     private int gold;

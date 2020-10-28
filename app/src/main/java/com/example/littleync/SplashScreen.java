@@ -7,14 +7,19 @@ import android.os.Bundle;
 import android.os.Handler;
 
 public class SplashScreen extends AppCompatActivity {
+
+
+    static boolean alive = false;
     private static int DELAY = 1500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
-        Runnable runScreen = new Runnable() {
+        if (alive) return;
+        alive = true;
 
+        Runnable rn = new Runnable() {
             @Override
             public void run() {
                 Intent i = new Intent(SplashScreen.this, MainActivity.class);
@@ -22,7 +27,11 @@ public class SplashScreen extends AppCompatActivity {
                 finish();
             }
         };
-        new Handler().postDelayed(runScreen, DELAY);
+
+        new Handler().postDelayed(
+                rn, DELAY);
+
+
     }
 
 }
