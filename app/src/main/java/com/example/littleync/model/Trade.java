@@ -3,6 +3,11 @@ package com.example.littleync.model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Trade class
+ *
+ * Description: Class is generated with each trade activity.
+ */
 public class Trade {
     private String tradeID;
     // What resource is being sold

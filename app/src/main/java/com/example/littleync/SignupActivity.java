@@ -3,12 +3,18 @@ package com.example.littleync;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.example.littleync.controller.Login;
+import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
  * Import the EditText and button type inside of the signup_page
@@ -28,7 +34,9 @@ public class SignupActivity extends AppCompatActivity {
     private EditText password;
     private EditText password2;
     private Button submitSignUp;
+    private DocumentReference userDoc;
     private final static String TAG = "signUp";
+    private final FirebaseFirestore fs = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +71,11 @@ public class SignupActivity extends AppCompatActivity {
                         email.setError(null);
                         password.setError(null);
                         password2.setError(null);
-                        submitSignUp.setText((task.getResult().toString()));
+                        User usr = new User();
+                        userDoc = fs.collection("users").document(FirebaseAuth.getInstance().getUid().toString());
+                        usr.writeToDatabase(userDoc);
+                        //submitSignUp.setText((task.getResult().toString()));
+                        SignupActivity.super.finish();
                     } else if (!task.isSuccessful()) {
                         Log.d(TAG, "login failed");
                         Log.d(TAG, task.toString());

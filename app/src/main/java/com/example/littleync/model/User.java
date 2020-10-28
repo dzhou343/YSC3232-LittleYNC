@@ -1,5 +1,6 @@
 package com.example.littleync.model;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
@@ -10,15 +11,16 @@ public class User {
     //private String databaseID = "random";
 
     private String userName;
-    private int woodchoppingGearLevel;
-    private int fishingGearLevel;
-    private int combatGearLevel;
-    private int aggregateLevel;
+    private int woodchoppingGearLevel = 1;
+    private int fishingGearLevel = 1;
+    private int combatGearLevel = 1;
+    private int aggregateLevel = 1;
     private int wood;
     private int fish;
     private int gold;
     private ArrayList<String> trades;
     private int exp;
+    private String UID;
 
     public User(String userName, int woodchoppingGearLevel, int fishingGearLevel,
                 int combatGearLevel, int aggregateLevel, int wood, int fish, int gold,
@@ -36,11 +38,13 @@ public class User {
     }
 
     // Needed to automatically parse DB
-    public User() {}
+    public User() {
+
+    }
 
     // Formula for level: 50 * level ^ 1.8
     public int requiredExperience(int level) {
-        return (int)(50 * Math.pow(level, 1.8));
+        return (int) (50 * Math.pow(level, 1.8));
     }
 
     private int computeAggregateLevelIndex() {
@@ -153,6 +157,10 @@ public class User {
 
     public String getUserName() {
         return this.userName;
+    }
+
+    public String getUID() {
+        return this.UID;
     }
 
     public int getWoodchoppingGearLevel() {
