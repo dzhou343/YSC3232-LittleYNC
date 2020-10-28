@@ -33,4 +33,9 @@ public class TravelActivity extends AppCompatActivity {
         Intent intent = new Intent(this, EcopondActivity.class);
         startActivity(intent);
     }
+
+    public void butteryButton(View view) {
+        Intent intent = new Intent(this, MarketplaceActivity.class);
+        startActivity(intent);
+    }
 }

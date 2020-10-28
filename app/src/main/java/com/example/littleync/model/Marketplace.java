@@ -17,7 +17,11 @@ public class Marketplace {
     public Boolean postTrade(User user, String selling, String receiving, int quantity, int totalCost) {
         int liveTrades = user.getTrades().size();
         if (liveTrades < 5) {
-            String newTradeID = user.getUserName() + liveTrades;
+            ///TODO: Edited from getuserName to getUID
+
+            String newTradeID = user.getUID() + liveTrades;
+
+
             Trade newTrade = new Trade(newTradeID, selling, receiving, quantity, totalCost);
             switch (selling) {
                 case "wood":

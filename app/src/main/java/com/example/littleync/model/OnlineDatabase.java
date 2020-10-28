@@ -4,20 +4,38 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * OnlineDatabase
+ *
+ * Description: This class is the blueprint for querying and generating objects from the database
+ *
+ * userReadWrite()
+ * @param
+ *
+ */
 public class OnlineDatabase {
-    String userID;
+    //Auto instantiates a UID as long as there is someone logged in here.
+    String userID = FirebaseAuth.getInstance().getUid();
     String USER_COLLECTION = "users";
     String TRADE_COLLECTION = "trades";
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Map<String, Trade> trades = new HashMap<String, Trade>();
 
-    public OnlineDatabase(String userID) {
-        this.userID = userID;
+    /**
+     * Constructor for the class
+     *
+     * Description: the userID is taken from the FirebaseAuth object.
+     *
+     * @param
+     */
+    public OnlineDatabase() {
+
     }
 
     public DocumentReference userReadWrite() {

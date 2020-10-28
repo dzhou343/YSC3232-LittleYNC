@@ -14,11 +14,13 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
 
+
 import com.example.littleync.controller.Login;
+import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.*;
-
+import com.example.littleync.MarketplaceActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText passwordLogin;
     public static String UID = null;
     private Boolean _b = true;
+    static User loggedInUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
 
             emailLogin = findViewById(R.id.input_email);
             passwordLogin = findViewById(R.id.input_password);
+
+            /**TODO: figure out the UI
+             *
+              */
             /*emailLogin.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
@@ -135,6 +142,9 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Called when the user taps the Login button
+     *
+     * @param view
+     *
      */
     public void loginButton(View view) {
         /**
@@ -151,12 +161,14 @@ public class MainActivity extends AppCompatActivity {
 
             //final String user = log.getMyAuthInstance().getUid().toString();
 
-
             //if (!emailLogin.equals(null) && !passwordLogin.equals(null)) {
             log.getMyAuthInstance().signInWithEmailAndPassword(emailLogin.getText().toString(), passwordLogin.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
+                        /**
+                         * Creates a user object
+                         */
                         final String user = log.getMyAuthInstance().getUid().toString();
                         System.out.println("successfully signed in!");
                         System.out.println(String.format("UID is %s", user));

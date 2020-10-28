@@ -85,6 +85,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".TravelActivity" />
         </activity>
+        <activity
+            android:name=".MarketplaceActivity"
+            android:parentActivityName=".TravelActivity">
+
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TravelActivity" />
+        </activity>
     </application>
 
 </manifest>

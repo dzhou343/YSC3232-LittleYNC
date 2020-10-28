@@ -3,7 +3,9 @@ package com.example.littleync;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.example.littleync.controller.Login;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -63,7 +65,8 @@ public class SignupActivity extends AppCompatActivity {
                         email.setError(null);
                         password.setError(null);
                         password2.setError(null);
-                        submitSignUp.setText((task.getResult().toString()));
+                        //submitSignUp.setText((task.getResult().toString()));
+                        SignupActivity.super.finish();
                     } else if (!task.isSuccessful()) {
                         Log.d(TAG, "login failed");
                         Log.d(TAG, task.toString());

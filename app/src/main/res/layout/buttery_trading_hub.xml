@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ArmoryActivity">
+    tools:context=".MarketplaceActivity">
 
     <Button
         android:id="@+id/tradeButton"
         android:layout_width="192dp"
         android:layout_height="165dp"
         android:text="UPGRADE FISHING ROD"
+        android:onClick="tradePage"
         app:layout_constraintBottom_toTopOf="@+id/button91"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
