@@ -137,13 +137,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:text="Dean of Students Armoury"
+        android:text="Dean of Students Armory"
         android:textColor="#C89FFD"
         android:textAlignment="center"
         android:textSize="25dp"
         android:textStyle="bold">
 
-    </TextView>
+    </TextView>s
 
     <ImageView
         android:id="@+id/imageView"
