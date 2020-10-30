@@ -208,7 +208,10 @@
                     android:id="@+id/fish_upgrade_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Upgrade Rod" />
+                    android:text="Upgrade Rod"
+                    android:textColor="#C89FFD"
+                    android:background="#252426"
+                    />
 
             </LinearLayout>
 
@@ -248,7 +251,9 @@
                     android:id="@+id/battle_upgrade_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Upgrade Sword" />
+                    android:text="Upgrade Sword"
+                    android:textColor="#C89FFD"
+                    android:background="#252426"/>
 
             </LinearLayout>
 
@@ -288,7 +293,9 @@
                     android:id="@+id/wood_upgrade_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Upgrade Axe" />
+                    android:text="Upgrade Axe"
+                    android:textColor="#C89FFD"
+                    android:background="#252426"/>
 
             </LinearLayout>
 
