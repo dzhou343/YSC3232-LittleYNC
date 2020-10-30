@@ -1,0 +1,194 @@
+Index: app/src/main/java/com/example/littleync/CendanaForestActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.littleync;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.graphics.drawable.Drawable;\r\nimport android.os.Bundle;\r\nimport android.os.CountDownTimer;\r\nimport android.view.View;\r\nimport android.widget.ImageButton;\r\nimport android.widget.TextView;\r\n\r\nimport java.util.Locale;\r\n\r\npublic class CendanaForestActivity extends AppCompatActivity {\r\n//    time (in milliseconds) taken to deplete one unit of stamina = 3s\r\n    private static final long time_per_stamina = 3000;\r\n    private static final int total_stamina = 4;\r\n    private int stamina_left = total_stamina;\r\n    private static final long total_time_per_session = time_per_stamina * total_stamina;\r\n    private boolean timer_running;\r\n//    total time left in the session\r\n    private long time_left = total_time_per_session;\r\n\r\n    private ImageButton start_pause_resume_btn;\r\n    private ImageButton reset_btn;\r\n    private CountDownTimer my_timer;\r\n    private TextView time_display;\r\n    private TextView stamina_display;\r\n\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.cendana_forest);\r\n\r\n        // By default, initialize stamina to full when the activity is created\r\n        stamina_display = (TextView) findViewById(R.id.stamina_section);\r\n//        String stamina_text = getString(R.string.Stamina, Integer.toString(0));\r\n//        stamina_display.setText(stamina_text);\r\n//        initialize the 1) start/pause/resume button, 2) the reset button and 3) the dynamic time\r\n//        display textview. By default, the reset button is initialized to invisible.\r\n        start_pause_resume_btn = findViewById(R.id.start_pause_resume_button);\r\n        reset_btn = findViewById(R.id.reset_button);\r\n        time_display = findViewById(R.id.time_left);\r\n\r\n//        set the onClickListeners for the two buttons\r\n        start_pause_resume_btn.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                if (timer_running) {PauseTimer();}\r\n                else{StartTimer();}\r\n            }\r\n        });\r\n\r\n        reset_btn.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                ResetTimer();\r\n            }\r\n        });\r\n\r\n        UpdateCountDownText();\r\n        UpdateStamina();\r\n    }\r\n\r\n    private void StartTimer(){\r\n        my_timer = new CountDownTimer(total_time_per_session, 1000) {\r\n            @Override\r\n            public void onTick(long millisUntilFinished) {\r\n                time_left = millisUntilFinished;\r\n                UpdateCountDownText();\r\n                UpdateStamina();\r\n            }\r\n\r\n            @Override\r\n            public void onFinish() {\r\n                timer_running = false;\r\n                start_pause_resume_btn.setVisibility(View.INVISIBLE);\r\n                reset_btn.setVisibility(View.VISIBLE);\r\n\r\n            }\r\n\r\n        }.start();\r\n\r\n        timer_running = true;\r\n        reset_btn.setVisibility(View.INVISIBLE);\r\n        start_pause_resume_btn.setImageResource(R.drawable.ic_baseline_pause_circle_filled_24);\r\n    }\r\n\r\n    private void PauseTimer(){\r\n        my_timer.cancel();\r\n        timer_running = false;\r\n        reset_btn.setVisibility(View.VISIBLE);\r\n        start_pause_resume_btn.setImageResource(R.drawable.ic_baseline_play_circle_filled_24);\r\n\r\n    }\r\n\r\n    private void ResetTimer(){\r\n        time_left = total_time_per_session;\r\n        UpdateCountDownText();\r\n        UpdateStamina();\r\n        reset_btn.setVisibility(View.INVISIBLE);\r\n        start_pause_resume_btn.setImageResource(R.drawable.ic_baseline_play_circle_filled_24);\r\n        start_pause_resume_btn.setVisibility(View.VISIBLE);\r\n    }\r\n\r\n    private void UpdateCountDownText(){\r\n//        conversion from milliseconds to minutes and seconds\r\n        int minutes = (int) (time_left / 1000) / 60;\r\n        int seconds = (int) (time_left / 1000) % 60;\r\n\r\n        String time_left_formatted = String.format(Locale.getDefault(), \"%02d:%02d\", minutes, seconds);\r\n        time_display.setText(time_left_formatted);\r\n    }\r\n\r\n//    better update with an if condition, i.e. compute stamina now and only update when stamina_now is\r\n//    different from stamina_left (the previous stamina till now).\r\n    private void UpdateStamina(){\r\n        int quotient = (int) (time_left / time_per_stamina);\r\n//        System.out.println(String.format(Locale.getDefault(), \"%d, %d\", (int) (time_left / 1000) % 60, (int) (time_left / 1000) % (time_per_stamina / 1000)));\r\n        if ((int) (time_left / 1000) % (time_per_stamina / 1000) == 0) {\r\n            stamina_left = quotient;\r\n        } else {\r\n            stamina_left = quotient + 1;\r\n        }\r\n\r\n        String stamina_left_formatted = String.format(Locale.getDefault(), \"Stamina: %s / %s\", stamina_left, total_stamina);\r\n        stamina_display.setText(stamina_left_formatted);\r\n\r\n    }\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/littleync/CendanaForestActivity.java	(revision 1d59f78a295cfe6604c9bbe41d3df101b3d6b98a)
++++ app/src/main/java/com/example/littleync/CendanaForestActivity.java	(date 1603439360851)
+@@ -2,7 +2,6 @@
+ 
+ import androidx.appcompat.app.AppCompatActivity;
+ 
+-import android.graphics.drawable.Drawable;
+ import android.os.Bundle;
+ import android.os.CountDownTimer;
+ import android.view.View;
+@@ -13,19 +12,19 @@
+ 
+ public class CendanaForestActivity extends AppCompatActivity {
+ //    time (in milliseconds) taken to deplete one unit of stamina = 3s
+-    private static final long time_per_stamina = 3000;
+-    private static final int total_stamina = 4;
+-    private int stamina_left = total_stamina;
+-    private static final long total_time_per_session = time_per_stamina * total_stamina;
+-    private boolean timer_running;
++    private static final long TIME_PER_STAMINA = 3000;
++    private static final int TOTAL_STAMINA = 4;
++    private int staminaLeft = TOTAL_STAMINA;
++    private static final long TOTAL_TIME_PER_SESSION = TIME_PER_STAMINA * TOTAL_STAMINA;
++    private boolean timerRunning;
+ //    total time left in the session
+-    private long time_left = total_time_per_session;
++    private long timeLeft = TOTAL_TIME_PER_SESSION;
+ 
+-    private ImageButton start_pause_resume_btn;
+-    private ImageButton reset_btn;
+-    private CountDownTimer my_timer;
+-    private TextView time_display;
+-    private TextView stamina_display;
++    private ImageButton startPauseResumeBtn;
++    private ImageButton resetBtn;
++    private CountDownTimer myTimer;
++    private TextView timeDisplay;
++    private TextView staminaDisplay;
+ 
+ 
+     @Override
+@@ -34,98 +33,100 @@
+         setContentView(R.layout.cendana_forest);
+ 
+         // By default, initialize stamina to full when the activity is created
+-        stamina_display = (TextView) findViewById(R.id.stamina_section);
++        staminaDisplay = (TextView) findViewById(R.id.stamina_section);
+ //        String stamina_text = getString(R.string.Stamina, Integer.toString(0));
+ //        stamina_display.setText(stamina_text);
+ //        initialize the 1) start/pause/resume button, 2) the reset button and 3) the dynamic time
+ //        display textview. By default, the reset button is initialized to invisible.
+-        start_pause_resume_btn = findViewById(R.id.start_pause_resume_button);
+-        reset_btn = findViewById(R.id.reset_button);
+-        time_display = findViewById(R.id.time_left);
++        startPauseResumeBtn = findViewById(R.id.start_pause_resume_button);
++        resetBtn = findViewById(R.id.reset_button);
++        timeDisplay = findViewById(R.id.time_left);
+ 
+ //        set the onClickListeners for the two buttons
+-        start_pause_resume_btn.setOnClickListener(new View.OnClickListener() {
++        startPauseResumeBtn.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+-                if (timer_running) {PauseTimer();}
+-                else{StartTimer();}
++                if (timerRunning) {
++                    pauseTimer();}
++                else{
++                    startTimer();}
+             }
+         });
+ 
+-        reset_btn.setOnClickListener(new View.OnClickListener() {
++        resetBtn.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+-                ResetTimer();
++                resetTimer();
+             }
+         });
+ 
+-        UpdateCountDownText();
+-        UpdateStamina();
++        updateCountdownText();
++        updateStamina();
+     }
+ 
+-    private void StartTimer(){
+-        my_timer = new CountDownTimer(total_time_per_session, 1000) {
++    private void startTimer(){
++        myTimer = new CountDownTimer(TOTAL_TIME_PER_SESSION, 1000) {
+             @Override
+             public void onTick(long millisUntilFinished) {
+-                time_left = millisUntilFinished;
+-                UpdateCountDownText();
+-                UpdateStamina();
++                timeLeft = millisUntilFinished;
++                updateCountdownText();
++                updateStamina();
+             }
+ 
+             @Override
+             public void onFinish() {
+-                timer_running = false;
+-                start_pause_resume_btn.setVisibility(View.INVISIBLE);
+-                reset_btn.setVisibility(View.VISIBLE);
++                timerRunning = false;
++                startPauseResumeBtn.setVisibility(View.INVISIBLE);
++                resetBtn.setVisibility(View.VISIBLE);
+ 
+             }
+ 
+         }.start();
+ 
+-        timer_running = true;
+-        reset_btn.setVisibility(View.INVISIBLE);
+-        start_pause_resume_btn.setImageResource(R.drawable.ic_baseline_pause_circle_filled_24);
++        timerRunning = true;
++        resetBtn.setVisibility(View.INVISIBLE);
++        startPauseResumeBtn.setImageResource(R.drawable.ic_baseline_pause_circle_filled_24);
+     }
+ 
+-    private void PauseTimer(){
+-        my_timer.cancel();
+-        timer_running = false;
+-        reset_btn.setVisibility(View.VISIBLE);
+-        start_pause_resume_btn.setImageResource(R.drawable.ic_baseline_play_circle_filled_24);
++    private void pauseTimer(){
++        myTimer.cancel();
++        timerRunning = false;
++        resetBtn.setVisibility(View.VISIBLE);
++        startPauseResumeBtn.setImageResource(R.drawable.ic_baseline_play_circle_filled_24);
+ 
+     }
+ 
+-    private void ResetTimer(){
+-        time_left = total_time_per_session;
+-        UpdateCountDownText();
+-        UpdateStamina();
+-        reset_btn.setVisibility(View.INVISIBLE);
+-        start_pause_resume_btn.setImageResource(R.drawable.ic_baseline_play_circle_filled_24);
+-        start_pause_resume_btn.setVisibility(View.VISIBLE);
++    private void resetTimer(){
++        timeLeft = TOTAL_TIME_PER_SESSION;
++        updateCountdownText();
++        updateStamina();
++        resetBtn.setVisibility(View.INVISIBLE);
++        startPauseResumeBtn.setImageResource(R.drawable.ic_baseline_play_circle_filled_24);
++        startPauseResumeBtn.setVisibility(View.VISIBLE);
+     }
+ 
+-    private void UpdateCountDownText(){
++    private void updateCountdownText(){
+ //        conversion from milliseconds to minutes and seconds
+-        int minutes = (int) (time_left / 1000) / 60;
+-        int seconds = (int) (time_left / 1000) % 60;
++        int minutes = (int) (timeLeft / 1000) / 60;
++        int seconds = (int) (timeLeft / 1000) % 60;
+ 
+         String time_left_formatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
+-        time_display.setText(time_left_formatted);
++        timeDisplay.setText(time_left_formatted);
+     }
+ 
+ //    better update with an if condition, i.e. compute stamina now and only update when stamina_now is
+ //    different from stamina_left (the previous stamina till now).
+-    private void UpdateStamina(){
+-        int quotient = (int) (time_left / time_per_stamina);
++    private void updateStamina(){
++        int quotient = (int) (timeLeft / TIME_PER_STAMINA);
+ //        System.out.println(String.format(Locale.getDefault(), "%d, %d", (int) (time_left / 1000) % 60, (int) (time_left / 1000) % (time_per_stamina / 1000)));
+-        if ((int) (time_left / 1000) % (time_per_stamina / 1000) == 0) {
+-            stamina_left = quotient;
++        if ((int) (timeLeft / 1000) % (TIME_PER_STAMINA / 1000) == 0) {
++            staminaLeft = quotient;
+         } else {
+-            stamina_left = quotient + 1;
++            staminaLeft = quotient + 1;
+         }
+ 
+-        String stamina_left_formatted = String.format(Locale.getDefault(), "Stamina: %s / %s", stamina_left, total_stamina);
+-        stamina_display.setText(stamina_left_formatted);
++        String stamina_left_formatted = String.format(Locale.getDefault(), "Stamina: %s / %s", staminaLeft, TOTAL_STAMINA);
++        staminaDisplay.setText(stamina_left_formatted);
+ 
+     }
+ 

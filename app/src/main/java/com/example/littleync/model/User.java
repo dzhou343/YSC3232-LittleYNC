@@ -20,6 +20,21 @@ public class User {
     private ArrayList<String> trades;
     private int exp;
 
+
+    /**
+     * Constructor which takes in elements
+     *
+     * @param userName
+     * @param woodchoppingGearLevel
+     * @param fishingGearLevel
+     * @param combatGearLevel
+     * @param aggregateLevel
+     * @param wood
+     * @param fish
+     * @param gold
+     * @param trades
+     * @param exp
+     */
     public User(String userName, int woodchoppingGearLevel, int fishingGearLevel,
                 int combatGearLevel, int aggregateLevel, int wood, int fish, int gold,
                 ArrayList<String> trades, int exp) {
@@ -36,9 +51,12 @@ public class User {
     }
 
     // Needed to automatically parse DB
-    public User() {
 
-    }
+    /**
+     * Second Constructor for User Class
+     * This is only called by the database
+     */
+    public User() {}
 
     // Formula for level: 50 * level ^ 1.8
     public int requiredExperience(int level) {

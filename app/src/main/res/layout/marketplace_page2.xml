@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/marketplace_page2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MarketplaceActivity"
+    android:background="@android:color/background_dark"
+    android:orientation="vertical"
+    >
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/t1"
+        android:layout_width="312dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="140dp"
+        android:background="@drawable/marketplace1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/reveice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.16">
+
+            <TextView
+                android:id="@+id/marketplace3_title1"
+                style="@style/marketplace1_title"
+                android:layout_width="wrap_content"
+                android:text="Trade for"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Spinner
+                android:id="@+id/receive_type"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="8dp"
+                android:dropDownWidth="50dp"
+                android:entries="@array/marketplace1_spinner"
+                android:spinnerMode="dropdown"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/marketplace3_title1"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/marketplace3_title2"
+                style="@style/marketplace1_title"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="x"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/receive_type"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/receive_qty"
+                style="@style/marketplace1_title"
+                android:layout_marginStart="8dp"
+                android:width="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/marketplace3_title2"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/marketplace3_title3"
+                style="@style/marketplace1_title"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="units"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/receive_qty"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/give"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/reveice"
+            app:layout_constraintHorizontal_bias="0.47"
+            app:layout_constraintStart_toStartOf="@+id/reveice"
+            app:layout_constraintTop_toBottomOf="@+id/reveice"
+            app:layout_constraintVertical_bias="0.272">
+
+            <TextView
+                android:id="@+id/marketplace3_title4"
+                style="@style/marketplace1_title"
+                android:layout_width="wrap_content"
+                android:text="With"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Spinner
+                android:id="@+id/give_type"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="8dp"
+                android:dropDownWidth="50dp"
+                android:entries="@array/marketplace1_spinner"
+                android:spinnerMode="dropdown"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/marketplace3_title4"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/marketplace3_title5"
+                style="@style/marketplace1_title"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="x"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/give_type"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/give_qty"
+                style="@style/marketplace1_title"
+                android:layout_marginStart="8dp"
+                android:width="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/marketplace3_title5"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/marketplace3_title6"
+                style="@style/marketplace1_title"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="units"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/give_qty"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/post_deal_btn"
+            style="@style/marketplace1_btn"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/reveice"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/box2"
+        android:layout_width="312dp"
+        android:layout_height="322dp"
+        android:background="@drawable/marketplace2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/t1">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/t2_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/marketplace2_title0"
+                style="@style/marketplace1_title"
+
+                android:layout_marginStart="16dp"
+                android:text="Time posted"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/marketplace2_title1"
+                style="@style/marketplace1_title"
+
+                android:layout_marginStart="8dp"
+                android:text="@string/marketplace2_title1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/marketplace2_title0"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/offer_title"
+                style="@style/marketplace1_title"
+                android:layout_marginStart="8dp"
+
+                android:text="Offering"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/marketplace2_title1"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/ask_title"
+                style="@style/marketplace1_title"
+                android:layout_marginStart="8dp"
+
+                android:text="Asking for"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/offer_title"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/marketplace2_title5"
+                style="@style/marketplace1_title"
+                android:layout_marginStart="8dp"
+
+                android:layout_marginEnd="16dp"
+                android:text="@string/marketplace2_title5"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ask_title"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ScrollView
+            android:id="@+id/b_listing"
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/t2_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginVertical="8dp"
+            >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/index"
+                    style="@style/marketplace1_title"
+                    android:layout_width="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="1"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView0"
+                    style="@style/marketplace1_title"
+                    android:layout_marginStart="8dp"
+                    android:text="19th Oct 2020"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/index"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView"
+                    style="@style/marketplace1_title"
+                    android:layout_marginStart="8dp"
+                    android:text="balabala"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/textView0"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    style="@style/marketplace1_title"
+                    android:layout_marginStart="8dp"
+                    android:text="fish"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/textView"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    style="@style/marketplace1_title"
+                    android:layout_marginStart="8dp"
+                    android:text="20"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/textView2"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <ImageButton
+                    style="@style/marketplace2_btn"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/textView3"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_baseline_done_24" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,6 +26,8 @@ import android.widget.EditText;
 
 import android.view.View;
 
+import java.util.ArrayList;
+
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -33,6 +35,7 @@ public class SignupActivity extends AppCompatActivity {
     private EditText email;
     private EditText password;
     private EditText password2;
+    private EditText userNameBox;
     private Button submitSignUp;
     private DocumentReference userDoc;
     private final static String TAG = "signUp";
@@ -50,10 +53,12 @@ public class SignupActivity extends AppCompatActivity {
         final EditText password = findViewById(R.id.sign_up_password);
         final EditText password2 = findViewById(R.id.sign_up_password2);
         final Button submitSignUp = findViewById(R.id.submitSignUpButton);
+        final EditText userName = findViewById(R.id.username);
         this.email = email;
         this.password = password;
         this.password2 = password2;
         this.submitSignUp = submitSignUp;
+        this.userNameBox = userName;
     }
 
     public void signUpSubmit(View view) {
@@ -71,7 +76,7 @@ public class SignupActivity extends AppCompatActivity {
                         email.setError(null);
                         password.setError(null);
                         password2.setError(null);
-                        User usr = new User();
+                        User usr = new User(userNameBox.getText().toString(), 1,1,1,1,0,0,0,new ArrayList<String>(),0);
                         userDoc = fs.collection("users").document(FirebaseAuth.getInstance().getUid().toString());
                         usr.writeToDatabase(userDoc);
                         //submitSignUp.setText((task.getResult().toString()));

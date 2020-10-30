@@ -24,6 +24,12 @@ public class TravelActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+
+    public void goToMarketplace(View view){
+        Intent intent = new Intent(this, MarketplaceActivity.class);
+        startActivity(intent);
+    }
+
     public void battleButton(View view){
         Intent intent = new Intent(this, SagaBattlegroundActivity.class);
         startActivity(intent);
@@ -34,8 +40,4 @@ public class TravelActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void butteryButton(View view) {
-        Intent intent = new Intent(this, MarketplaceActivity.class);
-        startActivity(intent);
-    }
 }

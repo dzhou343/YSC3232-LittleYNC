@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.example.littleync.model.OnlineDatabase;
 import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -41,6 +40,7 @@ public class EcopondActivity extends AppCompatActivity {
     private TextView aggLevelProgressDisplay;
     private TextView fishAndExpGainDisplay;
 
+
     // Timer attributes
     //    time (in milliseconds) taken to deplete one unit of stamina = 3s
     private static final long TIME_PER_STAMINA = 5000;
@@ -66,7 +66,7 @@ public class EcopondActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ecopond);
+        setContentView(R.layout.ecopond_page);
 
         // Timer stuff
         // By default, initialize stamina to full when the activity is created
@@ -117,8 +117,7 @@ public class EcopondActivity extends AppCompatActivity {
         // locally in this Activity
         // I believe onCreate() will only complete once
         // the user has been loaded in
-        // TODO: Pass in the correct userID
-        String userID = FirebaseAuth.getInstance().getUid().toString();
+        String userID = FirebaseAuth.getInstance().getUid();
         // Flag just to be sure the reading was successful
         userLoaded = false;
         userDoc = fs.collection("users").document(userID);
