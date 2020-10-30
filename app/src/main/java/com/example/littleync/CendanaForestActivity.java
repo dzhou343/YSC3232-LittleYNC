@@ -27,6 +27,7 @@ public class CendanaForestActivity extends AppCompatActivity {
     private final FirebaseFirestore fs = FirebaseFirestore.getInstance();
     private DocumentReference userDoc;
     private User user;
+    private User initialUser;
     private volatile Boolean userLoaded = false;
 
     // To update User stats at top of page
@@ -129,7 +130,7 @@ public class CendanaForestActivity extends AppCompatActivity {
      */
     @Override
     public void onDestroy() {
-        user.writeToDatabase(userDoc);
+        user.writeToDatabase(userDoc, initialUser);
         Log.d(TAG, "Wrote to DB");
         super.onDestroy();
     }
@@ -143,6 +144,9 @@ public class CendanaForestActivity extends AppCompatActivity {
         ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        // Store the initial values of the user
+                                        initialUser = documentSnapshot.toObject(User.class);
+                                        // Store the user that this page will manipulate
                                         user = documentSnapshot.toObject(User.class);
                                         userLoaded = true;
                                         // Assign User attributes to textViews

@@ -1,14 +1,17 @@
 package com.example.littleync.model;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class User {
-
     private String userName;
     private int woodchoppingGearLevel;
     private int fishingGearLevel;
@@ -20,6 +23,7 @@ public class User {
     private ArrayList<String> trades;
     private int exp;
 
+    private final FirebaseFirestore fs = FirebaseFirestore.getInstance();
 
     /**
      * Constructor which takes in elements
@@ -50,13 +54,44 @@ public class User {
         this.exp = exp;
     }
 
-    // Needed to automatically parse DB
-
     /**
      * Second Constructor for User Class
      * This is only called by the database
      */
     public User() {}
+
+    public void writeToDatabase(final DocumentReference userDoc, final User initialUser) {
+        String userID = FirebaseAuth.getInstance().getUid();
+        fs.collection("users").document(userID)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                          @Override
+                                          public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                              // See the values of the user before writing
+                                              User finalUser = documentSnapshot.toObject(User.class);
+
+                                              // Only these three attributes can be affected by trade
+                                              int deltaWood = finalUser.getWood() - initialUser.getWood();
+                                              int deltaFish = finalUser.getFish() - initialUser.getFish();
+                                              int deltaGold = finalUser.getGold() - initialUser.getGold();
+
+                                              // Write to DB
+                                              Map<String, Object> docData = new HashMap<>();
+                                              docData.put("userName", getUserName());
+                                              docData.put("woodchoppingGearLevel", getWoodchoppingGearLevel());
+                                              docData.put("fishingGearLevel", getFishingGearLevel());
+                                              docData.put("combatGearLevel", getCombatGearLevel());
+                                              docData.put("aggregateLevel", getAggregateLevel());
+                                              docData.put("wood", getWood() + deltaWood);
+                                              docData.put("fish", getFish() + deltaFish);
+                                              docData.put("gold", getGold() + deltaGold);
+                                              docData.put("trades", getTrades());
+                                              docData.put("exp", getExp());
+                                              userDoc.set(docData);
+                                          }
+                                      }
+                );
+    }
 
     // Formula for level: 50 * level ^ 1.8
     public int requiredExperience(int level) {
@@ -107,28 +142,13 @@ public class User {
     public void addTrade(String documentID) {
         trades.add(documentID);
     }
-    
+
     public void removeTrade(String documentID) {
         trades.remove(documentID);
     }
 
     public void addExp(int exp) {
         setExp(getExp() + exp);
-    }
-
-    public void writeToDatabase(DocumentReference userDoc) {
-        Map<String, Object> docData = new HashMap<>();
-        docData.put("userName", getUserName());
-        docData.put("woodchoppingGearLevel", getWoodchoppingGearLevel());
-        docData.put("fishingGearLevel", getFishingGearLevel());
-        docData.put("combatGearLevel", getCombatGearLevel());
-        docData.put("aggregateLevel", getAggregateLevel());
-        docData.put("wood", getWood());
-        docData.put("fish", getFish());
-        docData.put("gold", getGold());
-        docData.put("trades", getTrades());
-        docData.put("exp", getExp());
-        userDoc.set(docData);
     }
 
     public void setUserName(String userName) {
