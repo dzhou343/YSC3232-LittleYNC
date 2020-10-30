@@ -117,7 +117,6 @@ public class EcopondActivity extends AppCompatActivity {
         // locally in this Activity
         // I believe onCreate() will only complete once
         // the user has been loaded in
-        // TODO: Pass in the correct userID
         String userID = FirebaseAuth.getInstance().getUid();
         // Flag just to be sure the reading was successful
         userLoaded = false;

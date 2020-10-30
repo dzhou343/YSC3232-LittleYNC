@@ -17,6 +17,7 @@ import com.example.littleync.model.Monsters;
 import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -128,8 +129,7 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         aggLevelProgressDisplay = findViewById(R.id.agg_level_progress);
         woodAndExpGainDisplay = findViewById(R.id.toast_msg);
 
-        // TODO: Pass in the correct userID
-        String userID = "random";
+        String userID = FirebaseAuth.getInstance().getUid();
         userLoaded = false;
         userDoc = fs.collection("users").document(userID);
         readUser(userDoc.get());

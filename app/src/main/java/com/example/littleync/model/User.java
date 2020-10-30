@@ -8,19 +8,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class User {
-    //private String databaseID = "random";
 
     private String userName;
-    private int woodchoppingGearLevel = 1;
-    private int fishingGearLevel = 1;
-    private int combatGearLevel = 1;
-    private int aggregateLevel = 1;
-    private int wood = 0;
-    private int fish = 0;
-    private int gold = 0;
-    private ArrayList<String> trades = new ArrayList<String>();
-    private int exp = 0;
-    private String UID;
+    private int woodchoppingGearLevel;
+    private int fishingGearLevel;
+    private int combatGearLevel;
+    private int aggregateLevel;
+    private int wood;
+    private int fish;
+    private int gold;
+    private ArrayList<String> trades;
+    private int exp;
 
 
     /**
@@ -106,8 +104,12 @@ public class User {
         }
     }
 
-    public void addTrade(String tradeID) {
-        trades.add(tradeID);
+    public void addTrade(String documentID) {
+        trades.add(documentID);
+    }
+    
+    public void removeTrade(String documentID) {
+        trades.remove(documentID);
     }
 
     public void addExp(int exp) {
@@ -175,10 +177,6 @@ public class User {
 
     public String getUserName() {
         return this.userName;
-    }
-
-    public String getUID() {
-        return this.UID;
     }
 
     public int getWoodchoppingGearLevel() {

@@ -38,13 +38,6 @@ public class OnlineDatabase {
 
     }
 
-    public DocumentReference userReadWrite() {
-        return db.collection(USER_COLLECTION).document(userID);
-    }
-
-    public DocumentReference tradeReadWrite(String documentID) {
-        return db.collection(TRADE_COLLECTION).document(documentID);
-    }
 
     // ASYNC ISSUE
     public Map<String, Trade> readAllTrades() {
@@ -56,8 +49,8 @@ public class OnlineDatabase {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         Trade t = document.toObject(Trade.class);
-                        System.out.println(t.getTradeID());
-                        trades.put(t.getTradeID(), t);
+                        System.out.println(t.getDocumentID());
+                        trades.put(t.getDocumentID(), t);
                     }
                 }
             }
