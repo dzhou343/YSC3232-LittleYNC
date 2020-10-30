@@ -68,7 +68,7 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_saga_battleground);
+        setContentView(R.layout.battleground_page);
 
         // INITIALIZING SPINNER
         // This spinner refers to initializing the drop down menu for picking which enemy a user would like to fight
@@ -76,10 +76,10 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
 
         ArrayAdapter<String> enemyAdapter = new ArrayAdapter<String>(
                 SagaBattlegroundActivity.this,
-                R.layout.battle_spinner,
+                R.layout.battleground_spinner,
                 getResources().getStringArray(R.array.monster_names));
         // Creates the list of data
-        enemyAdapter.setDropDownViewResource(R.layout.battle_spinner_dropdown);
+        enemyAdapter.setDropDownViewResource(R.layout.battleground_spinner_dropdown);
         // Allows the spinner to show the data within the spinner.
         enemySpinner.setAdapter(enemyAdapter);
 
