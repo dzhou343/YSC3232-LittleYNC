@@ -1,42 +1,300 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/forest"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ArmoryActivity">
+    tools:context=".CendanaForestActivity"
+    android:background="@android:color/background_dark"
+    android:orientation="vertical">
 
-    <Button
-        android:id="@+id/tradeButton"
-        android:layout_width="192dp"
-        android:layout_height="165dp"
-        android:text="UPGRADE FISHING ROD"
-        app:layout_constraintBottom_toTopOf="@+id/button91"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.816" />
+    <LinearLayout
+        android:id="@+id/Dashboard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:orientation="vertical"
+        android:paddingBottom="0dp">
 
-    <Button
-        android:id="@+id/button91"
-        android:layout_width="192dp"
-        android:layout_height="165dp"
-        android:text="UPGRADE AXE"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.821" />
+        <LinearLayout
+            android:id="@+id/fish_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/button98"
-        android:layout_width="192dp"
-        android:layout_height="165dp"
-        android:text="UPGRADE SWORD"
-        app:layout_constraintBottom_toTopOf="@+id/tradeButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/fish_res"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif"
+                android:text="@string/fish_res"
+                android:textColor="#8CEAFF" />
+
+            <TextView
+                android:id="@+id/fish_gear_level"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif"
+                android:text="@string/fish_gear_level"
+                android:textColor="#8CEAFF" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/wood_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/wood_res"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:fontFamily="sans-serif"
+                android:text="@string/wood_res"
+                android:textColor="#8FFF7C" />
+
+            <TextView
+                android:id="@+id/wood_gear_level"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:text="@string/wood_gear_level"
+                android:textColor="#8FFF7C" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/combat_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/gold_res"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:fontFamily="sans-serif"
+                android:text="@string/gold_res"
+                android:textColor="#CCA533" />
+
+            <TextView
+                android:id="@+id/combat_gear_level"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:text="@string/combat_gear_level"
+                android:textColor="#CCA533" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/agg_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/agg_level"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/agg_level"
+                android:textColor="#FF9999" />
+
+            <TextView
+                android:id="@+id/agg_level_progress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/agg_level_progress"
+                android:textColor="#FF9999" />
+
+            <!--            <ProgressBar-->
+            <!--                android:id="@+id/pg_bar"-->
+            <!--                style="@android:style/Widget.ProgressBar.Horizontal"-->
+            <!--                android:layout_width="0dp"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginHorizontal="10dp"-->
+            <!--                android:layout_weight="1"-->
+            <!--                android:progress="25">-->
+            <!--            </ProgressBar>-->
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="Dean of Students Armoury"
+        android:textColor="#C89FFD"
+        android:textAlignment="center"
+        android:textSize="25dp"
+        android:textStyle="bold">
+
+    </TextView>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:srcCompat="@drawable/merchant_dave" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hi Kingfisher, don't forget to upgrade your gear!"
+        android:textColor="#C89FFD"
+        android:gravity="center"
+        />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="100dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/fish_upgrade_level"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="70dp"
+                    android:gravity="center"
+                    android:text="Level 1 -> 2"
+                    android:textColor="#C89FFD" />
+
+                <TextView
+                    android:id="@+id/fish_upgrade_gather"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Amount Gathered: 5 -> 10"
+                    android:textColor="#C89FFD" />
+
+                <TextView
+                    android:id="@+id/fish_upgrade_cost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="70dp"
+                    android:gravity="center"
+                    android:text="Cost: 50 wood, 500 gold"
+                    android:textColor="#C89FFD" />
+
+                <Button
+                    android:id="@+id/fish_upgrade_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Upgrade Rod" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="100dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/battle_upgrade_level"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="70dp"
+                    android:gravity="center"
+                    android:text="Level 1 -> 2"
+                    android:textColor="#C89FFD" />
+
+                <TextView
+                    android:id="@+id/battle_damage_amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Damage: 5 -> 10"
+                    android:textColor="#C89FFD" />
+
+                <TextView
+                    android:id="@+id/battle_upgrade_cost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="70dp"
+                    android:gravity="center"
+                    android:text="Cost: 50 fish, 10 wood"
+                    android:textColor="#C89FFD" />
+
+                <Button
+                    android:id="@+id/battle_upgrade_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Upgrade Sword" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="100dp">
+
+                <TextView
+                    android:id="@+id/wood_upgrade_level"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="70dp"
+                    android:text="Level 1 -> 2"
+                    android:textColor="#C89FFD"
+                    android:gravity="center"
+                    />
+
+                <TextView
+                    android:id="@+id/wood_upgrade_gather"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Amount Gathered: 5 -> 10"
+                    android:textColor="#C89FFD"
+                    android:gravity="center"
+                    />
+
+                <TextView
+                    android:id="@+id/wood_upgrade_cost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cost: 50 fish, 500 gold"
+                    android:textColor="#C89FFD"
+                    android:gravity="center"
+                    android:layout_marginBottom="70dp"/>
+
+                <Button
+                    android:id="@+id/wood_upgrade_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Upgrade Axe" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+
+</LinearLayout>
