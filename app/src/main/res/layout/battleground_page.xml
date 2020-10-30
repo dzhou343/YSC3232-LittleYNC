@@ -7,12 +7,12 @@
     tools:context=".SagaBattlegroundActivity">
 
     <LinearLayout
-        android:id="@+id/cendana_forest"
+        android:id="@+id/battleground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/background_dark"
         android:orientation="vertical"
-        tools:context=".CendanaForestActivity">
+        tools:context=".SagaBattlegroundActivity">
 
         <LinearLayout
             android:id="@+id/Dashboard"
