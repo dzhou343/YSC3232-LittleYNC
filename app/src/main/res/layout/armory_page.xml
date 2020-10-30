@@ -5,7 +5,7 @@
     android:id="@+id/forest"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CendanaForestActivity"
+    tools:context=".ArmoryActivity"
     android:background="@android:color/background_dark"
     android:orientation="vertical">
 
@@ -156,7 +156,7 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hi Kingfisher, don't forget to upgrade your gear!"
+        android:text="@string/toast_msg"
         android:textColor="#C89FFD"
         android:gravity="center"
         />
@@ -184,15 +184,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="70dp"
                     android:gravity="center"
-                    android:text="Level 1 -> 2"
-                    android:textColor="#C89FFD" />
-
-                <TextView
-                    android:id="@+id/fish_upgrade_gather"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Amount Gathered: 5 -> 10"
+                    android:text="@string/to_level"
                     android:textColor="#C89FFD" />
 
                 <TextView
@@ -201,7 +193,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="70dp"
                     android:gravity="center"
-                    android:text="Cost: 50 wood, 500 gold"
+                    android:text="@string/cost"
                     android:textColor="#C89FFD" />
 
                 <Button
@@ -211,7 +203,7 @@
                     android:text="Upgrade Rod"
                     android:textColor="#C89FFD"
                     android:background="#252426"
-                    />
+                    android:onClick="upgradeFish"/>
 
             </LinearLayout>
 
@@ -227,15 +219,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="70dp"
                     android:gravity="center"
-                    android:text="Level 1 -> 2"
-                    android:textColor="#C89FFD" />
-
-                <TextView
-                    android:id="@+id/battle_damage_amount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Damage: 5 -> 10"
+                    android:text="@string/to_level"
                     android:textColor="#C89FFD" />
 
                 <TextView
@@ -244,7 +228,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="70dp"
                     android:gravity="center"
-                    android:text="Cost: 50 fish, 10 wood"
+                    android:text="@string/cost"
                     android:textColor="#C89FFD" />
 
                 <Button
@@ -253,7 +237,8 @@
                     android:layout_height="wrap_content"
                     android:text="Upgrade Sword"
                     android:textColor="#C89FFD"
-                    android:background="#252426"/>
+                    android:background="#252426"
+                    android:onClick="upgradeCombat" />
 
             </LinearLayout>
 
@@ -269,15 +254,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="70dp"
                     android:gravity="center"
-                    android:text="Level 1 -> 2"
-                    android:textColor="#C89FFD" />
-
-                <TextView
-                    android:id="@+id/wood_upgrade_gather"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Amount Gathered: 5 -> 10"
+                    android:text="@string/to_level"
                     android:textColor="#C89FFD" />
 
                 <TextView
@@ -286,7 +263,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="70dp"
                     android:gravity="center"
-                    android:text="Cost: 50 fish, 500 gold"
+                    android:text="@string/cost"
                     android:textColor="#C89FFD" />
 
                 <Button
@@ -295,7 +272,8 @@
                     android:layout_height="wrap_content"
                     android:text="Upgrade Axe"
                     android:textColor="#C89FFD"
-                    android:background="#252426"/>
+                    android:background="#252426"
+                    android:onClick="upgradeWood" />
 
             </LinearLayout>
 
