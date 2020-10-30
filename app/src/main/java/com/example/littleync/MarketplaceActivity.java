@@ -1,22 +1,84 @@
 package com.example.littleync;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MarketplaceActivity extends AppCompatActivity {
+import com.example.littleync.model.Resource;
+
+public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+//    s-: sell; b-: buy
+    Resource sRecourceType;
+    private EditText receiveQty;
+    private EditText giveQty;
+    private Button postDealBtn;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.marketplace_page);
+        setContentView(R.layout.marketplace_page2);
 
-        Spinner marketplace1Spinner = (Spinner) findViewById(R.id.marketplace1_spinner);
-        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(MarketplaceActivity.this,
+//        T1 initialization
+//        set up the spinner for the type of resource the user is asking for
+        Spinner receiveType = (Spinner) findViewById(R.id.receive_type);
+        ArrayAdapter<String> receiveAdapter = new ArrayAdapter<String>(MarketplaceActivity.this,
                 android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.marketplace1_spinner));
-        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        marketplace1Spinner.setAdapter(adapter1);
+        receiveAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        receiveType.setAdapter(receiveAdapter);
+        receiveType.setOnItemSelectedListener(this);
+
+//        set up the spinner for the type of resource the user is trading with
+        Spinner giveType = (Spinner) findViewById(R.id.give_type);
+        ArrayAdapter<String> giveAdapter = new ArrayAdapter<String>(MarketplaceActivity.this,
+                android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.marketplace1_spinner));
+        giveAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        giveType.setAdapter(giveAdapter);
+        giveType.setOnItemSelectedListener(this);
+
+        receiveQty = (EditText) findViewById(R.id.receive_qty);
+        giveQty = (EditText) findViewById(R.id.give_qty);
+
+        postDealBtn = (Button) findViewById(R.id.post_deal_btn);
+        postDealBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                postDeal();
+            }
+    });
+    }
+
+    protected void postDeal(){
+//        TODO: cast the dropdown option to the proper resource type
+        sRecourceType = Resource.Fish;
+
+//        TODO: cast the edittext input to int
+//        data validation for quantity: 1. Only positive integers are accepted. 2. Cannot > existing qty
+        int sQty = 5;
+        int sBill = 10;
+
+//        TODO: click the green button -> trigger the posting?
+
+
+    }
+
+    protected void acceptDeal(){
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }
