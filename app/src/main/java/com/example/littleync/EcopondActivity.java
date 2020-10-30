@@ -41,6 +41,7 @@ public class EcopondActivity extends AppCompatActivity {
     private TextView aggLevelProgressDisplay;
     private TextView fishAndExpGainDisplay;
 
+
     // Timer attributes
     //    time (in milliseconds) taken to deplete one unit of stamina = 3s
     private static final long TIME_PER_STAMINA = 5000;
@@ -118,7 +119,7 @@ public class EcopondActivity extends AppCompatActivity {
         // I believe onCreate() will only complete once
         // the user has been loaded in
         // TODO: Pass in the correct userID
-        String userID = FirebaseAuth.getInstance().getUid().toString();
+        String userID = FirebaseAuth.getInstance().getUid();
         // Flag just to be sure the reading was successful
         userLoaded = false;
         userDoc = fs.collection("users").document(userID);

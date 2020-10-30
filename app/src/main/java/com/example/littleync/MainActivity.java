@@ -170,7 +170,6 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("UID is", String.format(user));
                         UID = user;
 
-
                         /**
                          * Move to new Travel Activity page
                          */
