@@ -19,17 +19,27 @@ public class SplashScreen extends AppCompatActivity {
         if (alive) return;
         alive = true;
 
-        Runnable rn = new Runnable() {
+        /**
+         * Bug where screen flashes for a short second
+         */
+        /*Runnable rn = new Runnable() {
             @Override
             public void run() {
                 Intent i = new Intent(SplashScreen.this, MainActivity.class);
                 startActivity(i);
                 finish();
             }
-        };
+        };*/
 
         new Handler().postDelayed(
-                rn, DELAY);
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent i = new Intent(SplashScreen.this, MainActivity.class);
+                        startActivity(i);
+                        finish();
+                    }
+                }, DELAY);
 
 
     }
