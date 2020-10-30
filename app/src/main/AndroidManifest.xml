@@ -94,6 +94,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".TravelActivity" />
         </activity>
+
         <activity
             android:name=".MarketplaceActivity"
             android:parentActivityName=".TravelActivity">
@@ -103,6 +104,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".TravelActivity" />
         </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
     </application>
 
 </manifest>

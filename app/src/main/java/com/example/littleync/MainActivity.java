@@ -151,7 +151,6 @@ public class MainActivity extends AppCompatActivity {
          * user variable here holds the current user object.
          */
 
-
         try {
 
             //final String user = log.getMyAuthInstance().getUid().toString();
