@@ -1,4 +1,5 @@
 package com.example.littleync;
+import com.example.littleync.model.Resource;
 
 import android.os.Bundle;
 import android.view.View;
@@ -7,11 +8,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-
+import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.littleync.model.Resource;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 //    s-: sell; b-: buy
@@ -19,6 +20,8 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     private EditText receiveQty;
     private EditText giveQty;
     private Button postDealBtn;
+    private Button trade;
+    private String logMsg = "Buttery screen";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,7 +55,16 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                 postDeal();
             }
     });
+
+        final String username;
+        final Button tradeXML = findViewById(R.id.tradeButton);
+        this.trade = tradeXML;
     }
+
+    public void tradePage(View view) {
+        Log.d(logMsg, logMsg);
+        FirebaseAuth fb = FirebaseAuth.getInstance();
+        Log.d(logMsg, fb.getCurrentUser().getUid().toString());}
 
     protected void postDeal(){
 //        TODO: cast the dropdown option to the proper resource type
@@ -79,6 +91,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
     }
 }
+
+

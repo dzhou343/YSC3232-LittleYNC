@@ -1,9 +1,18 @@
 package com.example.littleync.controller;
 
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.concurrent.Executor;
+
 /**
+ * THIS CLASS IS DEPRECATED
+ *
  * Title:
  * <p>
  * <p>
@@ -31,5 +40,8 @@ public class Login {
 
     public static String getAuthID() {
         return authID;
+    }
+
+    public void loginValidate(String _email, String _password) {
     }
 }

@@ -2,9 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <ImageView
         android:id="@+id/avatar"
@@ -17,21 +21,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
         tools:srcCompat="@tools:sample/avatars" />
 
     <EditText
         android:id="@+id/input_email"
         android:layout_width="275dp"
         android:layout_height="wrap_content"
-        android:ems="10"
+        android:hint="@string/email"
         android:inputType="textEmailAddress"
-        android:text="chuayunda@outlook.com"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.61" />
+         />
 
 
     <EditText
@@ -39,12 +41,15 @@
         android:layout_width="275dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:ems="10"
+        android:hint="@string/password"
+        android:imeActionLabel="sign in"
+        android:imeOptions="actionDone"
         android:inputType="textPassword"
-        android:text="password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input_email" />
+        app:layout_constraintTop_toBottomOf="@+id/input_email"
+        />
+
 
     <Button
         android:id="@+id/login_btn"
@@ -76,14 +81,25 @@
         android:id="@+id/btn_to_random_page"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Go to random page for testing purpose"
+        android:onClick="goToRandomPage"
+        android:text="@string/go_to_random_page_for_testing_purpose"
         app:layout_constraintBottom_toTopOf="@+id/input_email"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/avatar"
-        app:layout_constraintVertical_bias="0.535"
-        android:onClick="goToRandomPage"/>
+        app:layout_constraintTop_toBottomOf="@+id/avatar" />
+
+    <TextView
+        android:id="@+id/forgot_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="forgotPasswordScreen"
+        android:text="Forgot or want to change your password?"
+        app:layout_constraintBottom_toTopOf="@+id/signup_line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/login_btn" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

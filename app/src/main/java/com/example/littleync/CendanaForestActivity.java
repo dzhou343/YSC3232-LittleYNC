@@ -3,29 +3,44 @@ package com.example.littleync;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.littleync.model.Monsters;
-import com.example.littleync.model.OnlineDatabase;
-import com.example.littleync.model.Shop;
 import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Locale;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class CendanaForestActivity extends AppCompatActivity {
-    private volatile Boolean flag = false;
-    private OnlineDatabase db;
-    private User user;
-    private final Monsters MONSTERS = new Monsters();
-    private final Shop SHOP = new Shop();
+    // To print to log instead of console
+    private final static String TAG = "CendanaForestActivity";
 
+    // DB attributes
+    private final FirebaseFirestore fs = FirebaseFirestore.getInstance();
+    private DocumentReference userDoc;
+    private User user;
+    private volatile Boolean userLoaded = false;
+
+    // To update User stats at top of page
+    private TextView woodDisplay;
+    private TextView woodchoppingGearLevelDisplay;
+    private TextView fishDisplay;
+    private TextView fishingGearLevelDisplay;
+    private TextView goldDisplay;
+    private TextView combatGearLevelDisplay;
+    private TextView aggLevelDisplay;
+    private TextView aggLevelProgressDisplay;
+    private TextView woodAndExpGainDisplay;
+
+    // Timer attributes
     //    time (in milliseconds) taken to deplete one unit of stamina = 3s
     private static final long TIME_PER_STAMINA = 5000;
     private static final int TOTAL_STAMINA = 50;
@@ -34,65 +49,25 @@ public class CendanaForestActivity extends AppCompatActivity {
     private boolean timerRunning;
     //    total time left in the session
     private long timeLeft = TOTAL_TIME_PER_SESSION;
-
     private ImageButton startPauseResumeBtn;
     private ImageButton resetBtn;
     private CountDownTimer myTimer;
     private TextView timeDisplay;
     private TextView staminaDisplay;
 
-    public synchronized Task<DocumentSnapshot> readTask() {
-        return db.userReadWrite().get();
-    }
-
-    public synchronized void parseDS(Task<DocumentSnapshot> ds) {
-        ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        user = documentSnapshot.toObject(User.class);
-                                        flag = true;
-                                    }
-                                }
-        );
-//        User userTest = new User("sighs", 1, 1, 1, 3,
-//                0, 0, 0, new ArrayList<String>(), 500000);
-//        userTest.addTrade("gold!");
-//        userTest.addTrade("silver");
-//        userTest.writeToDatabase(dbb);
-    }
-
-    public synchronized void fight() {
-        System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-        if (flag) {
-            for (int i = 0; i < 10; i++) {
-                user.addExp(MONSTERS.getExpYield("Prof. Wertz"));
-                user.addGold(MONSTERS.getGoldYield("Prof. Bodin"));
-                System.out.println(user.getExp());
-                System.out.println(user.getGold());
-                System.out.println(user.getAggregateLevel());
-            }
-            user.writeToDatabase(db);
-        } else {
-            System.out.println("SHOULD NEVER REACH HERE");
-        }
-        System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-    }
-
-    public synchronized void chopWood() {
-        if (flag) {
-            System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-            user.addWood();
-            System.out.println(user.getWood());
-            System.out.println(user.getExp());
-            System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-        }
-    }
-
+    /**
+     * Update stamina view
+     * Create timer
+     * Read user from DB
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cendana_forest);
 
+        // Timer stuff
         // By default, initialize stamina to full when the activity is created
         staminaDisplay = (TextView) findViewById(R.id.stamina_section);
 //        String stamina_text = getString(R.string.Stamina, Integer.toString(0));
@@ -103,14 +78,16 @@ public class CendanaForestActivity extends AppCompatActivity {
         resetBtn = findViewById(R.id.reset_button);
         timeDisplay = findViewById(R.id.time_left);
 
-//        set the onClickListeners for the two buttons
+        // set the onClickListeners for the two buttons
         startPauseResumeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (timerRunning) {
-                    pauseTimer();}
-                else{
-                    startTimer();}
+                    pauseTimer();
+                }
+                else {
+                    startTimer();
+                }
             }
         });
 
@@ -124,13 +101,97 @@ public class CendanaForestActivity extends AppCompatActivity {
         updateCountdownText();
         updateStamina();
 
-        db = new OnlineDatabase("random");
-        flag = false;
-        parseDS(readTask());
+        // All other text views
+        woodDisplay = findViewById(R.id.wood_res);
+        woodchoppingGearLevelDisplay = findViewById(R.id.wood_gear_level);
+        fishDisplay = findViewById(R.id.fish_res);
+        fishingGearLevelDisplay = findViewById(R.id.fish_gear_level);
+        goldDisplay = findViewById(R.id.gold_res);
+        combatGearLevelDisplay = findViewById(R.id.combat_gear_level);
+        aggLevelDisplay = findViewById(R.id.agg_level);
+        aggLevelProgressDisplay = findViewById(R.id.agg_level_progress);
+        woodAndExpGainDisplay = findViewById(R.id.toast_msg);
+
+        // Read the user from the database and store it
+        // locally in this Activity
+        // I believe onCreate() will only complete once
+        // the user has been loaded in
+        // TODO: Pass in the correct userID
+        String userID = "random";
+        // Flag just to be sure the reading was successful
+        userLoaded = false;
+        userDoc = fs.collection("users").document(userID);
+        readUser(userDoc.get());
     }
 
+    /**
+     * Write the local User and any updates made to it back to the DB
+     * This is called when we press the back button to return to the Main Activity
+     */
+    @Override
+    public void onDestroy() {
+        user.writeToDatabase(userDoc);
+        Log.d(TAG, "Wrote to DB");
+        super.onDestroy();
+    }
 
-//    FROM HERE: TIMER STUFF
+    /**
+     * Read in User by userID, update all the textViews at top of page
+     *
+     * @param ds
+     */
+    public void readUser(Task<DocumentSnapshot> ds) {
+        ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        user = documentSnapshot.toObject(User.class);
+                                        userLoaded = true;
+                                        // Assign User attributes to textViews
+                                        String woodRes = String.format(Locale.getDefault(), "Wood: %s", user.getWood());
+                                        woodDisplay.setText(woodRes);
+                                        String woodGearLevel = String.format(Locale.getDefault(), "Wood Gear Level: %s", user.getWoodchoppingGearLevel());
+                                        woodchoppingGearLevelDisplay.setText(woodGearLevel);
+                                        String fishRes = String.format(Locale.getDefault(), "Fish: %s", user.getFish());
+                                        fishDisplay.setText(fishRes);
+                                        String fishGearLevel = String.format(Locale.getDefault(), "Fish Gear Level: %s", user.getFishingGearLevel());
+                                        fishingGearLevelDisplay.setText(fishGearLevel);
+                                        String goldRes = String.format(Locale.getDefault(), "Gold: %s", user.getGold());
+                                        goldDisplay.setText(goldRes);
+                                        String combatGearLevel = String.format(Locale.getDefault(), "Combat Gear Level: %s", user.getCombatGearLevel());
+                                        combatGearLevelDisplay.setText(combatGearLevel);
+                                        String aggLevel = String.format(Locale.getDefault(), "Aggregate Level: %s", user.getAggregateLevel());
+                                        aggLevelDisplay.setText(aggLevel);
+                                        String aggLevelProgress = String.format(Locale.getDefault(),
+                                                "%s / %s", user.getExp(), user.requiredExperience(user.getAggregateLevel() + 1));
+                                        aggLevelProgressDisplay.setText(aggLevelProgress);
+                                        String toastMsg = String.format(Locale.getDefault(),
+                                                "+%s Wood and +%s Exp", user.getWoodchoppingGearLevel(), user.getWoodchoppingGearLevel());
+                                        woodAndExpGainDisplay.setText(toastMsg);
+                                    }
+                                }
+        );
+    }
+
+    /**
+     * Call the chopWood() method, which updates wood and exp, and has the potential
+     * to update the aggregateLevel
+     */
+    public void chopWood() {
+        if (userLoaded) {
+            user.chopWood();
+            String woodRes = String.format(Locale.getDefault(), "Wood: %s", user.getWood());
+            woodDisplay.setText(woodRes);
+            String aggLevel = String.format(Locale.getDefault(), "Aggregate Level: %s", user.getAggregateLevel());
+            aggLevelDisplay.setText(aggLevel);
+            String aggLevelProgress = String.format(Locale.getDefault(),
+                    "%s / %s", user.getExp(), user.requiredExperience(user.getAggregateLevel() + 1));
+            aggLevelProgressDisplay.setText(aggLevelProgress);
+        } else {
+            Log.d(TAG, "User not yet loaded");
+        }
+    }
+
+    //    FROM HERE: TIMER STUFF
     private void startTimer(){
         myTimer = new CountDownTimer(TOTAL_TIME_PER_SESSION, 1000) {
             @Override
@@ -176,28 +237,27 @@ public class CendanaForestActivity extends AppCompatActivity {
 //        conversion from milliseconds to minutes and seconds
         int minutes = (int) (timeLeft / 1000) / 60;
         int seconds = (int) (timeLeft / 1000) % 60;
-
-        String time_left_formatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
-        timeDisplay.setText(time_left_formatted);
+        String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
+        timeDisplay.setText(timeLeftFormatted);
     }
 
     //    better update with an if condition, i.e. compute stamina now and only update when stamina_now is
-//    different from stamina_left (the previous stamina till now).
-    private void updateStamina(){
+    //    different from stamina_left (the previous stamina till now).
+    private void updateStamina() {
         int quotient = (int) (timeLeft / TIME_PER_STAMINA);
 //        System.out.println(String.format(Locale.getDefault(), "%d, %d", (int) (time_left / 1000) % 60, (int) (time_left / 1000) % (time_per_stamina / 1000)));
         if ((int) (timeLeft / 1000) % (TIME_PER_STAMINA / 1000) == 0) {
             staminaLeft = quotient;
+            // For each unit of stamina consumed we want to chop wood
+            if (staminaLeft < TOTAL_STAMINA) {
+                chopWood();
+            }
         } else {
             staminaLeft = quotient + 1;
         }
 
-        String stamina_left_formatted = String.format(Locale.getDefault(), "Stamina: %s / %s", staminaLeft, TOTAL_STAMINA);
-        staminaDisplay.setText(stamina_left_formatted);
-
-        // Ignore for now, testing buttons to write to DB
-        chopWood();
-
+        String staminaLeftFormatted = String.format(Locale.getDefault(), "Stamina: %s / %s", staminaLeft, TOTAL_STAMINA);
+        staminaDisplay.setText(staminaLeftFormatted);
     }
 
 }

@@ -1,8 +1,10 @@
 <resources>
+    <!-- For loading Login Page attributes -->
     <string name="app_name">LittleYNC</string>
     <string name="email_field">Email</string>
     <string name="password_field">Password</string>
     <string name="sign_up">Don\'t have an account? Sign up here.</string>
+<<<<<<< HEAD
     <string name="woodcutting_place_name">Cendana Forest</string>
     <string name="fishing_place_name">Eco Pond</string>
     <string name="combat_place_name">Saga Battleground</string>
@@ -25,4 +27,49 @@
         <item>Fish</item>
         <item>Wood</item>
     </string-array>
+=======
+
+    <!-- For loading Travel Page attributes -->
+    <string name="Combat_Place">Saga Battleground</string>
+    <string name="Woodcutting_Place">Cendana Forest</string>
+    <string name="Fishing_Place">Eco Pond</string>
+    <string name="Gear_Shop">DoS Armoury</string>
+    <string name="Marketplace">Buttery Trading Hub</string>
+    <string name="Login">Login</string>
+    <string name="avatar_description">go to the random page for testing purpose</string>
+
+    <!-- For loading User attributes -->
+    <string name="wood_res">Wood:</string>
+    <string name="wood_gear_level">Wood Gear Level:</string>
+    <string name="fish_res">Fish:</string>
+    <string name="fish_gear_level">Fish Gear Level:</string>
+    <string name="gold_res">Gold:</string>
+    <string name="combat_gear_level">Combat Gear Level:</string>
+    <string name="agg_level">Aggregate Level:</string>
+    <string name="agg_level_progress"> / </string>
+    <string name="toast_msg">LOADING…</string>
+
+    <!-- For loading Monster attributes -->
+    <string name="monster_hp">HP:</string>
+    <string-array name="monster_names">
+        <item>Prof. Sergey</item>
+        <item>Prof. Stamps</item>
+        <item>Prof. Danvy</item>
+        <item>Prof. Wertz</item>
+        <item>Prof. Cheung</item>
+        <item>Prof. Field</item>
+        <item>Prof. Liu</item>
+        <item>Prof. De Iorio</item>
+        <item>Prof. Tolwinski</item>
+        <item>Prof. Comaroff</item>
+        <item>Prof. Hobor</item>
+        <item>Prof. Bodin</item>
+    </string-array>
+
+    <!-- For loading Stamina attributes -->
+    <string name="stamina">Stamina:</string>
+    <string name="go_to_random_page_for_testing_purpose">Go to random page for testing purpose</string>
+    <string name="email">EMAIL</string>
+    <string name="password">PASSWORD</string>
+>>>>>>> master
 </resources>

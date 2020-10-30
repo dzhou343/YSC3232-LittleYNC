@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cendana_forest"
+    android:id="@+id/forest"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CendanaForestActivity"
@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif"
-                android:text="FISH RESOURCE: 187"
+                android:text="@string/fish_res"
                 android:textColor="#8CEAFF" />
 
             <TextView
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif"
-                android:text="FISH GEAR LEVEL: 2"
+                android:text="@string/fish_gear_level"
                 android:textColor="#8CEAFF" />
 
         </LinearLayout>
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="5"
                 android:fontFamily="sans-serif"
-                android:text="WOOD RESOURCE: 187"
+                android:text="@string/wood_res"
                 android:textColor="#8FFF7C" />
 
             <TextView
@@ -65,7 +65,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="5"
-                android:text="WOOD GEAR LEVEL: 2"
+                android:text="@string/wood_gear_level"
                 android:textColor="#8FFF7C" />
         </LinearLayout>
 
@@ -77,14 +77,13 @@
             android:layout_marginVertical="10dp"
             android:orientation="horizontal">
 
-
             <TextView
                 android:id="@+id/gold_res"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="5"
                 android:fontFamily="sans-serif"
-                android:text="GOLD: 187"
+                android:text="@string/gold_res"
                 android:textColor="#CCA533" />
 
             <TextView
@@ -92,7 +91,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="5"
-                android:text="COMBAT GEAR LEVEL: 2"
+                android:text="@string/combat_gear_level"
                 android:textColor="#CCA533" />
         </LinearLayout>
 
@@ -108,21 +107,26 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="AGG: 1087"
-                android:textColor="#FF9999">
+                android:text="@string/agg_level"
+                android:textColor="#FF9999" />
 
-            </TextView>
-
-            <ProgressBar
-                android:id="@+id/pg_bar"
-                style="@android:style/Widget.ProgressBar.Horizontal"
+            <TextView
+                android:id="@+id/agg_level_progress"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
                 android:layout_weight="1"
-                android:progress="25">
+                android:text="@string/agg_level_progress"
+                android:textColor="#FF9999" />
 
-            </ProgressBar>
+<!--            <ProgressBar-->
+<!--                android:id="@+id/pg_bar"-->
+<!--                style="@android:style/Widget.ProgressBar.Horizontal"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginHorizontal="10dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:progress="25">-->
+<!--            </ProgressBar>-->
 
         </LinearLayout>
 
@@ -142,11 +146,11 @@
     </TextView>
 
     <ImageView
-        android:id="@+id/forest_img"
+        android:id="@+id/monster_img"
         android:layout_width="match_parent"
         android:layout_height="180dp"
         app:srcCompat="@drawable/ic_tree"
-        android:tint="#C89FFD">
+        android:tint="#8FFF7C">
 
     </ImageView>
 
@@ -155,7 +159,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:text="+5 Wood and +10 EXP"
+        android:text="@string/toast_msg"
         android:textColor="#C89FFD"
         android:textSize="20dp"
         android:textAlignment="center">

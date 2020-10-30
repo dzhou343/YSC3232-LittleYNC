@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Monsters {
     // { Monster Name : [Hitpoints, Gold Yield, Exp Yield] }
-    private Map<String, int[]> monsters = new HashMap<String, int[]>();
+    private final Map<String, int[]> monsters = new HashMap<String, int[]>();
 
     public Monsters() {
         monsters.put("Prof. Sergey", new int[] {10, 1, 1});
