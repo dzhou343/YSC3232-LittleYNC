@@ -4,17 +4,14 @@ import com.example.littleync.model.Resource;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
-import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.util.Log;
 import android.widget.TextView;
@@ -29,15 +26,12 @@ import com.example.littleync.model.Trade;
 import com.example.littleync.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 
-import org.w3c.dom.Text;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Locale;
 
 public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
@@ -52,6 +46,9 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     private String userID;
     private Boolean posted;
 
+    //    for trade button t
+    private Boolean clicked;
+    private Boolean finished;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -166,7 +163,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
     }
 
-    protected void acceptDeal(){
+    protected void acceptDeal(Trade t){
 
     }
 
@@ -216,6 +213,70 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
             lastRowID = id;
 
     }}
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    protected void populateExistingDeals2(ArrayList<Trade> existingDeals){
+        //        scroll test
+
+        ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
+        int lastRowID = R.id.first_row;
+
+        for (int i = 0; i < existingDeals.size(); i++){
+            final Trade t = existingDeals.get(i);
+
+            View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);
+
+//        set content
+            TextView index = (TextView) new_row.findViewById(R.id.index2);
+            TextView timestamp = (TextView) new_row.findViewById(R.id.timestamp2);
+            TextView username = (TextView) new_row.findViewById(R.id.username2);
+            TextView giving = (TextView) new_row.findViewById(R.id.giving2);
+            TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
+            final ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
+
+            index.setText(String.valueOf(i + 1));
+            timestamp.setText(t.getTimestamp().format(DateTimeFormatter.ofPattern("dd MMM yyyy")));
+            username.setText(t.getUserName());
+            giving.setText(String.format(Locale.getDefault(),"%s x %d", t.getSellType(), t.getSellQty()));
+            receiving.setText(String.format(Locale.getDefault(),"%s x %d", t.getReceiveType(), t.getReceiveQty()));
+
+            clicked = false;
+            finished = false;
+
+//          set accept button
+            t2Btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (clicked) {
+                        acceptDeal(t);
+                        clicked = false;
+                        }
+                    else {
+                        Log.d("Haha", "Else");
+                    }
+                }
+            });
+
+//        add to parent
+            scrollParent.addView(new_row);
+
+//        set id & then constraints
+            int id = View.generateViewId();
+            Log.d("BRO", String.valueOf(id));
+            new_row.setId(id);
+
+            ConstraintSet set = new ConstraintSet();
+            set.constrainWidth(id, ConstraintSet.WRAP_CONTENT);
+            set.constrainHeight(id, ConstraintSet.WRAP_CONTENT);
+
+            set.connect(id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
+            set.connect(id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
+            set.connect(id, ConstraintSet.TOP, lastRowID, ConstraintSet.BOTTOM, 0);
+            set.applyTo(scrollParent);
+
+            lastRowID = id;
+
+        }}
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
