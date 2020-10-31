@@ -10,7 +10,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -18,34 +17,41 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Map;
 
-
-////////////////////////////////////////
-// NOTE THIS ENTIRE CLASS IS UNTESTED //
-////////////////////////////////////////
 public class Marketplace {
-    private Map<String, Trade> trades;
+    private String TAG = "Marketplace Class";
+
+    private Map<String, Trade> tradesMap;
     private volatile Boolean tradeComplete = false;
     private DocumentReference tradeDoc;
     FirebaseFirestore fs = FirebaseFirestore.getInstance();
 
-    public Marketplace() {
-        readAllTrades();
+    public Marketplace(ArrayList<Trade> trades) {
+        for (Trade t : trades) {
+            tradesMap.put(t.getDocumentID(), t);
+        }
     }
 
-    private String TAG = "Results of querySellerDatabase";
-
+    private final ArrayList<Trade> trades = new ArrayList<Trade>();
+    private volatile Boolean tradesLoaded = false;
     public void readAllTrades() {
-        CollectionReference tradesRef = fs.collection("trades");
-        tradesRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        trades.clear();
+        Query queriedTrades = fs.collection("trades")
+                .orderBy("timeOfListing", Query.Direction.DESCENDING)
+                .limit(100);
+        queriedTrades
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         Trade t = document.toObject(Trade.class);
-                        trades.put(t.getDocumentID(), t);
+                        trades.add(t);
                     }
+                    tradesLoaded = true;
                 }
             }
         });
@@ -151,13 +157,13 @@ public class Marketplace {
                                                     new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
-                                                            Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                                            Log.d(TAG, "Trade successfully deleted");
                                                         }
                                                     })
                                             .addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
-                                                    Log.w(TAG, "Error deleting document", e);
+                                                    Log.w(TAG, "Error deleting Trade", e);
                                                 }
                                             });
                                     // Flag that the acceptTrade() method can complete
@@ -166,7 +172,7 @@ public class Marketplace {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                             }
                         } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            Log.d(TAG, "Error getting user: ", task.getException());
                         }
                     }
                 });
@@ -181,7 +187,7 @@ public class Marketplace {
      */
     public Boolean acceptTrade(User buyer, String documentID) {
         tradeComplete = false;
-        Trade sellerTrade = trades.get(documentID);
+        Trade sellerTrade = tradesMap.get(documentID);
         switch (sellerTrade.getReceiving()) {
             case "wood":
                 if (buyer.getWood() >= sellerTrade.getTotalCost()) {

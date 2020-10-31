@@ -12,16 +12,33 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.littleync.model.User;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+import java.util.Locale;
+
+public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+    // To print to log instead of console
+    private final static String TAG = "MarketplaceActivity";
+
+    // DB attributes
+    private final FirebaseFirestore fs = FirebaseFirestore.getInstance();
+    private DocumentReference userDoc;
+    private User user;
+    private User initialUser;
+    private volatile Boolean userLoaded = false;
+
 //    s-: sell; b-: buy
     Resource sRecourceType;
     private EditText receiveQty;
     private EditText giveQty;
     private Button postDealBtn;
     private Button trade;
-    private String logMsg = "Buttery screen";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,15 +73,49 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
             }
     });
 
-        final String username;
         final Button tradeXML = findViewById(R.id.tradeButton);
         this.trade = tradeXML;
+
+        String userID = FirebaseAuth.getInstance().getUid();
+        userLoaded = false;
+        userDoc = fs.collection("users").document(userID);
+        readUser(userDoc.get());
+    }
+
+    /**
+     * Write the local User and any updates made to it back to the DB
+     * This is called when we press the back button to return to the Main Activity
+     */
+    @Override
+    public void onDestroy() {
+        user.writeToDatabase(userDoc, initialUser);
+        Log.d(TAG, "Wrote to DB");
+        super.onDestroy();
+    }
+
+    /**
+     * Read in User by userID, update all the textViews at top of page
+     *
+     * @param ds
+     */
+    public void readUser(Task<DocumentSnapshot> ds) {
+        ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        // Store the initial values of the user
+                                        initialUser = documentSnapshot.toObject(User.class);
+                                        // Store the user that this page will manipulate
+                                        user = documentSnapshot.toObject(User.class);
+                                        userLoaded = true;
+                                    }
+                                }
+        );
     }
 
     public void tradePage(View view) {
-        Log.d(logMsg, logMsg);
+        Log.d(TAG, TAG);
         FirebaseAuth fb = FirebaseAuth.getInstance();
-        Log.d(logMsg, fb.getCurrentUser().getUid().toString());}
+        Log.d(TAG, fb.getCurrentUser().getUid().toString());}
 
     protected void postDeal(){
 //        TODO: cast the dropdown option to the proper resource type
