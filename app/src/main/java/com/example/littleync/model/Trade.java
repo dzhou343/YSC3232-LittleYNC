@@ -107,6 +107,10 @@ public class Trade {
         return this.receiveQty;
     }
 
+    public int getSellQty() {
+        return this.sellQty;
+    }
+
     public int getTotalCost() {
         return this.sellQty;
     }
