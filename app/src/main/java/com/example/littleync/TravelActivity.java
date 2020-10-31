@@ -11,7 +11,11 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import com.google.android.location.gms.location.FusedLocationProviderClient;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -25,7 +29,6 @@ public class TravelActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.travel_page);
     }
-
     public void cendanaForestButton(View view) {
         Intent intent = new Intent(this, CendanaForestActivity.class);
         startActivity(intent);
