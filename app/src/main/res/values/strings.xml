@@ -45,6 +45,10 @@
         <item>Prof. Bodin</item>
     </string-array>
 
+    <!-- For loading Shop attributes -->
+    <string name="to_level"> -> </string>
+    <string name="cost">Cost:</string>
+
     <!-- Marketplace attributes -->
     <string name="marketplace1_title1">Resource</string>
     <string name="marketplace1_title2">Quantity</string>
