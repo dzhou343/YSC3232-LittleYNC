@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.util.Log;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,12 +25,16 @@ import androidx.constraintlayout.widget.ConstraintSet;
 
 import com.example.littleync.model.Trade;
 import com.example.littleync.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -44,6 +49,11 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     private User user;
     private User initialUser;
     private volatile Boolean userLoaded = false;
+    private final ArrayList<Trade> trades = new ArrayList<Trade>();
+    private volatile Boolean tradesLoaded = false;
+
+    // For trading
+    private Marketplace marketplace;
 
 //    s-: sell; b-: buy
     Resource sRecourceType;
@@ -51,7 +61,6 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     private EditText giveQty;
     private Button postDealBtn;
     private Button trade;
-    private Marketplace m;
     private Boolean posted;
 
 
@@ -82,34 +91,21 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         giveQty = (EditText) findViewById(R.id.give_qty);
 
         postDealBtn = (Button) findViewById(R.id.post_deal_btn);
-        postDealBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (posted) {
-                    postDealBtn.setBackgroundColor(Color.TRANSPARENT);
-                    postDealBtn.setText("Posting");
-                    postDealBtn.setTextColor(getApplication().getResources().getColor(R.color.marketplace1_btn));
-                    posted = false;
-                } else {
-                    try {int s = Integer.parseInt(receiveQty.toString());} catch (Exception e) {Log.e("What the hell", e.getMessage());}
-                    postDeal(receiveType.toString(), Integer.parseInt(receiveQty.toString()), giveType.toString(), Integer.parseInt(giveQty.toString()));}
-            }
-    });
-        posted = false;
+//        postDealBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (posted) {
+//                    postDealBtn.setBackgroundColor(Color.TRANSPARENT);
+//                    postDealBtn.setText("Posting");
+//                    postDealBtn.setTextColor(getApplication().getResources().getColor(R.color.marketplace1_btn));
+//                    posted = false;
+//                } else {
+//                    try {int s = Integer.parseInt(receiveQty.toString());} catch (Exception e) {Log.e("What the hell", e.getMessage());}
+//                    postDeal(receiveType.toString(), Integer.parseInt(receiveQty.toString()), giveType.toString(), Integer.parseInt(giveQty.toString()));}
+//            }
+//    });
+//        posted = false;
 
-//        T2 initialization
-        ArrayList<Trade> existingDeals = new ArrayList<Trade>();
-        Trade t1 = new Trade("d1", "bro", "Gold", "Fish", 5, 10, LocalDateTime.now());
-        Trade t2 = new Trade("sss5", "sis", "Wood", "Fish", 77, 1, LocalDateTime.now());
-        Trade t3 = new Trade("OOOOO", "dude", "Wood", "Gold", 100, 99, LocalDateTime.now());
-
-        existingDeals.add(t1);
-        existingDeals.add(t2);
-        existingDeals.add(t3);
-        populateExistingDeals(existingDeals);
-
-//      Yun Da & Mark
-        final String username;
         final Button tradeXML = findViewById(R.id.tradeButton);
         this.trade = tradeXML;
 
@@ -117,6 +113,9 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         userLoaded = false;
         userDoc = fs.collection("users").document(userID);
         readUser(userDoc.get());
+
+        // Setup marketplace for trading
+        readAllTrades();
     }
 
     /**
@@ -128,6 +127,35 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         user.writeToDatabase(userDoc, initialUser);
         Log.d(TAG, "Wrote to DB");
         super.onDestroy();
+    }
+
+    public void readAllTrades() {
+        trades.clear();
+        Query queriedTrades = fs.collection("trades");
+//                .orderBy("timeOfListing", Query.Direction.DESCENDING)
+//                .limit(100);
+        queriedTrades
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Trade t = document.toObject(Trade.class);
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                trades.add(t);
+                            }
+                            Log.d(TAG, "zzzzzzzzzzzzzzzzzzz");
+                            marketplace = new Marketplace(trades);
+                            if (marketplace.tradesMap != null) {
+                                for (String d : marketplace.tradesMap.keySet()) {
+                                    Log.d(TAG, d);
+                                }
+                            }
+                            tradesLoaded = true;
+                        }
+                    }
+                });
     }
 
     /**
@@ -152,16 +180,25 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     public void tradePage(View view) {
         Log.d(TAG, TAG);
         FirebaseAuth fb = FirebaseAuth.getInstance();
-        Log.d(TAG, fb.getCurrentUser().getUid().toString());}
+        Log.d(TAG, fb.getCurrentUser().getUid().toString());
+    }
 
-
-
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void postTrade(View view) {
+        if (userLoaded) {
+            marketplace.postTrade(user, "wood", "gold", 2, 11);
+            marketplace.postTrade(user, "gold", "fish", 3, 2020);
+            marketplace.postTrade(user, "wood", "wood", 6, 55555);
+        } else {
+            Log.d(TAG, "User not yet loaded");
+        }
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     protected void postDeal(String receiveTypeStr, int receiveQtyInt, String giveTypeStr, int giveQtyInt){
 //        data validation for quantity: 1. Only positive integers are accepted. 2. Cannot > existing qty
         User u = new User();
-        boolean validDeal = m.postTrade(u, giveTypeStr, receiveTypeStr, giveQtyInt, receiveQtyInt);
+        boolean validDeal = marketplace.postTrade(u, giveTypeStr, receiveTypeStr, giveQtyInt, receiveQtyInt);
 
 //        if (receiveTypeStr.equals(giveTypeStr)){
 //            giveQty.setError("The resource you are trading for cannot be of the same type as that of the resource you are trading with.");
