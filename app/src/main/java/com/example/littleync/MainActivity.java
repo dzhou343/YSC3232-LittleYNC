@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
                         try {
                             System.out.println(emailLogin.getText().toString());
-                            emailLogin.addTextChangedListener(new TextWatcher() {
+                            emailLogin.addTextCha ngedListener(new TextWatcher() {
                                 @Override
                                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -212,11 +212,6 @@ public class MainActivity extends AppCompatActivity {
     // Called when the user presses the sign-up text.
     public void signUp(View view) {
         Intent intent = new Intent(this, SignupActivity.class);
-        startActivity(intent);
-    }
-
-    public void goToRandomPage(View view) {
-        Intent intent = new Intent(this, RandomPage.class);
         startActivity(intent);
     }
 
