@@ -4,17 +4,14 @@ import com.example.littleync.model.Resource;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
-import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.util.Log;
 import android.widget.TextView;
@@ -27,7 +24,6 @@ import androidx.constraintlayout.widget.ConstraintSet;
 
 import com.example.littleync.model.Trade;
 import com.example.littleync.model.User;
-import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,12 +31,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Locale;
-
-import org.w3c.dom.Text;
-
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.ArrayList;
 
 public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -61,6 +52,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     private Button postDealBtn;
     private Button trade;
     private Marketplace m;
+    private Boolean posted;
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -262,7 +254,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //        set content
         TextView index = (TextView) new_row.findViewById(R.id.index2);
         TextView timestamp = (TextView) new_row.findViewById(R.id.timestamp2);
-        TextView username = (TextView) new_row.findViewById(R.id.username2);
+        TextView username = (TextView) new_row.findViewById(R.id.toast_msg_armory);
         TextView giving = (TextView) new_row.findViewById(R.id.giving2);
         TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
         ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);

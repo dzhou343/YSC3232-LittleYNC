@@ -63,7 +63,7 @@ public class ArmoryActivity extends AppCompatActivity {
         combatGearLevelDisplay = findViewById(R.id.combat_gear_level);
         aggLevelDisplay = findViewById(R.id.agg_level);
         aggLevelProgressDisplay = findViewById(R.id.agg_level_progress);
-        toastDisplay = findViewById(R.id.textView);
+        toastDisplay = findViewById(R.id.toast_msg_armory);
 
         woodToLevel = findViewById(R.id.wood_upgrade_level);
         woodCost = findViewById(R.id.wood_upgrade_cost);

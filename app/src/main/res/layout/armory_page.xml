@@ -153,7 +153,7 @@
         tools:srcCompat="@drawable/merchant_dave" />
 
     <TextView
-        android:id="@+id/username2"
+        android:id="@+id/toast_msg_armory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/toast_msg"
