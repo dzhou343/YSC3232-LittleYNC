@@ -63,6 +63,7 @@
     <string-array name="marketplace1_spinner">
         <item>Fish</item>
         <item>Wood</item>
+        <item>Gold</item>
     </string-array>
 
     <!-- For loading Stamina attributes -->
