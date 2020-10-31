@@ -58,7 +58,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     private volatile Boolean tradesLoaded = false;
 
     // For trading
-    private Marketplace marketplace;
+    private Marketplace MARKETPLACE;
 
 //    s-: sell; b-: buy
     Resource sRecourceType;
@@ -124,6 +124,9 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
         // Setup marketplace for trading
         readAllTrades();
+
+        // Populate the scrollview with dummy trade objects
+        addRow2();
     }
 
     /**
@@ -139,9 +142,9 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
     public void readAllTrades() {
         trades.clear();
-        Query queriedTrades = fs.collection("trades");
-//                .orderBy("timeOfListing", Query.Direction.DESCENDING)
-//                .limit(100);
+        Query queriedTrades = fs.collection("trades")
+                .orderBy("timeOfListing", Query.Direction.DESCENDING)
+                .limit(100);
         queriedTrades
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -154,9 +157,9 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                                 trades.add(t);
                             }
                             Log.d(TAG, "zzzzzzzzzzzzzzzzzzz");
-                            marketplace = new Marketplace(trades);
-                            if (marketplace.tradesMap != null) {
-                                for (String d : marketplace.tradesMap.keySet()) {
+                            MARKETPLACE = new Marketplace(trades);
+                            if (MARKETPLACE.tradesMap != null) {
+                                for (String d : MARKETPLACE.tradesMap.keySet()) {
                                     Log.d(TAG, d);
                                 }
                             }
@@ -194,9 +197,9 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void postTrade(View view) {
         if (userLoaded) {
-            marketplace.postTrade(user, "wood", "gold", 2, 11);
-            marketplace.postTrade(user, "gold", "fish", 3, 2020);
-            marketplace.postTrade(user, "wood", "wood", 6, 55555);
+            MARKETPLACE.postTrade(user, "wood", "gold", 2, 11);
+            MARKETPLACE.postTrade(user, "gold", "fish", 3, 2020);
+            MARKETPLACE.postTrade(user, "wood", "wood", 6, 55555);
         } else {
             Log.d(TAG, "User not yet loaded");
         }
@@ -206,7 +209,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     protected void postDeal(String receiveTypeStr, int receiveQtyInt, String giveTypeStr, int giveQtyInt){
 //        data validation for quantity: 1. Only positive integers are accepted. 2. Cannot > existing qty
         User u = new User();
-        boolean validDeal = marketplace.postTrade(u, giveTypeStr, receiveTypeStr, giveQtyInt, receiveQtyInt);
+        boolean validDeal = MARKETPLACE.postTrade(u, giveTypeStr, receiveTypeStr, giveQtyInt, receiveQtyInt);
 
 //        if (receiveTypeStr.equals(giveTypeStr)){
 //            giveQty.setError("The resource you are trading for cannot be of the same type as that of the resource you are trading with.");
