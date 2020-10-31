@@ -41,7 +41,6 @@ public class EcopondActivity extends AppCompatActivity {
     private TextView aggLevelProgressDisplay;
     private TextView fishAndExpGainDisplay;
 
-
     // Timer attributes
     //    time (in milliseconds) taken to deplete one unit of stamina = 3s
     private static final long TIME_PER_STAMINA = 5000;

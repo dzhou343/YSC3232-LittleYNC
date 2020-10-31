@@ -1,28 +1,78 @@
 package com.example.littleync;
+import com.example.littleync.model.Marketplace;
 import com.example.littleync.model.Resource;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.util.Log;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 
+import com.example.littleync.model.Trade;
+import com.example.littleync.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
-public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Locale;
+
+public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+    // To print to log instead of console
+    private final static String TAG = "MarketplaceActivity";
+
+    // DB attributes
+    private final FirebaseFirestore fs = FirebaseFirestore.getInstance();
+    private DocumentReference userDoc;
+    private User user;
+    private User initialUser;
+    private volatile Boolean userLoaded = false;
+    private final ArrayList<Trade> trades = new ArrayList<Trade>();
+    private volatile Boolean tradesLoaded = false;
+
+    // For trading
+    private Marketplace MARKETPLACE;
+
 //    s-: sell; b-: buy
     Resource sRecourceType;
     private EditText receiveQty;
     private EditText giveQty;
     private Button postDealBtn;
     private Button trade;
-    private String logMsg = "Buttery screen";
+    private Boolean posted;
 
+    //    for trade button t
+    private Boolean clicked;
+    private Boolean finished;
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +80,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
 //        T1 initialization
 //        set up the spinner for the type of resource the user is asking for
-        Spinner receiveType = (Spinner) findViewById(R.id.receive_type);
+        final Spinner receiveType = (Spinner) findViewById(R.id.receive_type);
         ArrayAdapter<String> receiveAdapter = new ArrayAdapter<String>(MarketplaceActivity.this,
                 android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.marketplace1_spinner));
         receiveAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -38,7 +88,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         receiveType.setOnItemSelectedListener(this);
 
 //        set up the spinner for the type of resource the user is trading with
-        Spinner giveType = (Spinner) findViewById(R.id.give_type);
+        final Spinner giveType = (Spinner) findViewById(R.id.give_type);
         ArrayAdapter<String> giveAdapter = new ArrayAdapter<String>(MarketplaceActivity.this,
                 android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.marketplace1_spinner));
         giveAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -49,40 +99,421 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         giveQty = (EditText) findViewById(R.id.give_qty);
 
         postDealBtn = (Button) findViewById(R.id.post_deal_btn);
-        postDealBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                postDeal();
-            }
-    });
+//        postDealBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (posted) {
+//                    postDealBtn.setBackgroundColor(Color.TRANSPARENT);
+//                    postDealBtn.setText("Posting");
+//                    postDealBtn.setTextColor(getApplication().getResources().getColor(R.color.marketplace1_btn));
+//                    posted = false;
+//                } else {
+//                    try {int s = Integer.parseInt(receiveQty.toString());} catch (Exception e) {Log.e("What the hell", e.getMessage());}
+//                    postDeal(receiveType.toString(), Integer.parseInt(receiveQty.toString()), giveType.toString(), Integer.parseInt(giveQty.toString()));}
+//            }
+//    });
+//        posted = false;
 
-        final String username;
         final Button tradeXML = findViewById(R.id.tradeButton);
         this.trade = tradeXML;
+
+        String userID = FirebaseAuth.getInstance().getUid();
+        userLoaded = false;
+        userDoc = fs.collection("users").document(userID);
+        readUser(userDoc.get());
+
+        // Setup marketplace for trading
+        readAllTrades();
+
+        // Populate the scrollview with dummy trade objects
+        addRow2();
+    }
+
+    /**
+     * Write the local User and any updates made to it back to the DB
+     * This is called when we press the back button to return to the Main Activity
+     */
+    @Override
+    public void onDestroy() {
+        user.writeToDatabase(userDoc, initialUser);
+        Log.d(TAG, "Wrote to DB");
+        super.onDestroy();
+    }
+
+    public void readAllTrades() {
+        trades.clear();
+        Query queriedTrades = fs.collection("trades")
+                .orderBy("timeOfListing", Query.Direction.DESCENDING)
+                .limit(100);
+        queriedTrades
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Trade t = document.toObject(Trade.class);
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                trades.add(t);
+                            }
+                            Log.d(TAG, "zzzzzzzzzzzzzzzzzzz");
+                            MARKETPLACE = new Marketplace(trades);
+                            if (MARKETPLACE.tradesMap != null) {
+                                for (String d : MARKETPLACE.tradesMap.keySet()) {
+                                    Log.d(TAG, d);
+                                }
+                            }
+                            tradesLoaded = true;
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Read in User by userID, update all the textViews at top of page
+     *
+     * @param ds
+     */
+    public void readUser(Task<DocumentSnapshot> ds) {
+        ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        // Store the initial values of the user
+                                        initialUser = documentSnapshot.toObject(User.class);
+                                        // Store the user that this page will manipulate
+                                        user = documentSnapshot.toObject(User.class);
+                                        userLoaded = true;
+                                    }
+                                }
+        );
     }
 
     public void tradePage(View view) {
-        Log.d(logMsg, logMsg);
+        Log.d(TAG, TAG);
         FirebaseAuth fb = FirebaseAuth.getInstance();
-        Log.d(logMsg, fb.getCurrentUser().getUid().toString());}
+        Log.d(TAG, fb.getCurrentUser().getUid().toString());
+    }
 
-    protected void postDeal(){
-//        TODO: cast the dropdown option to the proper resource type
-        sRecourceType = Resource.Fish;
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void postTrade(View view) {
+        if (userLoaded) {
+            MARKETPLACE.postTrade(user, "wood", "gold", 2, 11);
+            MARKETPLACE.postTrade(user, "gold", "fish", 3, 2020);
+            MARKETPLACE.postTrade(user, "wood", "wood", 6, 55555);
+        } else {
+            Log.d(TAG, "User not yet loaded");
+        }
+    }
 
-//        TODO: cast the edittext input to int
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    protected void postDeal(String receiveTypeStr, int receiveQtyInt, String giveTypeStr, int giveQtyInt){
 //        data validation for quantity: 1. Only positive integers are accepted. 2. Cannot > existing qty
-        int sQty = 5;
-        int sBill = 10;
+        User u = new User();
+        boolean validDeal = MARKETPLACE.postTrade(u, giveTypeStr, receiveTypeStr, giveQtyInt, receiveQtyInt);
 
-//        TODO: click the green button -> trigger the posting?
+//        if (receiveTypeStr.equals(giveTypeStr)){
+//            giveQty.setError("The resource you are trading for cannot be of the same type as that of the resource you are trading with.");
+//            successfulPosting = false;
+//        }
+//        if (receiveQtyInt < 0){
+//            receiveQty.setError("You cannot trade for non-positve units of resources.");
+//            successfulPosting = false;
+//        }
+//        if (giveQtyInt < 0){
+//            giveQty.setError("You cannot trade with non-positive units of resources");
+//            successfulPosting = false;
+//        }
+//
+//        if m.postTrade
 
+        if (validDeal) {
+//            TODO: print out a success msg in the button
+            postDealBtn.setText("Successfully posted! Post another deal?");
+            postDealBtn.setBackgroundResource(R.drawable.marketplace2_btn);
+            postDealBtn.setTextColor(0xff0000);
+            posted = true;
+        } else {
+            giveQty.setError("You have input an invalid quantity for trading. Please try again.");
+        }
+
+////        TODO: cast the dropdown option to the proper resource type
+////        sRecourceType = Resource.Fish;
+//
+////        TODO: cast the edittext input to int
+//
+//        int sQty = 5;
+//        int sBill = 10;
+//
+////        TODO: click the green button -> trigger the posting?
+//
 
     }
 
-    protected void acceptDeal(){
+    protected void acceptDeal(Trade t){
 
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    protected void populateExistingDeals(ArrayList<Trade> existingDeals){
+        //        scroll test
+
+        ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
+        int lastRowID = R.id.first_row;
+
+        for (int i = 0; i < existingDeals.size(); i++){
+            Trade t = existingDeals.get(i);
+
+            View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);
+
+//        set content
+            TextView index = (TextView) new_row.findViewById(R.id.index2);
+            TextView timestamp = (TextView) new_row.findViewById(R.id.timestamp2);
+            TextView username = (TextView) new_row.findViewById(R.id.username2);
+            TextView giving = (TextView) new_row.findViewById(R.id.giving2);
+            TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
+            ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
+
+            index.setText(String.valueOf(i + 1));
+            timestamp.setText(t.getTimestamp().format(DateTimeFormatter.ofPattern("dd MMM yyyy")));
+            username.setText(t.getUserName());
+            giving.setText(String.format(Locale.getDefault(),"%s x %d", t.getSellType(), t.getSellQty()));
+            receiving.setText(String.format(Locale.getDefault(),"%s x %d", t.getReceiveType(), t.getReceiveQty()));
+
+//        add to parent
+            scrollParent.addView(new_row);
+
+//        set id & then constraints
+            int id = View.generateViewId();
+            Log.d("BRO", String.valueOf(id));
+            new_row.setId(id);
+
+            ConstraintSet set = new ConstraintSet();
+            set.constrainWidth(id, ConstraintSet.WRAP_CONTENT);
+            set.constrainHeight(id, ConstraintSet.WRAP_CONTENT);
+
+            set.connect(id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
+            set.connect(id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
+            set.connect(id, ConstraintSet.TOP, lastRowID, ConstraintSet.BOTTOM, 0);
+            set.applyTo(scrollParent);
+
+            lastRowID = id;
+
+    }}
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    protected void populateExistingDeals2(ArrayList<Trade> existingDeals){
+        //        scroll test
+
+        ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
+        int lastRowID = R.id.first_row;
+
+        for (int i = 0; i < existingDeals.size(); i++){
+            final Trade t = existingDeals.get(i);
+
+            View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);
+
+//        set content
+            TextView index = (TextView) new_row.findViewById(R.id.index2);
+            TextView timestamp = (TextView) new_row.findViewById(R.id.timestamp2);
+            TextView username = (TextView) new_row.findViewById(R.id.username2);
+            TextView giving = (TextView) new_row.findViewById(R.id.giving2);
+            TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
+            final ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
+
+            index.setText(String.valueOf(i + 1));
+            timestamp.setText(t.getTimestamp().format(DateTimeFormatter.ofPattern("dd MMM yyyy")));
+            username.setText(t.getUserName());
+            giving.setText(String.format(Locale.getDefault(),"%s x %d", t.getSellType(), t.getSellQty()));
+            receiving.setText(String.format(Locale.getDefault(),"%s x %d", t.getReceiveType(), t.getReceiveQty()));
+
+            clicked = false;
+            finished = false;
+
+//          set accept button
+            t2Btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (clicked) {
+                        acceptDeal(t);
+                        clicked = false;
+                        }
+                    else {
+                        Log.d("Haha", "Else");
+                    }
+                }
+            });
+
+//        add to parent
+            scrollParent.addView(new_row);
+
+//        set id & then constraints
+            int id = View.generateViewId();
+            Log.d("BRO", String.valueOf(id));
+            new_row.setId(id);
+
+            ConstraintSet set = new ConstraintSet();
+            set.constrainWidth(id, ConstraintSet.WRAP_CONTENT);
+            set.constrainHeight(id, ConstraintSet.WRAP_CONTENT);
+
+            set.connect(id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
+            set.connect(id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
+            set.connect(id, ConstraintSet.TOP, lastRowID, ConstraintSet.BOTTOM, 0);
+            set.applyTo(scrollParent);
+
+            lastRowID = id;
+
+        }}
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @SuppressLint("SetTextI18n")
+    private void addRow() {
+        // creation of a new constraintlayout for a new row 2
+
+        final View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);
+
+//        set content
+        TextView index = (TextView) new_row.findViewById(R.id.index2);
+        TextView timestamp = (TextView) new_row.findViewById(R.id.timestamp2);
+        TextView username = (TextView) new_row.findViewById(R.id.username2);
+        TextView giving = (TextView) new_row.findViewById(R.id.giving2);
+        TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
+        ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
+
+        index.setText("2");
+        timestamp.setText("20th Oct 2020");
+        username.setText("DDDDD");
+        giving.setText("gold x 50");
+        receiving.setText("wood x 1");
+
+//        find parent and add to parent
+        ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
+        scrollParent.addView(new_row);
+
+
+//        set id & then constraints
+        int id = View.generateViewId();
+        Log.d("BRO", String.valueOf(id));
+        new_row.setId(id);
+
+//        Remarks: 1. setting the height & weight to equal to first row doesn't work.
+//        2. setting the height & weight to the exact dim 312 and 40 also don't work
+//        3. setting the dim to 0 also doesn't work
+//        4. seem to need to set it super big
+//         5. try to have another set for row_set
+
+        ConstraintLayout firstRow = (ConstraintLayout) findViewById(R.id.first_row);
+//        int h = firstRow.getHeight();
+//        int w = firstRow.getWidth();
+        TextView firstRowTimestamp = (TextView) findViewById(R.id.timestamp33);
+
+//        ConstraintSet row_set = new ConstraintSet();
+//        row_set.constrainHeight(id, h);
+//        row_set.constrainWidth(id, w);
+//        row_set.applyTo((ConstraintLayout) new_row);
+        Log.d("AAAAAAA", String.valueOf(firstRowTimestamp.getWidth()));
+
+
+        ConstraintSet set = new ConstraintSet();
+        set.constrainWidth(id, ConstraintSet.WRAP_CONTENT);
+        set.constrainHeight(id, ConstraintSet.WRAP_CONTENT);
+
+        set.connect(id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
+        set.connect(id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
+        set.connect(id, ConstraintSet.TOP, R.id.first_row, ConstraintSet.BOTTOM, 0);
+        set.connect(id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
+        set.applyTo(scrollParent);
+        Log.d("BBBBBBBB", String.valueOf(timestamp.getWidth()));
+
+
+
+        }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void addRow2(){
+        //        scroll test
+        ArrayList<String> indexList = new ArrayList<>();
+        ArrayList<String> timestampList = new ArrayList<>();
+        ArrayList<String> usernameList = new ArrayList<>();
+        ArrayList<String> givingList = new ArrayList<>();
+        ArrayList<String> receivingList  = new ArrayList<>();
+
+        ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
+        int lastRowID = R.id.first_row;
+
+        for (int i  = 0; i < 20; i++) {
+//            creating test strings
+            indexList.add(String.valueOf(i));
+
+            LocalDate newDate = LocalDate.of(2020, Month.APRIL, i+1);
+            String newDateString = newDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy"));
+            timestampList.add(newDateString);
+
+            char c = (char) (i + 64);
+            char[] chars = new char[8];
+            Arrays.fill(chars, c);
+            String newString = new String(chars);
+            usernameList.add(newString);
+
+            givingList.add(String.format("fish x %d", i));
+            receivingList.add(String.format("gold x %d", i));
+
+            View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);
+
+//        set content
+            TextView index = (TextView) new_row.findViewById(R.id.index2);
+            TextView timestamp = (TextView) new_row.findViewById(R.id.timestamp2);
+            TextView username = (TextView) new_row.findViewById(R.id.username2);
+            TextView giving = (TextView) new_row.findViewById(R.id.giving2);
+            TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
+            ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
+
+            index.setText(indexList.get(i));
+            timestamp.setText(timestampList.get(i));
+            username.setText(usernameList.get(i));
+            giving.setText(givingList.get(i));
+            receiving.setText(receivingList.get(i));
+
+//        add to parent
+
+            scrollParent.addView(new_row);
+
+
+//        set id & then constraints
+            int id = View.generateViewId();
+            Log.d("BRO", String.valueOf(id));
+            new_row.setId(id);
+
+//        Remarks: 1. setting the height & weight to equal to first row doesn't work.
+//        2. setting the height & weight to the exact dim 312 and 40 also don't work
+//        3. setting the dim to 0 also doesn't work
+//        4. seem to need to set it super big
+//         5. try to have another set for row_set
+
+//            ConstraintLayout firstRow = (ConstraintLayout) findViewById(R.id.first_row);
+//        int h = firstRow.getHeight();
+//        int w = firstRow.getWidth();
+//            TextView firstRowTimestamp = (TextView) findViewById(R.id.timestamp33);
+
+//        ConstraintSet row_set = new ConstraintSet();
+//        row_set.constrainHeight(id, h);
+//        row_set.constrainWidth(id, w);
+//        row_set.applyTo((ConstraintLayout) new_row);
+//            Log.d("AAAAAAA", String.valueOf(firstRowTimestamp.getWidth()));
+
+
+            ConstraintSet set = new ConstraintSet();
+            set.constrainWidth(id, ConstraintSet.WRAP_CONTENT);
+            set.constrainHeight(id, ConstraintSet.WRAP_CONTENT);
+
+            set.connect(id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
+            set.connect(id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
+            set.connect(id, ConstraintSet.TOP, lastRowID, ConstraintSet.BOTTOM, 0);
+//            set.connect(id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
+            set.applyTo(scrollParent);
+//            Log.d("BBBBBBBB", String.valueOf(timestamp.getWidth()));
+
+            lastRowID = id;
+    }}
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

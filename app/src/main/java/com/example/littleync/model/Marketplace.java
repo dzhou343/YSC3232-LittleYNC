@@ -10,71 +10,60 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Map;
 
-
-////////////////////////////////////////
-// NOTE THIS ENTIRE CLASS IS UNTESTED //
-////////////////////////////////////////
 public class Marketplace {
-    private Map<String, Trade> trades;
-    private volatile Boolean tradeComplete = false;
+    private String TAG = "Marketplace Class";
+    public Map<String, Trade> tradesMap;
+    private volatile Boolean tradeAccepted = false;
+    private volatile Boolean tradePosted = false;
     private DocumentReference tradeDoc;
     FirebaseFirestore fs = FirebaseFirestore.getInstance();
 
-    public Marketplace() {
-        readAllTrades();
-    }
-
-    private String TAG = "Results of querySellerDatabase";
-
-    public void readAllTrades() {
-        CollectionReference tradesRef = fs.collection("trades");
-        tradesRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Trade t = document.toObject(Trade.class);
-                        trades.put(t.getDocumentID(), t);
-                    }
-                }
-            }
-        });
+    public Marketplace(ArrayList<Trade> trades) {
+//        for (Trade t : trades) {
+//            tradesMap.put(t.getDocumentID(), t);
+//        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public Boolean postTrade(User user, String selling, String receiving, int quantity, int totalCost) {
+    public Boolean postTrade(final User user, final String sellType, final String receiveType, final int sellQty, final int receiveQty) {
+//        tradePosted = false;
         int liveTrades = user.getTrades().size();
+        // Qty must be positive
+        if (sellQty <= 0 || receiveQty <= 0) {
+            return false;
+        }
         if (liveTrades < 5) {
-            switch (selling) {
+            switch (sellType) {
                 case "wood":
-                    if (user.getWood() >= quantity) {
+                    if (user.getWood() >= sellQty) {
                         // Deposit the resource the user wants to trade
-                        user.setWood(user.getWood() - quantity);
+                        user.setWood(user.getWood() - sellQty);
                     } else {
                         // The user does not have enough to deposit
                         return false;
                     }
                     break;
                 case "fish":
-                    if (user.getFish() >= quantity) {
-                        user.setFish(user.getFish() - quantity);
+                    if (user.getFish() >= sellQty) {
+                        user.setFish(user.getFish() - sellQty);
                     } else {
                         return false;
                     }
                     break;
                 default:
-                    if (user.getGold() >= quantity) {
-                        user.setGold(user.getGold() - quantity);
+                    if (user.getGold() >= sellQty) {
+                        user.setGold(user.getGold() - sellQty);
                     } else {
                         return false;
                     }
@@ -85,13 +74,23 @@ public class Marketplace {
             // Write trade to DB
             //Creates a new document, and then attaches the doc ID to documentID
             // TODO see if it works
-            String documentID = fs.collection("trades").add(new Trade()).getResult().getId();
-            Trade newTrade = new Trade(documentID, user.getUserName(), selling, receiving, quantity, totalCost, LocalDateTime.now());
-            tradeDoc = fs.collection("trades").document(documentID);
-            newTrade.writeToDatabase(tradeDoc);
-            // Add the trade to the user's live trades
-            user.addTrade(documentID);
+            fs.collection("trades")
+                    .add(new Trade())
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            String documentID = documentReference.getId();
+                            Trade newTrade = new Trade(documentID, user.getUserName(), sellType, receiveType, sellQty, receiveQty, LocalDateTime.now());
+                            tradeDoc = fs.collection("trades").document(documentID);
+                            newTrade.writeToDatabase(tradeDoc);
+                            Log.d(TAG, "Posted trade");
+                            // Add the trade to the user's live trades
+                            user.addTrade(documentID);
+//                            tradePosted = true;
+                        }
+                    });
             // Return true to display that the trade was successfully posted
+//            while (!tradePosted) {}
             return true;
         } else {
             // The user already has 5 live trades, which is the max
@@ -113,8 +112,8 @@ public class Marketplace {
 //    }
 
     public void updateSellerResource(final Trade completeTradeForSeller) {
-        final String receiveResourceType = completeTradeForSeller.getReceiving();
-        final int receiveQuantity = completeTradeForSeller.getTotalCost();
+        final String receiveResourceType = completeTradeForSeller.getReceiveType();
+        final int receiveQuantity = completeTradeForSeller.getReceiveQty();
         final String userName = completeTradeForSeller.getUserName();
 
         Query queriedUserObject = fs.collection("users").whereEqualTo("userName", userName);
@@ -151,22 +150,22 @@ public class Marketplace {
                                                     new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
-                                                            Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                                            Log.d(TAG, "Trade successfully deleted");
                                                         }
                                                     })
                                             .addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
-                                                    Log.w(TAG, "Error deleting document", e);
+                                                    Log.w(TAG, "Error deleting Trade", e);
                                                 }
                                             });
-                                    // Flag that the acceptTrade() method can complete
-                                    tradeComplete = true;
+//                                    // Flag that the acceptTrade() method can complete
+//                                    tradeAccepted = true;
                                 }
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                             }
                         } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            Log.d(TAG, "Error getting user: ", task.getException());
                         }
                     }
                 });
@@ -180,20 +179,20 @@ public class Marketplace {
      * @return
      */
     public Boolean acceptTrade(User buyer, String documentID) {
-        tradeComplete = false;
-        Trade sellerTrade = trades.get(documentID);
-        switch (sellerTrade.getReceiving()) {
+//        tradeAccepted = false;
+        Trade sellerTrade = tradesMap.get(documentID);
+        switch (sellerTrade.getReceiveType()) {
             case "wood":
-                if (buyer.getWood() >= sellerTrade.getTotalCost()) {
+                if (buyer.getWood() >= sellerTrade.getSellQty()) {
                     // Less off the resource from the accepting user
-                    buyer.setWood(buyer.getWood() - sellerTrade.getTotalCost());
+                    buyer.setWood(buyer.getWood() - sellerTrade.getSellQty());
                     // Debit the resource received
-                    if (sellerTrade.getSelling().equals("wood")) {
-                        buyer.setWood(buyer.getWood() + sellerTrade.getQuantity());
-                    } else if (sellerTrade.getSelling().equals("fish")) {
-                        buyer.setFish(buyer.getFish() + sellerTrade.getQuantity());
+                    if (sellerTrade.getSellType().equals("wood")) {
+                        buyer.setWood(buyer.getWood() + sellerTrade.getReceiveQty());
+                    } else if (sellerTrade.getSellType().equals("fish")) {
+                        buyer.setFish(buyer.getFish() + sellerTrade.getReceiveQty());
                     } else {
-                        buyer.setGold(buyer.getGold() + sellerTrade.getQuantity());
+                        buyer.setGold(buyer.getGold() + sellerTrade.getReceiveQty());
                     }
                 } else {
                     // Accepting user does not have enough resources to trade
@@ -201,32 +200,32 @@ public class Marketplace {
                 }
                 break;
             case "fish":
-                if (buyer.getFish() >= sellerTrade.getTotalCost()) {
+                if (buyer.getFish() >= sellerTrade.getSellQty()) {
                     // Less off the resource from the accepting user
-                    buyer.setFish(buyer.getFish() - sellerTrade.getTotalCost());
+                    buyer.setFish(buyer.getFish() - sellerTrade.getSellQty());
                     // Debit the resource received
-                    if (sellerTrade.getSelling().equals("wood")) {
-                        buyer.setWood(buyer.getWood() + sellerTrade.getQuantity());
-                    } else if (sellerTrade.getSelling().equals("fish")) {
-                        buyer.setFish(buyer.getFish() + sellerTrade.getQuantity());
+                    if (sellerTrade.getSellType().equals("wood")) {
+                        buyer.setWood(buyer.getWood() + sellerTrade.getReceiveQty());
+                    } else if (sellerTrade.getSellType().equals("fish")) {
+                        buyer.setFish(buyer.getFish() + sellerTrade.getReceiveQty());
                     } else {
-                        buyer.setGold(buyer.getGold() + sellerTrade.getQuantity());
+                        buyer.setGold(buyer.getGold() + sellerTrade.getReceiveQty());
                     }
                 } else {
                     return false;
                 }
                 break;
             default:
-                if (buyer.getGold() >= sellerTrade.getTotalCost()) {
+                if (buyer.getGold() >= sellerTrade.getSellQty()) {
                     // Less off the resource from the accepting user
-                    buyer.setGold(buyer.getGold() - sellerTrade.getTotalCost());
+                    buyer.setGold(buyer.getGold() - sellerTrade.getSellQty());
                     // Debit the resource received
-                    if (sellerTrade.getSelling().equals("wood")) {
-                        buyer.setWood(buyer.getWood() + sellerTrade.getQuantity());
-                    } else if (sellerTrade.getSelling().equals("fish")) {
-                        buyer.setFish(buyer.getFish() + sellerTrade.getQuantity());
+                    if (sellerTrade.getSellType().equals("wood")) {
+                        buyer.setWood(buyer.getWood() + sellerTrade.getReceiveQty());
+                    } else if (sellerTrade.getSellType().equals("fish")) {
+                        buyer.setFish(buyer.getFish() + sellerTrade.getReceiveQty());
                     } else {
-                        buyer.setGold(buyer.getGold() + sellerTrade.getQuantity());
+                        buyer.setGold(buyer.getGold() + sellerTrade.getReceiveQty());
                     }
                 } else {
                     return false;
@@ -236,7 +235,7 @@ public class Marketplace {
         // Trade is completed
         // Debit the resource of the accepted user
         updateSellerResource(sellerTrade);
-        while (!tradeComplete) {}
+//        while (!tradeAccepted) {}
         return true;
     }
 

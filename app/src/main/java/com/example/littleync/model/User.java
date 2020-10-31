@@ -26,18 +26,19 @@ public class User {
     private final FirebaseFirestore fs = FirebaseFirestore.getInstance();
 
     /**
-     * Constructor which takes in elements
+     * Constructor for the User; only called in sign-up page
      *
-     * @param userName
-     * @param woodchoppingGearLevel
-     * @param fishingGearLevel
-     * @param combatGearLevel
-     * @param aggregateLevel
-     * @param wood
-     * @param fish
-     * @param gold
-     * @param trades
-     * @param exp
+     * @param userName: this User's user name
+     * @param woodchoppingGearLevel: woodchopping gear level
+     * @param fishingGearLevel: fishing gear level
+     * @param combatGearLevel: combar gear level
+     * @param aggregateLevel: an aggregate level to indicate how experienced this User is
+     * @param wood: wood resource
+     * @param fish: fish resource
+     * @param gold: gold resource
+     * @param trades: list of trade document IDs, which correspond to "trades" collection in DB,
+     *              each User can have a max of 5 trades at any given time
+     * @param exp: this is used to calculate the aggregate level; required exp by level: 50 * level ^ 1.8
      */
     public User(String userName, int woodchoppingGearLevel, int fishingGearLevel,
                 int combatGearLevel, int aggregateLevel, int wood, int fish, int gold,
@@ -55,11 +56,20 @@ public class User {
     }
 
     /**
-     * Second Constructor for User Class
-     * This is only called by the database
+     * Empty constructor required to automatically parse User document from DB
      */
     public User() {}
 
+    /**
+     * Write User object to the DB. We need to also pass in the initial state of the user. This is
+     * so that in the case when the User object is locally stored for some task, e.g. fishing or woodchopping,
+     * if one of their active trades are accepted, then we need to reflect this properly and not immediately
+     * overwrite this trade data. Thus, we need to calculate delta change for our three resources (which
+     * are the ones that can be affected by trading), as well as the User trade list.
+     *
+     * @param userDoc: the DocumentReference object that connects this User object to the DB
+     * @param initialUser: a snapshot of the User when initially loaded in
+     */
     public void writeToDatabase(final DocumentReference userDoc, final User initialUser) {
         String userID = FirebaseAuth.getInstance().getUid();
         fs.collection("users").document(userID)
@@ -85,7 +95,7 @@ public class User {
                                               docData.put("wood", getWood() + deltaWood);
                                               docData.put("fish", getFish() + deltaFish);
                                               docData.put("gold", getGold() + deltaGold);
-                                              docData.put("trades", getTrades());
+                                              docData.put("trades", finalUser.getTrades());
                                               docData.put("exp", getExp());
                                               userDoc.set(docData);
                                           }

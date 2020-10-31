@@ -15,103 +15,94 @@ public class Trade {
     private String documentID;
     private String userName;
     // What resource is being sold
-    private String selling;
+    private String sellType;
     // What resource is requested
-    private String receiving;
-
-
+    private String receiveType;
     // How much of the resource is being sold
-    private int quantityRequested;
+    private int sellQty;
     // How much of the resource is being requested
-    private int totalCost;
-    private LocalDateTime timeOfListing;
+    private int receiveQty;
+    private LocalDateTime timestamp;
 
-    public Trade(String documentID, String userName, String selling, String receiving, int quantity, int totalCost, LocalDateTime timeOfListing) {
+    public Trade(String documentID, String userName, String sellType, String receiveType, int sellQty, int receiveQty, LocalDateTime timeOfListing) {
         this.documentID = documentID;
         this.userName = userName;
-        this.selling = selling;
-        this.receiving = receiving;
-        this.quantityRequested = quantity;
-        this.totalCost = totalCost;
-        this.timeOfListing = timeOfListing;
+        this.sellType = sellType;
+        this.receiveType = receiveType;
+        this.sellQty = sellQty;
+        this.receiveQty = receiveQty;
+        this.timestamp = timeOfListing;
     }
 
     // Needed to automatically parse DB
-    public Trade() {
-    }
+    public Trade() {}
 
     public void writeToDatabase(DocumentReference tradeDoc) {
         Map<String, Object> docData = new HashMap<>();
-        docData.put("tradeID", getDocumentID());
-        docData.put("selling", getSelling());
-        docData.put("receiving", getReceiving());
-        docData.put("quantity", getQuantity());
-        docData.put("totalCost", getTotalCost());
-        docData.put("timeOfListing", getTimeOfListing());
+        docData.put("documentID", getDocumentID());
+        docData.put("userName", getUserName());
+        docData.put("sellType", getSellType());
+        docData.put("receiveType", getReceiveType());
+        docData.put("sellQty", getSellQty());
+        docData.put("receiveQty", getReceiveQty());
+        docData.put("timeOfListing", getTimestamp());
         tradeDoc.set(docData);
     }
 
-    public String getUserName() {
-        return this.userName;
-    }
-
-    public int getQuantityRequested() {
-        return this.quantityRequested;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public void setQuantityRequested(int quantityRequested) {
-        this.quantityRequested = quantityRequested;
+    public String getDocumentID() {
+        return documentID;
     }
 
     public void setDocumentID(String documentID) {
         this.documentID = documentID;
     }
 
-    public void setSelling(String selling) {
-        this.selling = selling;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setReceiving(String receiving) {
-        this.receiving = receiving;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantityRequested = quantity;
+    public String getSellType() {
+        return sellType;
     }
 
-    public void setTotalCost(int totalCost) {
-        this.totalCost = totalCost;
+    public void setSellType(String sellType) {
+        this.sellType = sellType;
     }
 
-    public void setTimeOfListing(LocalDateTime timeOfListing) {
-        this.timeOfListing = timeOfListing;
+    public String getReceiveType() {
+        return receiveType;
     }
 
-    public String getDocumentID() {
-        return this.documentID;
+    public void setReceiveType(String receiveType) {
+        this.receiveType = receiveType;
     }
 
-    public String getSelling() {
-        return this.selling;
+    public int getSellQty() {
+        return sellQty;
     }
 
-    public String getReceiving() {
-        return this.receiving;
+    public void setSellQty(int sellQty) {
+        this.sellQty = sellQty;
     }
 
-    public int getQuantity() {
-        return this.quantityRequested;
+    public int getReceiveQty() {
+        return receiveQty;
     }
 
-    public int getTotalCost() {
-        return this.totalCost;
+    public void setReceiveQty(int receiveQty) {
+        this.receiveQty = receiveQty;
     }
 
-    public LocalDateTime getTimeOfListing() {
-        return this.timeOfListing;
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
 }
