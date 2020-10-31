@@ -169,6 +169,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     protected void populateExistingDeals(ArrayList<Trade> existingDeals){
 
 //        can keep a last row id reference here?
@@ -203,7 +204,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //        set.connect(id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
 //        set.applyTo(scrollParent);
 
-        addRow();
+        addRow2();
 
 
 
@@ -282,11 +283,14 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         ArrayList<String> givingList = new ArrayList<>();
         ArrayList<String> receivingList  = new ArrayList<>();
 
+        ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
+        int lastRowID = R.id.first_row;
 
         for (int i  = 0; i < 20; i++) {
+//            creating test strings
             indexList.add(String.valueOf(i));
 
-            LocalDate newDate = LocalDate.of(2020, Month.APRIL, i);
+            LocalDate newDate = LocalDate.of(2020, Month.APRIL, i+1);
             String newDateString = newDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy"));
             timestampList.add(newDateString);
 
@@ -310,13 +314,13 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
             ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
 
             index.setText(indexList.get(i));
-            timestamp.setText(timestampList.get(i);
+            timestamp.setText(timestampList.get(i));
             username.setText(usernameList.get(i));
             giving.setText(givingList.get(i));
             receiving.setText(receivingList.get(i));
 
-//        find parent and add to parent
-            ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
+//        add to parent
+
             scrollParent.addView(new_row);
 
 
@@ -331,16 +335,16 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //        4. seem to need to set it super big
 //         5. try to have another set for row_set
 
-            ConstraintLayout firstRow = (ConstraintLayout) findViewById(R.id.first_row);
+//            ConstraintLayout firstRow = (ConstraintLayout) findViewById(R.id.first_row);
 //        int h = firstRow.getHeight();
 //        int w = firstRow.getWidth();
-            TextView firstRowTimestamp = (TextView) findViewById(R.id.timestamp33);
+//            TextView firstRowTimestamp = (TextView) findViewById(R.id.timestamp33);
 
 //        ConstraintSet row_set = new ConstraintSet();
 //        row_set.constrainHeight(id, h);
 //        row_set.constrainWidth(id, w);
 //        row_set.applyTo((ConstraintLayout) new_row);
-            Log.d("AAAAAAA", String.valueOf(firstRowTimestamp.getWidth()));
+//            Log.d("AAAAAAA", String.valueOf(firstRowTimestamp.getWidth()));
 
 
             ConstraintSet set = new ConstraintSet();
@@ -349,11 +353,13 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
             set.connect(id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
             set.connect(id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
-            set.connect(id, ConstraintSet.TOP, R.id.first_row, ConstraintSet.BOTTOM, 0);
-            set.connect(id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
+            set.connect(id, ConstraintSet.TOP, lastRowID, ConstraintSet.BOTTOM, 0);
+//            set.connect(id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
             set.applyTo(scrollParent);
-            Log.d("BBBBBBBB", String.valueOf(timestamp.getWidth()));
-    }
+//            Log.d("BBBBBBBB", String.valueOf(timestamp.getWidth()));
+
+            lastRowID = id;
+    }}
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
