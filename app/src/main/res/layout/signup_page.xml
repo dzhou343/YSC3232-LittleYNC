@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SignupActivity">
+    tools:context=".SignupActivity"
+    android:background="@android:color/background_dark"
+    >
 
 
     <EditText
@@ -17,7 +19,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.274" />
+        app:layout_constraintVertical_bias="0.274"
+        android:backgroundTint="@android:color/white"
+        android:textColorHint="#C89FFD"
+        android:textColor="#C89FFD"/>
 
     <EditText
         android:id="@+id/sign_up_password"
@@ -29,7 +34,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sign_up_email"
-        app:layout_constraintVertical_bias="0.093" />
+        app:layout_constraintVertical_bias="0.093"
+        android:backgroundTint="@android:color/white"
+        android:textColorHint="#C89FFD"
+        android:textColor="#C89FFD"/>
 
     <EditText
         android:id="@+id/sign_up_password2"
@@ -42,7 +50,10 @@
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sign_up_password"
-        app:layout_constraintVertical_bias="0.111" />
+        app:layout_constraintVertical_bias="0.111"
+        android:backgroundTint="@android:color/white"
+        android:textColorHint="#C89FFD"
+        android:textColor="#C89FFD"/>
 
     <Button
         android:id="@+id/submitSignUpButton"
@@ -55,7 +66,8 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sign_up_password2"
-        app:layout_constraintVertical_bias="0.178" />
+        app:layout_constraintVertical_bias="0.178"
+        />
 
     <EditText
         android:id="@+id/username"
@@ -67,5 +79,8 @@
         app:layout_constraintBottom_toTopOf="@+id/sign_up_email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:backgroundTint="@android:color/white"
+        android:textColorHint="#C89FFD"
+        android:textColor="#C89FFD"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

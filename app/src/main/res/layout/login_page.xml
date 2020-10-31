@@ -8,20 +8,9 @@
     tools:context=".MainActivity"
     android:clickable="true"
     android:focusable="true"
-    android:focusableInTouchMode="true">
-
-    <ImageView
-        android:id="@+id/avatar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="144dp"
-        android:layout_marginBottom="16dp"
-        android:contentDescription="@string/avatar_description"
-        app:layout_constraintBottom_toTopOf="@+id/input_email"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+    android:focusableInTouchMode="true"
+    android:background="@android:color/background_dark"
+    >
 
     <EditText
         android:id="@+id/input_email"
@@ -33,6 +22,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:backgroundTint="@android:color/white"
+        android:textColorHint="#C89FFD"
+        android:textColor="#C89FFD"
          />
 
 
@@ -48,6 +40,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/input_email"
+        android:backgroundTint="@android:color/white"
+        android:textColorHint="#C89FFD"
+        android:textColor="#C89FFD"
         />
 
 
@@ -75,18 +70,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_btn" />
-
-    <Button
-        android:id="@+id/btn_to_random_page"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="goToRandomPage"
-        android:text="@string/go_to_random_page_for_testing_purpose"
-        app:layout_constraintBottom_toTopOf="@+id/input_email"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/avatar" />
+        app:layout_constraintTop_toBottomOf="@+id/login_btn"
+        android:textColor="#C89FFD"/>
 
     <TextView
         android:id="@+id/forgot_password"
@@ -99,7 +84,8 @@
         app:layout_constraintBottom_toTopOf="@+id/signup_line"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_btn" />
+        app:layout_constraintTop_toBottomOf="@+id/login_btn"
+        android:textColor="#C89FFD"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
