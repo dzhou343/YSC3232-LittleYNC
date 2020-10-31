@@ -280,7 +280,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/timestamp"
+                        android:id="@+id/timestamp33"
                         style="@style/marketplace1_title"
                         android:layout_marginStart="8dp"
                         android:text="19th Oct 2020"
@@ -294,7 +294,7 @@
                         android:layout_marginStart="8dp"
                         android:text="balabala"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/timestamp"
+                        app:layout_constraintStart_toEndOf="@+id/timestamp33"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
@@ -322,7 +322,9 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/receiving2"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_baseline_done_24" />
+                        app:srcCompat="@drawable/ic_baseline_done_24"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
