@@ -140,8 +140,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
     public void readTrades() {
         Query queriedTrades = fs.collection("trades")
-                .orderBy("timeOfListing", Query.Direction.DESCENDING)
-                .limit(100);
+                .orderBy("timeOfListing", Query.Direction.DESCENDING);
         queriedTrades
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

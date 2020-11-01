@@ -24,25 +24,25 @@ public class User {
     private int gold;
     private ArrayList<String> trades;
     private int exp;
-    private ArrayList<String> newTrades = new ArrayList<String>();
+    private final ArrayList<String> newTrades = new ArrayList<>();
     private final FirebaseFirestore fs = FirebaseFirestore.getInstance();
 
     /**
      * Constructor for the User; only called in sign-up page when we need to initialize
      * a brand new user
      *
-     * @param userName this User's user name
+     * @param userName              this User's user name
      * @param woodchoppingGearLevel woodchopping gear level
-     * @param fishingGearLevel fishing gear level
-     * @param combatGearLevel combar gear level
-     * @param aggregateLevel an aggregate level to indicate how experienced this User is
-     * @param wood wood resource
-     * @param fish fish resource
-     * @param gold gold resource
-     * @param trades list of trade document IDs, which correspond to "trades" collection in DB,
-     *              each User can have a max of 5 trades at any given time
-     * @param exp this is used to calculate the aggregate level; required exp by level:
-     *            50 * level ^ 1.8
+     * @param fishingGearLevel      fishing gear level
+     * @param combatGearLevel       combar gear level
+     * @param aggregateLevel        an aggregate level to indicate how experienced this User is
+     * @param wood                  wood resource
+     * @param fish                  fish resource
+     * @param gold                  gold resource
+     * @param trades                list of trade document IDs, which correspond to "trades" collection in DB,
+     *                              each User can have a max of 5 trades at any given time
+     * @param exp                   this is used to calculate the aggregate level; required exp by level:
+     *                              50 * level ^ 1.8
      */
     public User(String userName, int woodchoppingGearLevel, int fishingGearLevel,
                 int combatGearLevel, int aggregateLevel, int wood, int fish, int gold,
@@ -71,8 +71,8 @@ public class User {
      * intermediate User attributes to be affected, unlike below.
      *
      * @param userDoc the DocumentReference that points to the User of interest; note that
-     *               this is not always the User that is currently logged in (e.g. while
-     *               trading)
+     *                this is not always the User that is currently logged in (e.g. while
+     *                trading)
      */
     public void writeToDatabaseDirectly(final DocumentReference userDoc) {
         Map<String, Object> docData = new HashMap<>();
@@ -98,11 +98,12 @@ public class User {
      * as the User trade list. For the User trade list, we need to maintain a purely local
      * newTrades list, then combine that with the most recent read from the DB.
      *
-     * @param userDoc the DocumentReference object that connects this User object to the DB
+     * @param userDoc     the DocumentReference object that connects this User object to the DB
      * @param initialUser a snapshot of the User when initially loaded in
      */
     public void writeToDatabase(final DocumentReference userDoc, final User initialUser) {
         String userID = FirebaseAuth.getInstance().getUid();
+        assert userID != null;
         fs.collection("users").document(userID)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -112,6 +113,7 @@ public class User {
                                               User finalUser = documentSnapshot.toObject(User.class);
 
                                               // Only these three attributes can be affected by trade
+                                              assert finalUser != null;
                                               int deltaWood = finalUser.getWood() - initialUser.getWood();
                                               int deltaFish = finalUser.getFish() - initialUser.getFish();
                                               int deltaGold = finalUser.getGold() - initialUser.getGold();

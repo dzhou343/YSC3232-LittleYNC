@@ -20,15 +20,15 @@ public class Trade {
     /**
      * Constructor for the Trade object, this is called when posting a new trade
      *
-     * @param documentID that corresponds to the documentID of this trade in  the trades collection
-     *                   of the DB
-     * @param userName the userName of the User that is selling (i.e. the User that posts the
-     *                 trade); we need to maintain this in the DB so that we can update the
-     *                 seller's attributes when their trade gets accepted
-     * @param sellType the resource being sold, can be "wood", "fish", or "gold"
-     * @param receiveType the resource requested, can be "wood", "fish", or "gold"
-     * @param sellQty the amount of resource being sold, must be >= 0
-     * @param receiveQty the amount of resource requested, must be >= 0
+     * @param documentID    that corresponds to the documentID of this trade in  the trades collection
+     *                      of the DB
+     * @param userName      the userName of the User that is selling (i.e. the User that posts the
+     *                      trade); we need to maintain this in the DB so that we can update the
+     *                      seller's attributes when their trade gets accepted
+     * @param sellType      the resource being sold, can be "wood", "fish", or "gold"
+     * @param receiveType   the resource requested, can be "wood", "fish", or "gold"
+     * @param sellQty       the amount of resource being sold, must be >= 0
+     * @param receiveQty    the amount of resource requested, must be >= 0
      * @param timeOfListing the String representation of the time of posting, serialized from
      *                      LocalDateTime object
      */

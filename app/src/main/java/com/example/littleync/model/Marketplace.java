@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Marketplace class to handle the creation, posting, and accepting of trades from User to User;
@@ -28,17 +29,18 @@ import java.util.Map;
 public class Marketplace {
     private final String TAG = "Marketplace Class";
     FirebaseFirestore fs = FirebaseFirestore.getInstance();
-    private ArrayList<Trade> trades;
-    private Map<String, Trade> tradesMap = new HashMap<String, Trade>();
-    private volatile Boolean acceptingTrade = false;
-    private volatile Boolean postingTrade = false;
+    private final ArrayList<Trade> trades;
+    private final Map<String, Trade> tradesMap = new HashMap<>();
+    private volatile boolean acceptingTrade = false;
+    private volatile boolean postingTrade = false;
+    private volatile boolean deletingTrade = false;
 
     /**
      * Constructor for the Marketplace object, which takes in the list of Trade objects that the
      * current session of the Marketplace Activity; this gets called in onCreate(); also saves down
      * the trades into a Map for ease of access
      *
-     * @param trades an ArrayList of the 100 most recent trades
+     * @param trades an ArrayList of all trades
      */
     public Marketplace(ArrayList<Trade> trades) {
         this.trades = trades;
@@ -64,11 +66,44 @@ public class Marketplace {
      * @return ArrayList of the User's trades to display
      */
     public ArrayList<Trade> getUserTrades(User user) {
-        ArrayList<Trade> userTrades = new ArrayList<Trade>();
+        ArrayList<Trade> userTrades = new ArrayList<>();
         for (String tradeDocumentID : user.getTrades()) {
             userTrades.add(tradesMap.get(tradeDocumentID));
         }
         return userTrades;
+    }
+
+    /**
+     * Delete a User's active trade
+     *
+     * @param user            User to remove trade from
+     * @param tradeDocumentID that corresponds to the documentID in the trades collection
+     */
+    public void deleteTrade(User user, String tradeDocumentID) {
+        if (!postingTrade && !acceptingTrade && !deletingTrade) {
+            deletingTrade = true;
+            // Delete trade from User
+            user.removeTrade(tradeDocumentID);
+            // Delete the trade from trades collection
+            fs.collection("trades").document(tradeDocumentID)
+                    .delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(TAG, "Trade successfully deleted");
+                            deletingTrade = false;
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(TAG, "Error deleting Trade", e);
+                            deletingTrade = false;
+                        }
+                    });
+        } else {
+            Log.d(TAG, "Trades still being processed.");
+        }
     }
 
     /**
@@ -79,16 +114,16 @@ public class Marketplace {
      * a flag, postingTrade, that only resolves once this trade is entirely finished being
      * processed (logically and physically in DB)
      *
-     * @param user the User posting the trade
-     * @param sellType the resource being sold
+     * @param user        the User posting the trade
+     * @param sellType    the resource being sold
      * @param receiveType the resource requested
-     * @param sellQty the amount of resource being sold
-     * @param receiveQty the amount of resource requested
+     * @param sellQty     the amount of resource being sold
+     * @param receiveQty  the amount of resource requested
      * @return true if the trade was successfully posted
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public Boolean postTrade(final User user, final String sellType, final String receiveType, final int sellQty, final int receiveQty) {
-        if (!postingTrade && !acceptingTrade) {
+    public boolean postTrade(final User user, final String sellType, final String receiveType, final int sellQty, final int receiveQty) {
+        if (!postingTrade && !acceptingTrade && !deletingTrade) {
             postingTrade = true;
             // Qty must be positive
             if (sellQty < 0 || receiveQty < 0) {
@@ -144,6 +179,7 @@ public class Marketplace {
             } else {
                 // The user already has 5 live trades, which is the max
                 // Return false to display that the trade was unsuccessful
+                postingTrade = false;
                 return false;
             }
         } else {
@@ -161,19 +197,24 @@ public class Marketplace {
      * only resolves once this trade is entirely finished being processed (logically and physically
      * in DB)
      *
-     * @param buyer the User object that is accepting the trade
+     * @param buyer           the User object that is accepting the trade
      * @param tradeDocumentID that corresponds to the documentID in the trades collection
      * @return true if the trade was successfully accepted
      */
-    public Boolean acceptTrade(User buyer, String tradeDocumentID) {
-        if (!postingTrade && !acceptingTrade) {
+    public boolean acceptTrade(User buyer, String tradeDocumentID) {
+        if (!postingTrade && !acceptingTrade && !deletingTrade) {
             acceptingTrade = true;
 
             Trade toAccept = tradesMap.get(tradeDocumentID);
+            assert toAccept != null;
             String sellType = toAccept.getSellType();
             String receiveType = toAccept.getReceiveType();
             int sellQty = toAccept.getSellQty();
             int receiveQty = toAccept.getReceiveQty();
+
+            if (toAccept.getUserName().equals(buyer.getUserName())) {
+                return false;
+            }
 
             switch (receiveType) {
                 case "wood":
@@ -255,7 +296,7 @@ public class Marketplace {
                         if (task.isSuccessful()) {
                             // TODO userName has to be unique
                             // userName is unique so there is only one here
-                            for (QueryDocumentSnapshot document : task.getResult()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
 
                                 // Update seller User object
@@ -278,23 +319,24 @@ public class Marketplace {
                                 // Delete the trade from trades collection
                                 fs.collection("trades").document(documentID)
                                         .delete()
-                                        .addOnSuccessListener(
-                                                new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        Log.d(TAG, "Trade successfully deleted");
-                                                        acceptingTrade = false;
-                                                    }
-                                                })
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(TAG, "Trade successfully deleted");
+                                                acceptingTrade = false;
+                                            }
+                                        })
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
                                                 Log.w(TAG, "Error deleting Trade", e);
+                                                acceptingTrade = false;
                                             }
                                         });
                             }
                         } else {
                             Log.d(TAG, "Error getting seller: ", task.getException());
+                            acceptingTrade = false;
                         }
                     }
                 });

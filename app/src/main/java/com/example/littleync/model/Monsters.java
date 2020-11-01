@@ -2,13 +2,14 @@ package com.example.littleync.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Monsters object that is created only for the Saga Battleground Activity, providing some useful
  * methods to query for monster attributes
  */
 public class Monsters {
-    private final Map<String, int[]> monsters = new HashMap<String, int[]>();
+    private final Map<String, int[]> monsters = new HashMap<>();
 
     /**
      * Automatically populate the monsters list when this object is created in the Saga
@@ -40,7 +41,7 @@ public class Monsters {
      * @return monster HP
      */
     public int getMonsterHitpoints(String monsterName) {
-        return monsters.get(monsterName)[0];
+        return Objects.requireNonNull(monsters.get(monsterName))[0];
     }
 
     /**
@@ -50,7 +51,7 @@ public class Monsters {
      * @return monster gold yield
      */
     public int getGoldYield(String monsterName) {
-        return monsters.get(monsterName)[1];
+        return Objects.requireNonNull(monsters.get(monsterName))[1];
     }
 
     /**
@@ -60,7 +61,7 @@ public class Monsters {
      * @return monster exp yield
      */
     public int getExpYield(String monsterName) {
-        return monsters.get(monsterName)[2];
+        return Objects.requireNonNull(monsters.get(monsterName))[2];
     }
 
 }
