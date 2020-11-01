@@ -3,7 +3,6 @@ import com.example.littleync.model.Marketplace;
 import com.example.littleync.model.Resource;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -37,7 +36,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -123,7 +121,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         readUser(userDoc.get());
 
         // Setup marketplace for trading
-        readAllTrades();
+        readTrades();
 
         // Populate the scrollview with dummy trade objects
         addRow2();
@@ -140,7 +138,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         super.onDestroy();
     }
 
-    public void readAllTrades() {
+    public void readTrades() {
         Query queriedTrades = fs.collection("trades")
                 .orderBy("timeOfListing", Query.Direction.DESCENDING)
                 .limit(100);
@@ -182,6 +180,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         );
     }
 
+    // err I don't think this does anything. delete?
     public void tradePage(View view) {
         Log.d(TAG, TAG);
         FirebaseAuth fb = FirebaseAuth.getInstance();
@@ -190,7 +189,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void postTrade(View view) {
-        if (userLoaded) {
+        if (userLoaded && tradesLoaded) {
             ////        TODO: cast the dropdown option to the proper resource type
 ////        sRecourceType = Resource.Fish;
 //
@@ -201,22 +200,50 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //
 ////        TODO: click the green button -> trigger the posting?
 //
-            Boolean tryPost = MARKETPLACE.postTrade(user, "fish", "gold", 0, 11);
+            boolean tryPost = MARKETPLACE.postTrade(user, "fish", "gold", 0, 11);
             if (tryPost) {
                 String msg = "Successfully posted! Post another deal?";
                 postDealBtn.setText(msg);
                 postDealBtn.setBackgroundResource(R.drawable.marketplace2_btn);
                 postDealBtn.setTextColor(0xff0000);
             } else {
+                // TODO proper error msg
                 giveQty.setError("You have input an invalid quantity for trading. Please try again.");
             }
         } else {
-            Log.d(TAG, "User not yet loaded");
+            Log.d(TAG, "User/trades not yet loaded");
         }
     }
 
-    protected void acceptDeal(Trade t){
+    // FOR TESTING ONLY, PLEASE IGNORE!
+    public void acceptTradeTest(View view) {
+        if (userLoaded && tradesLoaded) {
+            boolean tryAccept = MARKETPLACE.acceptTrade(user, "UcQQ3PKdtgU10R21jdoM");
+            if (tryAccept) {
+                // TODO success msgs
+                Log.d(TAG, user.getUserName() + " accepted " + "mtrader" + "'s trade");
+            } else {
+                // TODO error msgs
+                Log.d(TAG, "Failed to accept trade");
+            }
+        } else {
+            Log.d(TAG, "User/trades not yet loaded");
+        }
+    }
 
+    public void acceptTrade(Trade toAccept) {
+        if (userLoaded && tradesLoaded) {
+            boolean tryAccept = MARKETPLACE.acceptTrade(user, toAccept.getDocumentID());
+            if (tryAccept) {
+                // TODO success msgs
+                Log.d(TAG, user.getUserName() + " accepted " + toAccept.getUserName() + "'s trade");
+            } else {
+                // TODO error msgs
+                Log.d(TAG, "Failed to accept trade");
+            }
+        } else {
+            Log.d(TAG, "User/trades not yet loaded");
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -300,7 +327,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                 @Override
                 public void onClick(View v) {
                     if (clicked) {
-                        acceptDeal(t);
+                        acceptTrade(t);
                         clicked = false;
                         }
                     else {

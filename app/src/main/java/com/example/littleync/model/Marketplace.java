@@ -117,11 +117,11 @@ public class Marketplace {
         }
     }
 
-    public Boolean acceptTrade(User buyer, String documentID) {
+    public Boolean acceptTrade(User buyer, String tradeDocumentID) {
         if (!postingTrade && !acceptingTrade) {
             acceptingTrade = true;
 
-            Trade toAccept = tradesMap.get(documentID);
+            Trade toAccept = tradesMap.get(tradeDocumentID);
             String sellType = toAccept.getSellType();
             int sellQty = toAccept.getSellQty();
             String receiveType = toAccept.getReceiveType();
@@ -219,7 +219,7 @@ public class Marketplace {
                                 }
                                 // Write updated seller to DB
                                 DocumentReference sellerDoc = fs.collection("users").document(sellerUserID);
-                                seller.writeToDatabase(sellerDoc, seller);
+                                seller.writeToDatabaseSignUp(sellerDoc);
 
                                 // Delete the trade from trades collection
                                 fs.collection("trades").document(documentID)
