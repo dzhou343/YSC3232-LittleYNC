@@ -22,16 +22,16 @@ public class Trade {
     private int sellQty;
     // How much of the resource is being requested
     private int receiveQty;
-    private LocalDateTime timestamp;
+    private String timeOfListing;
 
-    public Trade(String documentID, String userName, String sellType, String receiveType, int sellQty, int receiveQty, LocalDateTime timeOfListing) {
+    public Trade(String documentID, String userName, String sellType, String receiveType, int sellQty, int receiveQty, String timeOfListing) {
         this.documentID = documentID;
         this.userName = userName;
         this.sellType = sellType;
         this.receiveType = receiveType;
         this.sellQty = sellQty;
         this.receiveQty = receiveQty;
-        this.timestamp = timeOfListing;
+        this.timeOfListing = timeOfListing;
     }
 
     // Needed to automatically parse DB
@@ -45,7 +45,7 @@ public class Trade {
         docData.put("receiveType", getReceiveType());
         docData.put("sellQty", getSellQty());
         docData.put("receiveQty", getReceiveQty());
-        docData.put("timeOfListing", getTimestamp());
+        docData.put("timeOfListing", getTimeOfListing());
         tradeDoc.set(docData);
     }
 
@@ -97,12 +97,12 @@ public class Trade {
         this.receiveQty = receiveQty;
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public String getTimeOfListing() {
+        return timeOfListing;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
+    public void setTimeOfListing(String timeOfListing) {
+        this.timeOfListing = timeOfListing;
     }
 
 }

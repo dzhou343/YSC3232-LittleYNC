@@ -10,6 +10,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,27 +24,23 @@ import java.util.Map;
 
 public class Marketplace {
     private String TAG = "Marketplace Class";
-    public Map<String, Trade> tradesMap;
+    private Map<String, Trade> tradesMap;
     private volatile Boolean tradeAccepted = false;
     private volatile Boolean tradePosted = false;
     private DocumentReference tradeDoc;
     FirebaseFirestore fs = FirebaseFirestore.getInstance();
 
-    public Marketplace(ArrayList<Trade> trades) {
-//        for (Trade t : trades) {
-//            tradesMap.put(t.getDocumentID(), t);
-//        }
+    public void populateTradeMap(Trade t) {
+        tradesMap.put(t.getDocumentID(), t);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public Boolean postTrade(final User user, final String sellType, final String receiveType, final int sellQty, final int receiveQty) {
-//        tradePosted = false;
-        int liveTrades = user.getTrades().size();
         // Qty must be positive
-        if (sellQty <= 0 || receiveQty <= 0) {
+        if (sellQty < 0 || receiveQty < 0) {
             return false;
         }
-        if (liveTrades < 5) {
+        if (user.getTrades().size() < 5) {
             switch (sellType) {
                 case "wood":
                     if (user.getWood() >= sellQty) {
@@ -80,17 +77,18 @@ public class Marketplace {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
                             String documentID = documentReference.getId();
-                            Trade newTrade = new Trade(documentID, user.getUserName(), sellType, receiveType, sellQty, receiveQty, LocalDateTime.now());
+                            Trade newTrade = new Trade(documentID, user.getUserName(), sellType, receiveType, sellQty, receiveQty, LocalDateTime.now().toString());
                             tradeDoc = fs.collection("trades").document(documentID);
                             newTrade.writeToDatabase(tradeDoc);
                             Log.d(TAG, "Posted trade");
                             // Add the trade to the user's live trades
                             user.addTrade(documentID);
-//                            tradePosted = true;
+                            String userID = FirebaseAuth.getInstance().getUid();
+                            DocumentReference userDoc = fs.collection("users").document(userID);
+                            Log.d(TAG, "User trades: " + user.getTrades().size());
                         }
                     });
             // Return true to display that the trade was successfully posted
-//            while (!tradePosted) {}
             return true;
         } else {
             // The user already has 5 live trades, which is the max

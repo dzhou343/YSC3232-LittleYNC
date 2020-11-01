@@ -58,7 +58,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     private volatile Boolean tradesLoaded = false;
 
     // For trading
-    private Marketplace MARKETPLACE;
+    private Marketplace MARKETPLACE = new Marketplace();;
 
 //    s-: sell; b-: buy
     Resource sRecourceType;
@@ -119,6 +119,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
         String userID = FirebaseAuth.getInstance().getUid();
         userLoaded = false;
+        tradesLoaded = false;
         userDoc = fs.collection("users").document(userID);
         readUser(userDoc.get());
 
@@ -152,16 +153,9 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Trade t = document.toObject(Trade.class);
                                 Log.d(TAG, document.getId() + " => " + document.getData());
+                                Trade t = document.toObject(Trade.class);
                                 trades.add(t);
-                            }
-                            Log.d(TAG, "zzzzzzzzzzzzzzzzzzz");
-                            MARKETPLACE = new Marketplace(trades);
-                            if (MARKETPLACE.tradesMap != null) {
-                                for (String d : MARKETPLACE.tradesMap.keySet()) {
-                                    Log.d(TAG, d);
-                                }
                             }
                             tradesLoaded = true;
                         }
@@ -197,46 +191,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void postTrade(View view) {
         if (userLoaded) {
-            MARKETPLACE.postTrade(user, "wood", "gold", 2, 11);
-            MARKETPLACE.postTrade(user, "gold", "fish", 3, 2020);
-            MARKETPLACE.postTrade(user, "wood", "wood", 6, 55555);
-        } else {
-            Log.d(TAG, "User not yet loaded");
-        }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    protected void postDeal(String receiveTypeStr, int receiveQtyInt, String giveTypeStr, int giveQtyInt){
-//        data validation for quantity: 1. Only positive integers are accepted. 2. Cannot > existing qty
-        User u = new User();
-        boolean validDeal = MARKETPLACE.postTrade(u, giveTypeStr, receiveTypeStr, giveQtyInt, receiveQtyInt);
-
-//        if (receiveTypeStr.equals(giveTypeStr)){
-//            giveQty.setError("The resource you are trading for cannot be of the same type as that of the resource you are trading with.");
-//            successfulPosting = false;
-//        }
-//        if (receiveQtyInt < 0){
-//            receiveQty.setError("You cannot trade for non-positve units of resources.");
-//            successfulPosting = false;
-//        }
-//        if (giveQtyInt < 0){
-//            giveQty.setError("You cannot trade with non-positive units of resources");
-//            successfulPosting = false;
-//        }
-//
-//        if m.postTrade
-
-        if (validDeal) {
-//            TODO: print out a success msg in the button
-            postDealBtn.setText("Successfully posted! Post another deal?");
-            postDealBtn.setBackgroundResource(R.drawable.marketplace2_btn);
-            postDealBtn.setTextColor(0xff0000);
-            posted = true;
-        } else {
-            giveQty.setError("You have input an invalid quantity for trading. Please try again.");
-        }
-
-////        TODO: cast the dropdown option to the proper resource type
+            ////        TODO: cast the dropdown option to the proper resource type
 ////        sRecourceType = Resource.Fish;
 //
 ////        TODO: cast the edittext input to int
@@ -246,7 +201,18 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //
 ////        TODO: click the green button -> trigger the posting?
 //
-
+            Boolean tryPost = MARKETPLACE.postTrade(user, "fish", "gold", 1, 11);
+            if (tryPost) {
+                String msg = "Successfully posted! Post another deal?";
+                postDealBtn.setText(msg);
+                postDealBtn.setBackgroundResource(R.drawable.marketplace2_btn);
+                postDealBtn.setTextColor(0xff0000);
+            } else {
+                giveQty.setError("You have input an invalid quantity for trading. Please try again.");
+            }
+        } else {
+            Log.d(TAG, "User not yet loaded");
+        }
     }
 
     protected void acceptDeal(Trade t){
@@ -274,7 +240,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
             ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
 
             index.setText(String.valueOf(i + 1));
-            timestamp.setText(t.getTimestamp().format(DateTimeFormatter.ofPattern("dd MMM yyyy")));
+            timestamp.setText(t.getTimeOfListing());
             username.setText(t.getUserName());
             giving.setText(String.format(Locale.getDefault(),"%s x %d", t.getSellType(), t.getSellQty()));
             receiving.setText(String.format(Locale.getDefault(),"%s x %d", t.getReceiveType(), t.getReceiveQty()));
@@ -321,7 +287,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
             final ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
 
             index.setText(String.valueOf(i + 1));
-            timestamp.setText(t.getTimestamp().format(DateTimeFormatter.ofPattern("dd MMM yyyy")));
+            timestamp.setText(t.getTimeOfListing());
             username.setText(t.getUserName());
             giving.setText(String.format(Locale.getDefault(),"%s x %d", t.getSellType(), t.getSellQty()));
             receiving.setText(String.format(Locale.getDefault(),"%s x %d", t.getReceiveType(), t.getReceiveQty()));

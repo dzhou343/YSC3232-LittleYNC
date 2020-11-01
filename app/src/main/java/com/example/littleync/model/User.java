@@ -6,6 +6,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -22,6 +23,7 @@ public class User {
     private int gold;
     private ArrayList<String> trades;
     private int exp;
+    private ArrayList<String> newTrades = new ArrayList<String>();
 
     private final FirebaseFirestore fs = FirebaseFirestore.getInstance();
 
@@ -84,6 +86,8 @@ public class User {
                                               int deltaWood = finalUser.getWood() - initialUser.getWood();
                                               int deltaFish = finalUser.getFish() - initialUser.getFish();
                                               int deltaGold = finalUser.getGold() - initialUser.getGold();
+                                              ArrayList<String> deltaTrades = finalUser.getTrades();
+                                              deltaTrades.addAll(newTrades);
 
                                               // Write to DB
                                               Map<String, Object> docData = new HashMap<>();
@@ -95,7 +99,7 @@ public class User {
                                               docData.put("wood", getWood() + deltaWood);
                                               docData.put("fish", getFish() + deltaFish);
                                               docData.put("gold", getGold() + deltaGold);
-                                              docData.put("trades", finalUser.getTrades());
+                                              docData.put("trades", deltaTrades);
                                               docData.put("exp", getExp());
                                               userDoc.set(docData);
                                           }
@@ -151,6 +155,7 @@ public class User {
 
     public void addTrade(String documentID) {
         trades.add(documentID);
+        newTrades.add(documentID);
     }
 
     public void removeTrade(String documentID) {
@@ -164,10 +169,6 @@ public class User {
     public void setUserName(String userName) {
         this.userName = userName;
     }
-
-//    public void setDatabaseID(String databaseID) {
-//        this.databaseID = databaseID;
-//    }
 
     public void setWoodchoppingGearLevel(int woodchoppingGearLevel) {
         this.woodchoppingGearLevel = woodchoppingGearLevel;
