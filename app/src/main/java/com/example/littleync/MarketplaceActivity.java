@@ -58,7 +58,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     private volatile Boolean tradesLoaded = false;
 
     // For trading
-    private Marketplace MARKETPLACE = new Marketplace();;
+    private Marketplace MARKETPLACE;
 
 //    s-: sell; b-: buy
     Resource sRecourceType;
@@ -157,6 +157,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                                 Trade t = document.toObject(Trade.class);
                                 trades.add(t);
                             }
+                            MARKETPLACE = new Marketplace(trades);
                             tradesLoaded = true;
                         }
                     }

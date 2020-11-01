@@ -20,18 +20,21 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Marketplace {
     private String TAG = "Marketplace Class";
-    private Map<String, Trade> tradesMap;
+    private Map<String, Trade> tradesMap = new HashMap<String, Trade>();
     private volatile Boolean tradeAccepted = false;
     private volatile Boolean tradePosted = false;
     private DocumentReference tradeDoc;
     FirebaseFirestore fs = FirebaseFirestore.getInstance();
 
-    public void populateTradeMap(Trade t) {
-        tradesMap.put(t.getDocumentID(), t);
+    public Marketplace(ArrayList<Trade> trades) {
+        for (Trade t : trades) {
+            tradesMap.put(t.getDocumentID(), t);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
