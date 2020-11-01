@@ -10,9 +10,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -23,15 +21,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Marketplace class to handle the creation, posting, and accepting of trades from User to User;
+ * only created for the Marketplace Activity
+ */
 public class Marketplace {
-    private String TAG = "Marketplace Class";
+    private final String TAG = "Marketplace Class";
     FirebaseFirestore fs = FirebaseFirestore.getInstance();
-
     private ArrayList<Trade> trades;
     private Map<String, Trade> tradesMap = new HashMap<String, Trade>();
     private volatile Boolean acceptingTrade = false;
     private volatile Boolean postingTrade = false;
 
+    /**
+     * Constructor for the Marketplace object, which takes in the list of Trade objects that the
+     * current session of the Marketplace Activity; this gets called in onCreate(); also saves down
+     * the trades into a Map for ease of access
+     *
+     * @param trades an ArrayList of the 100 most recent trades
+     */
     public Marketplace(ArrayList<Trade> trades) {
         this.trades = trades;
         for (Trade t : trades) {
@@ -39,10 +47,22 @@ public class Marketplace {
         }
     }
 
+    /**
+     * Getter for the accessible trades for this session, used to return the trades for the
+     * front-end scrollview to display
+     *
+     * @return ArrayList of active trades to display
+     */
     public ArrayList<Trade> getTrades() {
         return trades;
     }
 
+    /**
+     * Getter for a specific User's live trades
+     *
+     * @param user the User who's trades we want to show
+     * @return ArrayList of the User's trades to display
+     */
     public ArrayList<Trade> getUserTrades(User user) {
         ArrayList<Trade> userTrades = new ArrayList<Trade>();
         for (String tradeDocumentID : user.getTrades()) {
@@ -51,6 +71,21 @@ public class Marketplace {
         return userTrades;
     }
 
+    /**
+     * Method called for a User to post a new trade; we need to process this locally in the current
+     * User object as well as add the new trade to the trades collection in the DB; this will
+     * return false if the user input negative numbers, if the User does not have enough resources,
+     * or if previous trade actions are still being processed; when this method is invoked, it sets
+     * a flag, postingTrade, that only resolves once this trade is entirely finished being
+     * processed (logically and physically in DB)
+     *
+     * @param user the User posting the trade
+     * @param sellType the resource being sold
+     * @param receiveType the resource requested
+     * @param sellQty the amount of resource being sold
+     * @param receiveQty the amount of resource requested
+     * @return true if the trade was successfully posted
+     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     public Boolean postTrade(final User user, final String sellType, final String receiveType, final int sellQty, final int receiveQty) {
         if (!postingTrade && !acceptingTrade) {
@@ -117,14 +152,27 @@ public class Marketplace {
         }
     }
 
+    /**
+     * Method called for a User (the buyer) to accept a trade; we need to process this locally in
+     * the current User object as well as for the person who posted the trade (the seller), finally
+     * we also need to delete this trade from the trades collection in the DB; this will return
+     * false if the buyer does not have enough enough resources, or if previous trade actions are
+     * still being processed; when this method is invoked, it sets a flag, acceptingTrade, that
+     * only resolves once this trade is entirely finished being processed (logically and physically
+     * in DB)
+     *
+     * @param buyer the User object that is accepting the trade
+     * @param tradeDocumentID that corresponds to the documentID in the trades collection
+     * @return true if the trade was successfully accepted
+     */
     public Boolean acceptTrade(User buyer, String tradeDocumentID) {
         if (!postingTrade && !acceptingTrade) {
             acceptingTrade = true;
 
             Trade toAccept = tradesMap.get(tradeDocumentID);
             String sellType = toAccept.getSellType();
-            int sellQty = toAccept.getSellQty();
             String receiveType = toAccept.getReceiveType();
+            int sellQty = toAccept.getSellQty();
             int receiveQty = toAccept.getReceiveQty();
 
             switch (receiveType) {
@@ -184,6 +232,12 @@ public class Marketplace {
         }
     }
 
+    /**
+     * Helper method invoked by acceptTrade() to update the seller's attributes in the DB as well
+     * as delete the accepted trade off of the trades collection
+     *
+     * @param toAccept the Trade object that is being accepted
+     */
     public void updateSellerResource(final Trade toAccept) {
         final String receiveType = toAccept.getReceiveType();
         final int receiveQty = toAccept.getReceiveQty();
@@ -219,7 +273,7 @@ public class Marketplace {
                                 }
                                 // Write updated seller to DB
                                 DocumentReference sellerDoc = fs.collection("users").document(sellerUserID);
-                                seller.writeToDatabaseSignUp(sellerDoc);
+                                seller.writeToDatabaseDirectly(sellerDoc);
 
                                 // Delete the trade from trades collection
                                 fs.collection("trades").document(documentID)
