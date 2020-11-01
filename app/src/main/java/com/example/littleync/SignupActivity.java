@@ -3,7 +3,6 @@ package com.example.littleync;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -23,8 +22,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-
-import android.view.View;
 
 import java.util.ArrayList;
 
@@ -76,9 +73,9 @@ public class SignupActivity extends AppCompatActivity {
                         email.setError(null);
                         password.setError(null);
                         password2.setError(null);
-                        User usr = new User(userNameBox.getText().toString(), 1,1,1,1,0,0,0,new ArrayList<String>(),0);
+                        User user = new User(userNameBox.getText().toString(), 1,1,1,1,0,0,0,new ArrayList<String>(),0);
                         userDoc = fs.collection("users").document(FirebaseAuth.getInstance().getUid().toString());
-                        usr.writeToDatabase(userDoc, usr);
+                        user.writeToDatabaseDirectly(userDoc);
                         //submitSignUp.setText((task.getResult().toString()));
                         SignupActivity.super.finish();
                     } else if (!task.isSuccessful()) {
