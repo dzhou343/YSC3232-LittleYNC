@@ -76,9 +76,9 @@ public class SignupActivity extends AppCompatActivity {
                         email.setError(null);
                         password.setError(null);
                         password2.setError(null);
-                        User usr = new User(userNameBox.getText().toString(), 1,1,1,1,0,0,0,new ArrayList<String>(),0);
+                        User user = new User(userNameBox.getText().toString(), 1,1,1,1,0,0,0,new ArrayList<String>(),0);
                         userDoc = fs.collection("users").document(FirebaseAuth.getInstance().getUid().toString());
-                        usr.writeToDatabase(userDoc, usr);
+                        user.writeToDatabaseSignUp(userDoc);
                         //submitSignUp.setText((task.getResult().toString()));
                         SignupActivity.super.finish();
                     } else if (!task.isSuccessful()) {

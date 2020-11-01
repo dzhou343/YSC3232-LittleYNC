@@ -54,7 +54,6 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     private User user;
     private User initialUser;
     private volatile Boolean userLoaded = false;
-    private final ArrayList<Trade> trades = new ArrayList<Trade>();
     private volatile Boolean tradesLoaded = false;
 
     // For trading
@@ -142,7 +141,6 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     }
 
     public void readAllTrades() {
-        trades.clear();
         Query queriedTrades = fs.collection("trades")
                 .orderBy("timeOfListing", Query.Direction.DESCENDING)
                 .limit(100);
@@ -152,6 +150,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            ArrayList<Trade> trades = new ArrayList<Trade>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 Trade t = document.toObject(Trade.class);
@@ -202,7 +201,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //
 ////        TODO: click the green button -> trigger the posting?
 //
-            Boolean tryPost = MARKETPLACE.postTrade(user, "fish", "gold", 1, 11);
+            Boolean tryPost = MARKETPLACE.postTrade(user, "fish", "gold", 0, 11);
             if (tryPost) {
                 String msg = "Successfully posted! Post another deal?";
                 postDealBtn.setText(msg);

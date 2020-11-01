@@ -62,6 +62,21 @@ public class User {
      */
     public User() {}
 
+    public void writeToDatabaseSignUp(final DocumentReference userDoc) {
+        Map<String, Object> docData = new HashMap<>();
+        docData.put("userName", getUserName());
+        docData.put("woodchoppingGearLevel", getWoodchoppingGearLevel());
+        docData.put("fishingGearLevel", getFishingGearLevel());
+        docData.put("combatGearLevel", getCombatGearLevel());
+        docData.put("aggregateLevel", getAggregateLevel());
+        docData.put("wood", getWood());
+        docData.put("fish", getFish());
+        docData.put("gold", getGold());
+        docData.put("trades", getTrades());
+        docData.put("exp", getExp());
+        userDoc.set(docData);
+    }
+
     /**
      * Write User object to the DB. We need to also pass in the initial state of the user. This is
      * so that in the case when the User object is locally stored for some task, e.g. fishing or woodchopping,
