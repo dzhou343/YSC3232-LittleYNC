@@ -253,6 +253,10 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
     }
 
+    protected void acceptDeal(){
+
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     protected void populateExistingDeals(ArrayList<Trade> existingDeals){
         //        scroll test
@@ -310,14 +314,14 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         for (int i = 0; i < existingDeals.size(); i++){
             final Trade t = existingDeals.get(i);
 
-            View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);
+            final View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);
 
 //        set content
             TextView index = (TextView) new_row.findViewById(R.id.index2);
             TextView timestamp = (TextView) new_row.findViewById(R.id.timestamp2);
             TextView username = (TextView) new_row.findViewById(R.id.username2);
             TextView giving = (TextView) new_row.findViewById(R.id.giving2);
-            TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
+            final TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
             final ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
 
             index.setText(String.valueOf(i + 1));
@@ -330,16 +334,62 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
             finished = false;
 
 //          set accept button
+
+            final Button t2Btn_text = (Button) findViewById(R.id.t2_btn_text2);
+
+//            final TextView t2Btn_text = new TextView(getApplication());
+////                        setting the width and height of the new button to that of the imagebutton
+//            final int t2Btn_text_id = View.generateViewId();
+//            t2Btn_text.setLayoutParams(t2Btn.getLayoutParams());
+//
+//            t2Btn_text.setBackgroundResource(R.drawable.marketplace2_btn);
+//            t2Btn_text.setText("Confirmed?");
+//            t2Btn_text.setTextSize(12);
+//            t2Btn_text.setTextColor(Color.BLACK);
+
+
+            t2Btn_text.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    acceptDeal(t);
+                    t2Btn_text.setText("Done!");
+                }
+            });
+
+
             t2Btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (clicked) {
-                        acceptDeal(t);
-                        clicked = false;
-                        }
-                    else {
-                        Log.d("Haha", "Else");
-                    }
+//                    if (clicked) {
+//                        acceptDeal(t);
+//                        clicked = false;
+//                        }
+//                    else {
+////                        make the confirmed/accepting button visible/to the back/connect it with other constraints
+//                        t2Btn.setVisibility(View.INVISIBLE);
+//
+//                        ((ConstraintLayout) new_row).addView(t2Btn_text);
+//                        ConstraintSet row_set = new ConstraintSet();
+//                        row_set.connect(t2Btn_text_id, ConstraintSet.LEFT, receiving.getId(), ConstraintSet.RIGHT, 8);
+//                        row_set.connect(t2Btn_text_id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 8);
+//                        row_set.connect(t2Btn_text_id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0);
+//                        row_set.connect(t2Btn_text_id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
+//                        row_set.applyTo((ConstraintLayout) new_row);
+//
+////                        t2Btn.bringToFront();
+//
+//
+//                        Log.d("Haha", "Else");
+//                    }
+                    t2Btn.setVisibility(View.INVISIBLE);
+                    t2Btn_text.setVisibility(View.VISIBLE);
+//                    ((ConstraintLayout) new_row).addView(t2Btn_text);
+//                    ConstraintSet row_set = new ConstraintSet();
+//                    row_set.connect(t2Btn_text_id, ConstraintSet.LEFT, receiving.getId(), ConstraintSet.RIGHT, 8);
+//                    row_set.connect(t2Btn_text_id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 8);
+//                    row_set.connect(t2Btn_text_id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0);
+//                    row_set.connect(t2Btn_text_id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
+//                    row_set.applyTo((ConstraintLayout) new_row);
                 }
             });
 
@@ -465,13 +515,32 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
             TextView username = (TextView) new_row.findViewById(R.id.username2);
             TextView giving = (TextView) new_row.findViewById(R.id.giving2);
             TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
-            ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
+            final ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
 
             index.setText(indexList.get(i));
             timestamp.setText(timestampList.get(i));
             username.setText(usernameList.get(i));
             giving.setText(givingList.get(i));
             receiving.setText(receivingList.get(i));
+
+            final Button t2Btn_text = (Button) findViewById(R.id.t2_btn_text2);
+
+            t2Btn_text.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    acceptDeal();
+                    t2Btn_text.setText("Done!");
+                }
+            });
+
+            t2Btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    t2Btn.setVisibility(View.INVISIBLE);
+                    t2Btn_text.setVisibility(View.VISIBLE);
+                }
+            });
+
 
 //        add to parent
 
