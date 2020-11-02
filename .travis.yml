@@ -2,6 +2,7 @@ language: android
 dist: trusty
 before_install:
   - yes | sdkmanager "platforms;android-30"
+  - yes | sdkmanager --licenses
 # Emulator Management: Create, Start and Wait
 before_script:
   - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a -c 100M
