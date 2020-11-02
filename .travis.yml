@@ -10,6 +10,7 @@ before_script:
   - adb shell input keyevent 82 &
 android:
   components:
+    - android-22
     # Uncomment the lines below if you want to
     # use the latest revision of Android SDK Tools
     # - tools
