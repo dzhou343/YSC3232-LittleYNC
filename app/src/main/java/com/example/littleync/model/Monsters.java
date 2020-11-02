@@ -2,11 +2,20 @@ package com.example.littleync.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
+/**
+ * Monsters object that is created only for the Saga Battleground Activity, providing some useful
+ * methods to query for monster attributes
+ */
 public class Monsters {
-    // { Monster Name : [Hitpoints, Gold Yield, Exp Yield] }
-    private final Map<String, int[]> monsters = new HashMap<String, int[]>();
+    private final Map<String, int[]> monsters = new HashMap<>();
 
+    /**
+     * Automatically populate the monsters list when this object is created in the Saga
+     * Battleground page; note that these monsters are represented as: { Monster Name : [Hitpoints,
+     * Gold Yield, Exp Yield] }
+     */
     public Monsters() {
         monsters.put("Prof. Sergey", new int[] {10, 1, 1});
         monsters.put("Prof. Stamps", new int[] {20, 2, 2});
@@ -25,16 +34,34 @@ public class Monsters {
         monsters.put("Prof. Bodin", new int[] {1000000, 10000, 10000});
     }
 
+    /**
+     * To get the monster HP, which is always in the first slot
+     *
+     * @param monsterName name to lookup in Map
+     * @return monster HP
+     */
     public int getMonsterHitpoints(String monsterName) {
-        return monsters.get(monsterName)[0];
+        return Objects.requireNonNull(monsters.get(monsterName))[0];
     }
 
+    /**
+     * To get the monster gold yield, which is always in the second slot
+     *
+     * @param monsterName name to lookup in Map
+     * @return monster gold yield
+     */
     public int getGoldYield(String monsterName) {
-        return monsters.get(monsterName)[1];
+        return Objects.requireNonNull(monsters.get(monsterName))[1];
     }
 
+    /**
+     * To get the monster exp yield, which is always in the third slot
+     *
+     * @param monsterName name to lookup in Map
+     * @return monster exp yield
+     */
     public int getExpYield(String monsterName) {
-        return monsters.get(monsterName)[2];
+        return Objects.requireNonNull(monsters.get(monsterName))[2];
     }
 
 }

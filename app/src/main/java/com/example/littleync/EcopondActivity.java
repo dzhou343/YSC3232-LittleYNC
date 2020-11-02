@@ -19,6 +19,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Locale;
 
+/**
+ * Ecopond Activity page where the user can idly fish for fish to gain fish resource
+ */
 public class EcopondActivity extends AppCompatActivity {
     // To print to log instead of console
     private final static String TAG = "EcopondActivity";
@@ -42,13 +45,11 @@ public class EcopondActivity extends AppCompatActivity {
     private TextView fishAndExpGainDisplay;
 
     // Timer attributes
-    //    time (in milliseconds) taken to deplete one unit of stamina = 3s
+    // Time (in milliseconds) taken to deplete one unit of stamina = 5s
     private static final long TIME_PER_STAMINA = 5000;
     private static final int TOTAL_STAMINA = 50;
-    private int staminaLeft = TOTAL_STAMINA;
     private static final long TOTAL_TIME_PER_SESSION = TIME_PER_STAMINA * TOTAL_STAMINA;
     private boolean timerRunning;
-    //    total time left in the session
     private long timeLeft = TOTAL_TIME_PER_SESSION;
     private ImageButton startPauseResumeBtn;
     private ImageButton resetBtn;
@@ -57,29 +58,42 @@ public class EcopondActivity extends AppCompatActivity {
     private TextView staminaDisplay;
 
     /**
-     * Update stamina view
-     * Create timer
-     * Read user from DB
+     * Initialize the objects and TextViews required for this page, including stamina computations
      *
-     * @param savedInstanceState
+     * @param savedInstanceState pass info around
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ecopond_page);
 
+        // User and relevant TextViews
+        woodDisplay = findViewById(R.id.wood_res);
+        woodchoppingGearLevelDisplay = findViewById(R.id.wood_gear_level);
+        fishDisplay = findViewById(R.id.fish_res);
+        fishingGearLevelDisplay = findViewById(R.id.fish_gear_level);
+        goldDisplay = findViewById(R.id.gold_res);
+        combatGearLevelDisplay = findViewById(R.id.combat_gear_level);
+        aggLevelDisplay = findViewById(R.id.agg_level);
+        aggLevelProgressDisplay = findViewById(R.id.agg_level_progress);
+        fishAndExpGainDisplay = findViewById(R.id.toast_msg);
+
+        String userID = FirebaseAuth.getInstance().getUid();
+        userLoaded = false;
+        assert userID != null;
+        userDoc = fs.collection("users").document(userID);
+        readUser(userDoc.get());
+
         // Timer stuff
         // By default, initialize stamina to full when the activity is created
-        staminaDisplay = (TextView) findViewById(R.id.stamina_section);
-//        String stamina_text = getString(R.string.Stamina, Integer.toString(0));
-//        stamina_display.setText(stamina_text);
-//        initialize the 1) start/pause/resume button, 2) the reset button and 3) the dynamic time
-//        display textview. By default, the reset button is initialized to invisible.
+        // Initialize 1) start/pause/resume button, 2) the reset button and 3) the dynamic time
+        // display textview. By default, the reset button is initialized to invisible.
+        staminaDisplay = findViewById(R.id.stamina_section);
         startPauseResumeBtn = findViewById(R.id.start_pause_resume_button);
         resetBtn = findViewById(R.id.reset_button);
         timeDisplay = findViewById(R.id.time_left);
 
-        // set the onClickListeners for the two buttons
+        // Set the onClickListeners for the two buttons
         startPauseResumeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,32 +115,11 @@ public class EcopondActivity extends AppCompatActivity {
 
         updateCountdownText();
         updateStamina();
-
-        // All other text views
-        woodDisplay = findViewById(R.id.wood_res);
-        woodchoppingGearLevelDisplay = findViewById(R.id.wood_gear_level);
-        fishDisplay = findViewById(R.id.fish_res);
-        fishingGearLevelDisplay = findViewById(R.id.fish_gear_level);
-        goldDisplay = findViewById(R.id.gold_res);
-        combatGearLevelDisplay = findViewById(R.id.combat_gear_level);
-        aggLevelDisplay = findViewById(R.id.agg_level);
-        aggLevelProgressDisplay = findViewById(R.id.agg_level_progress);
-        fishAndExpGainDisplay = findViewById(R.id.toast_msg);
-
-        // Read the user from the database and store it
-        // locally in this Activity
-        // I believe onCreate() will only complete once
-        // the user has been loaded in
-        String userID = FirebaseAuth.getInstance().getUid();
-        // Flag just to be sure the reading was successful
-        userLoaded = false;
-        userDoc = fs.collection("users").document(userID);
-        readUser(userDoc.get());
     }
 
     /**
-     * Write the local User and any updates made to it back to the DB
-     * This is called when we press the back button to return to the Main Activity
+     * Write the local User and any updates made to it back to the DB; this is called when we press
+     * the back button to return to the Main Activity
      */
     @Override
     public void onDestroy() {
@@ -136,9 +129,10 @@ public class EcopondActivity extends AppCompatActivity {
     }
 
     /**
-     * Read in User by userID, update all the textViews at top of page
+     * Read in User by userID, update all the textViews at top of page, flags that the User has
+     * been loaded in
      *
-     * @param ds
+     * @param ds DocumentSnapshot of the User from the DB
      */
     public void readUser(Task<DocumentSnapshot> ds) {
         ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -176,8 +170,9 @@ public class EcopondActivity extends AppCompatActivity {
     }
 
     /**
-     * Call the fishFish() method, which updates fish and exp, and has the potential
-     * to update the aggregateLevel
+     * Call the user.fishFish() method, which updates fish and exp, and has the potential to update
+     * the aggregateLevel, thus, we need to update these TextViews; there is also the check that
+     * the User has actually loaded in (since it is loaded in asynchronously)
      */
     public void fishFish() {
         if (userLoaded) {
@@ -194,8 +189,10 @@ public class EcopondActivity extends AppCompatActivity {
         }
     }
 
-    //    FROM HERE: TIMER STUFF
-    private void startTimer(){
+    /**
+     * Begin the timer counting down
+     */
+    private void startTimer() {
         myTimer = new CountDownTimer(TOTAL_TIME_PER_SESSION, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -209,7 +206,6 @@ public class EcopondActivity extends AppCompatActivity {
                 timerRunning = false;
                 startPauseResumeBtn.setVisibility(View.INVISIBLE);
                 resetBtn.setVisibility(View.VISIBLE);
-
             }
 
         }.start();
@@ -219,15 +215,20 @@ public class EcopondActivity extends AppCompatActivity {
         startPauseResumeBtn.setImageResource(R.drawable.ic_baseline_pause_circle_filled_24);
     }
 
-    private void pauseTimer(){
+    /**
+     * Pause the timer
+     */
+    private void pauseTimer() {
         myTimer.cancel();
         timerRunning = false;
         resetBtn.setVisibility(View.VISIBLE);
         startPauseResumeBtn.setImageResource(R.drawable.ic_baseline_play_circle_filled_24);
-
     }
 
-    private void resetTimer(){
+    /**
+     * Reset the timer
+     */
+    private void resetTimer() {
         timeLeft = TOTAL_TIME_PER_SESSION;
         updateCountdownText();
         updateStamina();
@@ -236,22 +237,26 @@ public class EcopondActivity extends AppCompatActivity {
         startPauseResumeBtn.setVisibility(View.VISIBLE);
     }
 
-    private void updateCountdownText(){
-//        conversion from milliseconds to minutes and seconds
+    /**
+     * Update text for the timer
+     */
+    private void updateCountdownText() {
+        // Conversion from milliseconds to minutes and seconds
         int minutes = (int) (timeLeft / 1000) / 60;
         int seconds = (int) (timeLeft / 1000) % 60;
         String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
         timeDisplay.setText(timeLeftFormatted);
     }
 
-    //    better update with an if condition, i.e. compute stamina now and only update when stamina_now is
-    //    different from stamina_left (the previous stamina till now).
+    /**
+     * Update the stamina left which occurs every 5s, and for each unit, we want to fish fish
+     */
     private void updateStamina() {
+        int staminaLeft;
         int quotient = (int) (timeLeft / TIME_PER_STAMINA);
-//        System.out.println(String.format(Locale.getDefault(), "%d, %d", (int) (time_left / 1000) % 60, (int) (time_left / 1000) % (time_per_stamina / 1000)));
         if ((int) (timeLeft / 1000) % (TIME_PER_STAMINA / 1000) == 0) {
             staminaLeft = quotient;
-            // For each unit of stamina consumed we want to chop wood
+            // For each unit of stamina consumed we want to fish fish
             if (staminaLeft < TOTAL_STAMINA) {
                 fishFish();
             }
@@ -262,4 +267,5 @@ public class EcopondActivity extends AppCompatActivity {
         String staminaLeftFormatted = String.format(Locale.getDefault(), "Stamina: %s / %s", staminaLeft, TOTAL_STAMINA);
         staminaDisplay.setText(staminaLeftFormatted);
     }
+
 }

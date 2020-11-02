@@ -24,6 +24,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Locale;
 
+/**
+ * Saga Battleground Activity page where the user can idly battle monsters to gain gold resource
+ */
 public class SagaBattlegroundActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     // To print to log instead of console
     private final static String TAG = "SagaBattleActivity";
@@ -47,9 +50,9 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
     private TextView woodAndExpGainDisplay;
 
     // Timer attributes
+    // Time (in milliseconds) taken to deplete one unit of stamina = 5s
     private static final long TIME_PER_STAMINA = 5000;
     private static final int TOTAL_STAMINA = 50;
-    private int staminaLeft = TOTAL_STAMINA;
     private static final long TOTAL_TIME_PER_SESSION = TIME_PER_STAMINA * TOTAL_STAMINA;
     private boolean timerRunning;
     private long timeLeft = TOTAL_TIME_PER_SESSION;
@@ -65,18 +68,39 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
     private int currentHP;
     private TextView healthDisplay;
     private ImageView monsterDisplay;
-    private Spinner enemySpinner;
 
+    /**
+     * Initialize the objects and TextViews required for this page, including stamina computations
+     * and Spinner required to select monsters to battle
+     *
+     * @param savedInstanceState pass info around
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.battleground_page);
 
-        // INITIALIZING SPINNER
-        // This spinner refers to initializing the drop down menu for picking which enemy a user would like to fight
-        Spinner enemySpinner = (Spinner) findViewById(R.id.spinner);
+        // User and relevant TextViews
+        woodDisplay = findViewById(R.id.wood_res);
+        woodchoppingGearLevelDisplay = findViewById(R.id.wood_gear_level);
+        fishDisplay = findViewById(R.id.fish_res);
+        fishingGearLevelDisplay = findViewById(R.id.fish_gear_level);
+        goldDisplay = findViewById(R.id.gold_res);
+        combatGearLevelDisplay = findViewById(R.id.combat_gear_level);
+        aggLevelDisplay = findViewById(R.id.agg_level);
+        aggLevelProgressDisplay = findViewById(R.id.agg_level_progress);
+        woodAndExpGainDisplay = findViewById(R.id.toast_msg);
 
-        ArrayAdapter<String> enemyAdapter = new ArrayAdapter<String>(
+        String userID = FirebaseAuth.getInstance().getUid();
+        userLoaded = false;
+        assert userID != null;
+        userDoc = fs.collection("users").document(userID);
+        readUser(userDoc.get());
+
+        // Initializing Spinner
+        // This spinner refers to initializing the drop down menu for picking which enemy a user would like to fight
+        Spinner enemySpinner = findViewById(R.id.spinner);
+        ArrayAdapter<String> enemyAdapter = new ArrayAdapter<>(
                 SagaBattlegroundActivity.this,
                 R.layout.battleground_spinner,
                 getResources().getStringArray(R.array.monster_names));
@@ -84,11 +108,15 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         enemyAdapter.setDropDownViewResource(R.layout.battleground_spinner_dropdown);
         // Allows the spinner to show the data within the spinner.
         enemySpinner.setAdapter(enemyAdapter);
-
         enemySpinner.setOnItemSelectedListener(this);
-        // END OF SPINNER INITIALIZATION
+        healthDisplay = findViewById(R.id.health_display);
+        monsterDisplay = findViewById(R.id.monster_img);
 
-        staminaDisplay = (TextView) findViewById(R.id.stamina_section);
+        // Timer stuff
+        // By default, initialize stamina to full when the activity is created
+        // Initialize 1) start/pause/resume button, 2) the reset button and 3) the dynamic time
+        // display textview. By default, the reset button is initialized to invisible.
+        staminaDisplay = findViewById(R.id.stamina_section);
         startPauseResumeBtn = findViewById(R.id.start_pause_resume_button);
         resetBtn = findViewById(R.id.reset_button);
         timeDisplay = findViewById(R.id.time_left);
@@ -115,30 +143,11 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
 
         updateCountdownText();
         updateStamina();
-
-        healthDisplay = (TextView) findViewById(R.id.health_display);
-        monsterDisplay = (ImageView) findViewById(R.id.monster_img);
-
-        // All other text views
-        woodDisplay = findViewById(R.id.wood_res);
-        woodchoppingGearLevelDisplay = findViewById(R.id.wood_gear_level);
-        fishDisplay = findViewById(R.id.fish_res);
-        fishingGearLevelDisplay = findViewById(R.id.fish_gear_level);
-        goldDisplay = findViewById(R.id.gold_res);
-        combatGearLevelDisplay = findViewById(R.id.combat_gear_level);
-        aggLevelDisplay = findViewById(R.id.agg_level);
-        aggLevelProgressDisplay = findViewById(R.id.agg_level_progress);
-        woodAndExpGainDisplay = findViewById(R.id.toast_msg);
-
-        String userID = FirebaseAuth.getInstance().getUid();
-        userLoaded = false;
-        userDoc = fs.collection("users").document(userID);
-        readUser(userDoc.get());
     }
 
     /**
-     * Write the local User and any updates made to it back to the DB
-     * This is called when we press the back button to return to the Main Activity
+     * Write the local User and any updates made to it back to the DB; this is called when we press
+     * the back button to return to the Main Activity
      */
     @Override
     public void onDestroy() {
@@ -147,9 +156,16 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         super.onDestroy();
     }
 
+    /**
+     * Update current monster being fought, and relevant TextViews and image
+     *
+     * @param parent   spinner
+     * @param view     for Android
+     * @param position for Android
+     * @param id       for Android
+     */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        // Set current Monster and HP, then update its textViews and image
         currentMonster = parent.getItemAtPosition(position).toString();
         currentHP = MONSTERS.getMonsterHitpoints(currentMonster);
         String healthMaxFormatted = String.format(Locale.getDefault(),
@@ -161,13 +177,19 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         changeMonsterImage();
     }
 
+    /**
+     * Default for spinner
+     *
+     * @param parent spinner
+     */
     @Override
     public void onNothingSelected(AdapterView<?> parent) {}
 
     /**
-     * Read in User by userID, update all the textViews at top of page
+     * Read in User by userID, update all the textViews at top of page, flags that the User has
+     * been loaded in
      *
-     * @param ds
+     * @param ds DocumentSnapshot of the User from the DB
      */
     public void readUser(Task<DocumentSnapshot> ds) {
         ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -201,6 +223,12 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         );
     }
 
+    /**
+     * Deal damage to the current monster, which has the potential to kill the monster, updating
+     * gold and exp, and has the potential to update the aggregateLevel, thus, we need to update
+     * these TextViews; there is also the check that the User has actually loaded in (since it is
+     * loaded in asynchronously)
+     */
     public void fight() {
         if (userLoaded) {
             // Deal damage to monster
@@ -229,6 +257,9 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         }
     }
 
+    /**
+     * Change the monster image depending on the monster selected to battle
+     */
     private void changeMonsterImage() {
         switch(currentMonster) {
             case "Prof. Bodin":
@@ -270,8 +301,10 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         }
     }
 
-    // TIMER STUFF
-    private void startTimer(){
+    /**
+     * Begin the timer counting down
+     */
+    private void startTimer() {
         myTimer = new CountDownTimer(TOTAL_TIME_PER_SESSION, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -285,7 +318,6 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
                 timerRunning = false;
                 startPauseResumeBtn.setVisibility(View.INVISIBLE);
                 resetBtn.setVisibility(View.VISIBLE);
-
             }
 
         }.start();
@@ -295,14 +327,20 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         startPauseResumeBtn.setImageResource(R.drawable.ic_baseline_pause_circle_filled_24);
     }
 
-    private void pauseTimer(){
+    /**
+     * Pause the timer
+     */
+    private void pauseTimer() {
         myTimer.cancel();
         timerRunning = false;
         resetBtn.setVisibility(View.VISIBLE);
         startPauseResumeBtn.setImageResource(R.drawable.ic_baseline_play_circle_filled_24);
     }
 
-    private void resetTimer(){
+    /**
+     * Reset the timer
+     */
+    private void resetTimer() {
         timeLeft = TOTAL_TIME_PER_SESSION;
         updateCountdownText();
         updateStamina();
@@ -311,18 +349,26 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         startPauseResumeBtn.setVisibility(View.VISIBLE);
     }
 
-    private void updateCountdownText(){
+    /**
+     * Update text for the timer
+     */
+    private void updateCountdownText() {
+        // Conversion from milliseconds to minutes and seconds
         int minutes = (int) (timeLeft / 1000) / 60;
         int seconds = (int) (timeLeft / 1000) % 60;
         String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
         timeDisplay.setText(timeLeftFormatted);
     }
 
-    private void updateStamina(){
+    /**
+     * Update the stamina left which occurs every 5s, and for each unit, we want to fish fish
+     */
+    private void updateStamina() {
+        int staminaLeft;
         int quotient = (int) (timeLeft / TIME_PER_STAMINA);
         if ((int) (timeLeft / 1000) % (TIME_PER_STAMINA / 1000) == 0) {
             staminaLeft = quotient;
-            // For each unit of stamina consumed we want to attack the monster
+            // For each unit of stamina consumed we want to fish fish
             if (staminaLeft < TOTAL_STAMINA) {
                 fight();
             }
