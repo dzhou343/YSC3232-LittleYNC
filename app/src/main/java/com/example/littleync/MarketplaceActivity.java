@@ -126,7 +126,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         readTrades();
 
         // Populate the scrollview with dummy trade objects
-
+        populateExistingDeals2();
     }
 
     /**
@@ -302,15 +302,17 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     protected void populateExistingDeals2(){
         //        scroll test
 
-        if (!tradesLoaded || !userLoaded) {
-            Toast populatingFail = Toast.makeText(this, "Failed to load trades.", Toast.LENGTH_LONG);
-            return;}
-
         ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
         int lastRowID = R.id.first_row;
 
+
 //        for (Trade t: MARKETPLACE.getTrades()){
         ArrayList<Trade> existingDeals = MARKETPLACE.getTrades();
+        if (!tradesLoaded || !userLoaded) {
+            Toast populatingFail = Toast.makeText(this, "Failed to load trades.", Toast.LENGTH_LONG);
+            populatingFail.show();
+            return;}
+
         for (int i = 0; i < existingDeals.size(); i++){
             final Trade t = existingDeals.get(i);
             final View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);
@@ -322,6 +324,20 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
             TextView giving = (TextView) new_row.findViewById(R.id.giving2);
             TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
             final ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
+            final Button t2Btn_text = (Button) new_row.findViewById(R.id.t2_btn_text2);
+
+            boolean sameUser = false;
+            if (t.getUserName().equals(user.getUserName())) {
+                sameUser = true;
+            }
+
+//            change the appearance of the accept button if the current user posted this particular
+//            trade and make it unclickable as well
+            if (sameUser) {
+                t2Btn.setVisibility(View.INVISIBLE);
+                t2Btn_text.setVisibility(View.VISIBLE);
+                t2Btn_text.setText("Your trade");
+            }
 
             index.setText(String.valueOf(i + 1));
             timestamp.setText(t.getTimeOfListing());
@@ -329,75 +345,25 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
             giving.setText(String.format(Locale.getDefault(),"%s x %d", t.getSellType(), t.getSellQty()));
             receiving.setText(String.format(Locale.getDefault(),"%s x %d", t.getReceiveType(), t.getReceiveQty()));
 
-            clicked = false;
-            finished = false;
-
-//          set accept button
-
-            final Button t2Btn_text = (Button) new_row.findViewById(R.id.t2_btn_text2);
-
-//            final TextView t2Btn_text = new TextView(getApplication());
-////                        setting the width and height of the new button to that of the imagebutton
-//            final int t2Btn_text_id = View.generateViewId();
-//            t2Btn_text.setLayoutParams(t2Btn.getLayoutParams());
-//
-//            t2Btn_text.setBackgroundResource(R.drawable.marketplace2_btn);
-//            t2Btn_text.setText("Confirmed?");
-//            t2Btn_text.setTextSize(12);
-//            t2Btn_text.setTextColor(Color.BLACK);
-
-
+            final boolean finalSameUser = sameUser;
             t2Btn_text.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (finalSameUser) {
+                        return;
+                    }
                     acceptTrade(t);
                     t2Btn_text.setText("Done!");
                 }
             });
 
 
+
             t2Btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-//                    if (clicked) {
-//                        acceptDeal(t);
-//                        clicked = false;
-//                        }
-//                    else {
-////                        make the confirmed/accepting button visible/to the back/connect it with other constraints
-//                        t2Btn.setVisibility(View.INVISIBLE);
-//
-//                        ((ConstraintLayout) new_row).addView(t2Btn_text);
-//                        ConstraintSet row_set = new ConstraintSet();
-//                        row_set.connect(t2Btn_text_id, ConstraintSet.LEFT, receiving.getId(), ConstraintSet.RIGHT, 8);
-//                        row_set.connect(t2Btn_text_id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 8);
-//                        row_set.connect(t2Btn_text_id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0);
-//                        row_set.connect(t2Btn_text_id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
-//                        row_set.applyTo((ConstraintLayout) new_row);
-//
-////                        t2Btn.bringToFront();
-//
-//
-//                        Log.d("Haha", "Else");
-//                    }
                     t2Btn.setVisibility(View.INVISIBLE);
                     t2Btn_text.setVisibility(View.VISIBLE);
-//                    ((ConstraintLayout) new_row).addView(t2Btn_text);
-//                    ConstraintSet row_set = new ConstraintSet();
-//                    row_set.connect(t2Btn_text_id, ConstraintSet.LEFT, receiving.getId(), ConstraintSet.RIGHT, 8);
-//                    row_set.connect(t2Btn_text_id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 8);
-//                    row_set.connect(t2Btn_text_id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0);
-//                    row_set.connect(t2Btn_text_id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
-//                    row_set.applyTo((ConstraintLayout) new_row);
-
-                    if (clicked) {
-                        acceptTrade(t);
-                        clicked = false;
-                        }
-                    else {
-                        Log.d("Haha", "Else");
-                    }
                 }
             });
 
