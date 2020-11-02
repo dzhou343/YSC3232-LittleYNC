@@ -17,7 +17,10 @@ android:
     - extra-google-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
+  licenses:
+    - 'build-tools;30.0.2 Android SDK Build-Tools 30.0.2'
+    - 'platforms;android-30 Android SDK Platform 30'
 
-    # Specify at least one system image,
-    # if you need to run emulator(s) during your tests
-    # - sys-img-x86-android-26
+  # Specify at least one system image,
+  # if you need to run emulator(s) during your tests
+  # - sys-img-x86-android-26
