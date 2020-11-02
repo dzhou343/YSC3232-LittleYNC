@@ -11,6 +11,7 @@ before_script:
 android:
   components:
     - android-22
+    - sys-img-armeabi-v7a-android-22
     # Uncomment the lines below if you want to
     # use the latest revision of Android SDK Tools
     # - tools
