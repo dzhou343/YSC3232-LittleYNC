@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,6 +36,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
@@ -124,7 +126,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         readTrades();
 
         // Populate the scrollview with dummy trade objects
-        addRow2();
+
     }
 
     /**
@@ -297,15 +299,20 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     }}
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    protected void populateExistingDeals2(ArrayList<Trade> existingDeals){
+    protected void populateExistingDeals2(){
         //        scroll test
+
+        if (!tradesLoaded || !userLoaded) {
+            Toast populatingFail = Toast.makeText(this, "Failed to load trades.", Toast.LENGTH_LONG);
+            return;}
 
         ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
         int lastRowID = R.id.first_row;
 
+//        for (Trade t: MARKETPLACE.getTrades()){
+        ArrayList<Trade> existingDeals = MARKETPLACE.getTrades();
         for (int i = 0; i < existingDeals.size(); i++){
             final Trade t = existingDeals.get(i);
-
             final View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);
 
 //        set content
@@ -313,7 +320,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
             TextView timestamp = (TextView) new_row.findViewById(R.id.timestamp2);
             TextView username = (TextView) new_row.findViewById(R.id.username2);
             TextView giving = (TextView) new_row.findViewById(R.id.giving2);
-            final TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
+            TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
             final ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
 
             index.setText(String.valueOf(i + 1));
@@ -327,7 +334,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
 //          set accept button
 
-            final Button t2Btn_text = (Button) findViewById(R.id.t2_btn_text2);
+            final Button t2Btn_text = (Button) new_row.findViewById(R.id.t2_btn_text2);
 
 //            final TextView t2Btn_text = new TextView(getApplication());
 ////                        setting the width and height of the new button to that of the imagebutton
@@ -479,111 +486,111 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
         }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private void addRow2(){
-        //        scroll test
-        ArrayList<String> indexList = new ArrayList<>();
-        ArrayList<String> timestampList = new ArrayList<>();
-        ArrayList<String> usernameList = new ArrayList<>();
-        ArrayList<String> givingList = new ArrayList<>();
-        ArrayList<String> receivingList  = new ArrayList<>();
-
-        ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
-        int lastRowID = R.id.first_row;
-
-        for (int i  = 0; i < 20; i++) {
-//            creating test strings
-            indexList.add(String.valueOf(i));
-
-            LocalDate newDate = LocalDate.of(2020, Month.APRIL, i+1);
-            String newDateString = newDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy"));
-            timestampList.add(newDateString);
-
-            char c = (char) (i + 64);
-            char[] chars = new char[8];
-            Arrays.fill(chars, c);
-            String newString = new String(chars);
-            usernameList.add(newString);
-
-            givingList.add(String.format("fish x %d", i));
-            receivingList.add(String.format("gold x %d", i));
-
-            View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);
-
-//        set content
-            TextView index = (TextView) new_row.findViewById(R.id.index2);
-            TextView timestamp = (TextView) new_row.findViewById(R.id.timestamp2);
-            TextView username = (TextView) new_row.findViewById(R.id.username2);
-            TextView giving = (TextView) new_row.findViewById(R.id.giving2);
-            TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
-            final ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
-
-            index.setText(indexList.get(i));
-            timestamp.setText(timestampList.get(i));
-            username.setText(usernameList.get(i));
-            giving.setText(givingList.get(i));
-            receiving.setText(receivingList.get(i));
-
-            final Button t2Btn_text = (Button) findViewById(R.id.t2_btn_text2);
-
-            t2Btn_text.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    acceptDeal();
-                    t2Btn_text.setText("Done!");
-                }
-            });
-
-            t2Btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    t2Btn.setVisibility(View.INVISIBLE);
-                    t2Btn_text.setVisibility(View.VISIBLE);
-                }
-            });
-
-
-//        add to parent
-
-            scrollParent.addView(new_row);
-
-
-//        set id & then constraints
-            int id = View.generateViewId();
-            Log.d("BRO", String.valueOf(id));
-            new_row.setId(id);
-
-//        Remarks: 1. setting the height & weight to equal to first row doesn't work.
-//        2. setting the height & weight to the exact dim 312 and 40 also don't work
-//        3. setting the dim to 0 also doesn't work
-//        4. seem to need to set it super big
-//         5. try to have another set for row_set
-
-//            ConstraintLayout firstRow = (ConstraintLayout) findViewById(R.id.first_row);
-//        int h = firstRow.getHeight();
-//        int w = firstRow.getWidth();
-//            TextView firstRowTimestamp = (TextView) findViewById(R.id.timestamp33);
-
-//        ConstraintSet row_set = new ConstraintSet();
-//        row_set.constrainHeight(id, h);
-//        row_set.constrainWidth(id, w);
-//        row_set.applyTo((ConstraintLayout) new_row);
-//            Log.d("AAAAAAA", String.valueOf(firstRowTimestamp.getWidth()));
-
-
-            ConstraintSet set = new ConstraintSet();
-            set.constrainWidth(id, ConstraintSet.WRAP_CONTENT);
-            set.constrainHeight(id, ConstraintSet.WRAP_CONTENT);
-
-            set.connect(id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
-            set.connect(id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
-            set.connect(id, ConstraintSet.TOP, lastRowID, ConstraintSet.BOTTOM, 0);
-//            set.connect(id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
-            set.applyTo(scrollParent);
-//            Log.d("BBBBBBBB", String.valueOf(timestamp.getWidth()));
-
-            lastRowID = id;
-    }}
+//    @RequiresApi(api = Build.VERSION_CODES.O)
+//    private void addRow2(){
+//        //        scroll test
+//        ArrayList<String> indexList = new ArrayList<>();
+//        ArrayList<String> timestampList = new ArrayList<>();
+//        ArrayList<String> usernameList = new ArrayList<>();
+//        ArrayList<String> givingList = new ArrayList<>();
+//        ArrayList<String> receivingList  = new ArrayList<>();
+//
+//        ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
+//        int lastRowID = R.id.first_row;
+//
+//        for (int i  = 0; i < 20; i++) {
+////            creating test strings
+//            indexList.add(String.valueOf(i));
+//
+//            LocalDate newDate = LocalDate.of(2020, Month.APRIL, i+1);
+//            String newDateString = newDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy"));
+//            timestampList.add(newDateString);
+//
+//            char c = (char) (i + 64);
+//            char[] chars = new char[8];
+//            Arrays.fill(chars, c);
+//            String newString = new String(chars);
+//            usernameList.add(newString);
+//
+//            givingList.add(String.format("fish x %d", i));
+//            receivingList.add(String.format("gold x %d", i));
+//
+//            View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);
+//
+////        set content
+//            TextView index = (TextView) new_row.findViewById(R.id.index2);
+//            TextView timestamp = (TextView) new_row.findViewById(R.id.timestamp2);
+//            TextView username = (TextView) new_row.findViewById(R.id.username2);
+//            TextView giving = (TextView) new_row.findViewById(R.id.giving2);
+//            TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
+//            final ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
+//
+//            index.setText(indexList.get(i));
+//            timestamp.setText(timestampList.get(i));
+//            username.setText(usernameList.get(i));
+//            giving.setText(givingList.get(i));
+//            receiving.setText(receivingList.get(i));
+//
+//            final Button t2Btn_text = (Button) new_row.findViewById(R.id.t2_btn_text2);
+//
+//            t2Btn_text.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    acceptDeal();
+//                    t2Btn_text.setText("Done!");
+//                }
+//            });
+//
+//            t2Btn.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    t2Btn.setVisibility(View.INVISIBLE);
+//                    t2Btn_text.setVisibility(View.VISIBLE);
+//                }
+//            });
+//
+//
+////        add to parent
+//
+//            scrollParent.addView(new_row);
+//
+//
+////        set id & then constraints
+//            int id = View.generateViewId();
+//            Log.d("BRO", String.valueOf(id));
+//            new_row.setId(id);
+//
+////        Remarks: 1. setting the height & weight to equal to first row doesn't work.
+////        2. setting the height & weight to the exact dim 312 and 40 also don't work
+////        3. setting the dim to 0 also doesn't work
+////        4. seem to need to set it super big
+////         5. try to have another set for row_set
+//
+////            ConstraintLayout firstRow = (ConstraintLayout) findViewById(R.id.first_row);
+////        int h = firstRow.getHeight();
+////        int w = firstRow.getWidth();
+////            TextView firstRowTimestamp = (TextView) findViewById(R.id.timestamp33);
+//
+////        ConstraintSet row_set = new ConstraintSet();
+////        row_set.constrainHeight(id, h);
+////        row_set.constrainWidth(id, w);
+////        row_set.applyTo((ConstraintLayout) new_row);
+////            Log.d("AAAAAAA", String.valueOf(firstRowTimestamp.getWidth()));
+//
+//
+//            ConstraintSet set = new ConstraintSet();
+//            set.constrainWidth(id, ConstraintSet.WRAP_CONTENT);
+//            set.constrainHeight(id, ConstraintSet.WRAP_CONTENT);
+//
+//            set.connect(id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
+//            set.connect(id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
+//            set.connect(id, ConstraintSet.TOP, lastRowID, ConstraintSet.BOTTOM, 0);
+////            set.connect(id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
+//            set.applyTo(scrollParent);
+////            Log.d("BBBBBBBB", String.valueOf(timestamp.getWidth()));
+//
+//            lastRowID = id;
+//    }}
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

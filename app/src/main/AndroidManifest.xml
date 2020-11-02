@@ -88,7 +88,8 @@
 
         <activity
             android:name=".MarketplaceActivity"
-            android:parentActivityName=".TravelActivity">
+            android:parentActivityName=".TravelActivity"
+            android:windowSoftInputMode="adjustPan">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
