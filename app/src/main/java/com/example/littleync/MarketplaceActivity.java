@@ -305,7 +305,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
         int lastRowID = R.id.first_row;
 
-
+        readTrades();
 //        for (Trade t: MARKETPLACE.getTrades()){
         ArrayList<Trade> existingDeals = MARKETPLACE.getTrades();
         if (!tradesLoaded || !userLoaded) {
