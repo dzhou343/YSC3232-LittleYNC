@@ -119,15 +119,16 @@ public class Marketplace {
      * @param receiveType the resource requested
      * @param sellQty     the amount of resource being sold
      * @param receiveQty  the amount of resource requested
-     * @return true if the trade was successfully posted
+     * @return message to display to user what went right/wrong
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public boolean postTrade(final User user, final String sellType, final String receiveType, final int sellQty, final int receiveQty) {
+    public String postTrade(final User user, final String sellType, final String receiveType, final int sellQty, final int receiveQty) {
         if (!postingTrade && !acceptingTrade && !deletingTrade) {
-            postingTrade = true;
             // Qty must be positive
-            if (sellQty < 0 || receiveQty < 0) {
-                return false;
+            if (sellQty < 0) {
+                return "Sell qty must be > 0";
+            } else if (receiveQty < 0) {
+                return "Receive qty must be > 0";
             } else if (user.getTrades().size() < 5) {
                 switch (sellType) {
                     case "wood":
@@ -136,27 +137,28 @@ public class Marketplace {
                             user.setWood(user.getWood() - sellQty);
                         } else {
                             // The user does not have enough to deposit
-                            return false;
+                            return "Not enough wood to trade";
                         }
                         break;
                     case "fish":
                         if (user.getFish() >= sellQty) {
                             user.setFish(user.getFish() - sellQty);
                         } else {
-                            return false;
+                            return "Not enough fish to trade";
                         }
                         break;
                     default:
                         if (user.getGold() >= sellQty) {
                             user.setGold(user.getGold() - sellQty);
                         } else {
-                            return false;
+                            return "Not enough gold to trade";
                         }
                         break;
                 }
                 // If the user has enough of the resource to deposit, then we can
                 // proceed with physically processing the trade
                 // Write trade to DB
+                postingTrade = true;
                 fs.collection("trades")
                         .add(new Trade())
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -175,16 +177,14 @@ public class Marketplace {
                             }
                         });
                 // Return true to display that the trade was successfully posted
-                return true;
+                return "Trade successfully posted!";
             } else {
                 // The user already has 5 live trades, which is the max
                 // Return false to display that the trade was unsuccessful
-                postingTrade = false;
-                return false;
+                return "Cannot have more than 5 live trades";
             }
         } else {
-            Log.d(TAG, "Trades still being processed.");
-            return false;
+            return "Trades still being processed, please wait";
         }
     }
 
@@ -199,19 +199,17 @@ public class Marketplace {
      *
      * @param buyer           the User object that is accepting the trade
      * @param tradeDocumentID that corresponds to the documentID in the trades collection
-     * @return true if the trade was successfully accepted
+     * @return message to display to user what went right/wrong
      */
-    public boolean acceptTrade(User buyer, String tradeDocumentID) {
+    public String acceptTrade(User buyer, String tradeDocumentID) {
         if (!postingTrade && !acceptingTrade && !deletingTrade) {
-            acceptingTrade = true;
-
             Trade toAccept = tradesMap.get(tradeDocumentID);
             if (toAccept == null) {
                 // Trade must not have been accepted before
-                return false;
+                return "Already accepted trade!";
             } else if (toAccept.getUserName().equals(buyer.getUserName())) {
                 // User cannot accept their own trade
-                return false;
+                return "Cannot accept your own trade";
             } else {
                 String sellType = toAccept.getSellType();
                 String receiveType = toAccept.getReceiveType();
@@ -233,7 +231,7 @@ public class Marketplace {
                             }
                         } else {
                             // Accepting user does not have enough resources to trade
-                            return false;
+                            return "Not enough wood to trade";
                         }
                         break;
                     case "fish":
@@ -247,7 +245,7 @@ public class Marketplace {
                                 buyer.setGold(buyer.getGold() + sellQty);
                             }
                         } else {
-                            return false;
+                            return "Not enough fish to trade";
                         }
                         break;
                     default:
@@ -261,21 +259,21 @@ public class Marketplace {
                                 buyer.setGold(buyer.getGold() + sellQty);
                             }
                         } else {
-                            return false;
+                            return "Not enough gold to trade";
                         }
                         break;
                 }
                 // Trade is completed
                 // Debit the resource of the seller user
+                acceptingTrade = true;
                 updateSellerResource(toAccept);
                 // Remove the trade from the Map of live trades
                 trades.remove(toAccept);
                 tradesMap.remove(tradeDocumentID);
-                return true;
+                return "Trade successfully accepted!";
             }
         } else {
-            Log.d(TAG, "Trades still being processed.");
-            return false;
+            return "Trades still being processed, please wait";
         }
     }
 

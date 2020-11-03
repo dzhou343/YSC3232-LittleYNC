@@ -184,13 +184,6 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         );
     }
 
-    // err I don't think this does anything. delete?
-    public void tradePage(View view) {
-        Log.d(TAG, TAG);
-        FirebaseAuth fb = FirebaseAuth.getInstance();
-        Log.d(TAG, fb.getCurrentUser().getUid().toString());
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void postTrade(View view) {
         if (userLoaded && tradesLoaded) {
@@ -204,16 +197,9 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //
 ////        TODO: click the green button -> trigger the posting?
 //
-            boolean tryPost = MARKETPLACE.postTrade(user, "fish", "gold", 0, 11);
-            if (tryPost) {
-                String msg = "Successfully posted! Post another deal?";
-                postDealBtn.setText(msg);
-                postDealBtn.setBackgroundResource(R.drawable.marketplace2_btn);
-                postDealBtn.setTextColor(0xff0000);
-            } else {
-                Toast fail = Toast.makeText(this, "Failed to post trade", Toast.LENGTH_LONG);
-                fail.show();
-            }
+            String tryPost = MARKETPLACE.postTrade(user, "fish", "gold", 0, 11);
+            Toast msg = Toast.makeText(this, tryPost, Toast.LENGTH_LONG);
+            msg.show();
         } else {
             Log.d(TAG, "User/trades not yet loaded");
         }
@@ -221,14 +207,9 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
     public void acceptTrade(Trade toAccept) {
         if (userLoaded && tradesLoaded) {
-            boolean tryAccept = MARKETPLACE.acceptTrade(user, toAccept.getDocumentID());
-            if (tryAccept) {
-                Toast success = Toast.makeText(this, user.getUserName() + " accepted " + toAccept.getUserName() + "'s trade", Toast.LENGTH_LONG);
-                success.show();
-            } else {
-                Toast fail = Toast.makeText(this, "Failed to accept trade", Toast.LENGTH_LONG);
-                fail.show();
-            }
+            String tryAccept = MARKETPLACE.acceptTrade(user, toAccept.getDocumentID());
+            Toast msg = Toast.makeText(this, tryAccept, Toast.LENGTH_LONG);
+            msg.show();
         } else {
             Log.d(TAG, "User/trades not yet loaded");
         }
@@ -253,14 +234,11 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                 final ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
                 final Button t2Btn_text = (Button) new_row.findViewById(R.id.t2_btn_text2);
 
+//            change the appearance of the accept button if the current user posted this particular
+//            trade and make it unclickable as well
                 boolean sameUser = false;
                 if (t.getUserName().equals(user.getUserName())) {
                     sameUser = true;
-                }
-
-//            change the appearance of the accept button if the current user posted this particular
-//            trade and make it unclickable as well
-                if (sameUser) {
                     t2Btn.setVisibility(View.INVISIBLE);
                     t2Btn_text.setVisibility(View.VISIBLE);
                     t2Btn_text.setText("Your trade");
@@ -276,14 +254,12 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                 t2Btn_text.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (finalSameUser) {
-                            return;
+                        if (!finalSameUser) {
+                            acceptTrade(t);
+                            t2Btn_text.setText("Done!");
                         }
-                        acceptTrade(t);
-                        t2Btn_text.setText("Done!");
                     }
                 });
-
                 t2Btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
