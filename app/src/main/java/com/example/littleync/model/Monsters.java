@@ -50,7 +50,7 @@ public class Monsters {
      * @param monsterName name to lookup in Map
      * @return monster gold yield
      */
-    public int getGoldYield(String monsterName) {
+    public int getMonsterGoldYield(String monsterName) {
         return Objects.requireNonNull(monsters.get(monsterName))[1];
     }
 
@@ -60,7 +60,7 @@ public class Monsters {
      * @param monsterName name to lookup in Map
      * @return monster exp yield
      */
-    public int getExpYield(String monsterName) {
+    public int getMonsterExpYield(String monsterName) {
         return Objects.requireNonNull(monsters.get(monsterName))[2];
     }
 

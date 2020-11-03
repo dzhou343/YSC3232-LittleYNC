@@ -28,7 +28,6 @@ import java.util.Objects;
  */
 public class Marketplace {
     private final String TAG = "Marketplace Class";
-    FirebaseFirestore fs = FirebaseFirestore.getInstance();
     private final ArrayList<Trade> trades;
     private final Map<String, Trade> tradesMap = new HashMap<>();
     private volatile boolean acceptingTrade = false;
@@ -55,17 +54,17 @@ public class Marketplace {
      *
      * @return ArrayList of active trades to display
      */
-    public ArrayList<Trade> getTrades() {
+    public synchronized ArrayList<Trade> getTrades() {
         return trades;
     }
 
     /**
      * Getter for a specific User's live trades
      *
-     * @param user the User who's trades we want to show
+     * @param user the User whose trades we want to show
      * @return ArrayList of the User's trades to display
      */
-    public ArrayList<Trade> getUserTrades(User user) {
+    public synchronized ArrayList<Trade> getUserTrades(User user) {
         ArrayList<Trade> userTrades = new ArrayList<>();
         for (String tradeDocumentID : user.getTrades()) {
             userTrades.add(tradesMap.get(tradeDocumentID));
@@ -79,13 +78,13 @@ public class Marketplace {
      * @param user            User to remove trade from
      * @param tradeDocumentID that corresponds to the documentID in the trades collection
      */
-    public void deleteTrade(User user, String tradeDocumentID) {
+    public synchronized void deleteTrade(User user, String tradeDocumentID) {
         if (!postingTrade && !acceptingTrade && !deletingTrade) {
             deletingTrade = true;
             // Delete trade from User
             user.removeTrade(tradeDocumentID);
             // Delete the trade from trades collection
-            fs.collection("trades").document(tradeDocumentID)
+            FirebaseFirestore.getInstance().collection("trades").document(tradeDocumentID)
                     .delete()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -109,27 +108,28 @@ public class Marketplace {
     /**
      * Method called for a User to post a new trade; we need to process this locally in the current
      * User object as well as add the new trade to the trades collection in the DB; this will
-     * return false if the user input negative numbers, if the User does not have enough resources,
-     * or if previous trade actions are still being processed; when this method is invoked, it sets
-     * a flag, postingTrade, that only resolves once this trade is entirely finished being
-     * processed (logically and physically in DB)
+     * return a helpful message if the user input negative numbers, if the User does not have
+     * enough resources, or if previous trade actions are still being processed; when this method
+     * is invoked, it sets a flag, postingTrade, that only resolves once this trade is entirely
+     * finished being processed (logically and physically in DB)
      *
+     * @param fs          the current Firestore instance
      * @param user        the User posting the trade
      * @param sellType    the resource being sold
      * @param receiveType the resource requested
      * @param sellQty     the amount of resource being sold
      * @param receiveQty  the amount of resource requested
-     * @return true if the trade was successfully posted
+     * @return message to display to user what went right/wrong
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public boolean postTrade(final User user, final String sellType, final String receiveType, final int sellQty, final int receiveQty) {
+    public synchronized String postTrade(final FirebaseFirestore fs, final User user, final String sellType, final String receiveType, final int sellQty, final int receiveQty) {
         if (!postingTrade && !acceptingTrade && !deletingTrade) {
-            postingTrade = true;
             // Qty must be positive
-            if (sellQty < 0 || receiveQty < 0) {
-                return false;
-            }
-            if (user.getTrades().size() < 5) {
+            if (sellQty < 0) {
+                return "Sell qty must be > 0";
+            } else if (receiveQty < 0) {
+                return "Receive qty must be > 0";
+            } else if (user.getTrades().size() < 5) {
                 switch (sellType) {
                     case "wood":
                         if (user.getWood() >= sellQty) {
@@ -137,27 +137,28 @@ public class Marketplace {
                             user.setWood(user.getWood() - sellQty);
                         } else {
                             // The user does not have enough to deposit
-                            return false;
+                            return "Not enough wood to trade";
                         }
                         break;
                     case "fish":
                         if (user.getFish() >= sellQty) {
                             user.setFish(user.getFish() - sellQty);
                         } else {
-                            return false;
+                            return "Not enough fish to trade";
                         }
                         break;
                     default:
                         if (user.getGold() >= sellQty) {
                             user.setGold(user.getGold() - sellQty);
                         } else {
-                            return false;
+                            return "Not enough gold to trade";
                         }
                         break;
                 }
                 // If the user has enough of the resource to deposit, then we can
                 // proceed with physically processing the trade
                 // Write trade to DB
+                postingTrade = true;
                 fs.collection("trades")
                         .add(new Trade())
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -169,22 +170,21 @@ public class Marketplace {
                                 newTrade.writeToDatabase(tradeDoc);
                                 // Add the trade to the user's live trades
                                 user.addTrade(documentID);
+                                trades.add(0, newTrade);
                                 Log.d(TAG, "User trades size: " + user.getTrades().size());
                                 Log.d(TAG, "Wrote to DB, posted trade");
                                 postingTrade = false;
                             }
                         });
                 // Return true to display that the trade was successfully posted
-                return true;
+                return "Trade successfully posted!";
             } else {
                 // The user already has 5 live trades, which is the max
                 // Return false to display that the trade was unsuccessful
-                postingTrade = false;
-                return false;
+                return "Cannot have more than 5 live trades";
             }
         } else {
-            Log.d(TAG, "Trades still being processed.");
-            return false;
+            return "Trades still being processed, please wait";
         }
     }
 
@@ -192,26 +192,25 @@ public class Marketplace {
      * Method called for a User (the buyer) to accept a trade; we need to process this locally in
      * the current User object as well as for the person who posted the trade (the seller), finally
      * we also need to delete this trade from the trades collection in the DB; this will return
-     * false if the buyer does not have enough enough resources, or if previous trade actions are
-     * still being processed; when this method is invoked, it sets a flag, acceptingTrade, that
-     * only resolves once this trade is entirely finished being processed (logically and physically
-     * in DB)
+     * a helpful message if the buyer does not have enough enough resources, or if previous trade
+     * actions are still being processed; when this method is invoked, it sets a flag,
+     * acceptingTrade, that only resolves once this trade is entirely finished being processed
+     * (logically and physically in DB)
      *
+     * @param fs          the current Firestore instance
      * @param buyer           the User object that is accepting the trade
      * @param tradeDocumentID that corresponds to the documentID in the trades collection
-     * @return true if the trade was successfully accepted
+     * @return message to display to user what went right/wrong
      */
-    public boolean acceptTrade(User buyer, String tradeDocumentID) {
+    public synchronized String acceptTrade(FirebaseFirestore fs, User buyer, String tradeDocumentID) {
         if (!postingTrade && !acceptingTrade && !deletingTrade) {
-            acceptingTrade = true;
-
             Trade toAccept = tradesMap.get(tradeDocumentID);
             if (toAccept == null) {
                 // Trade must not have been accepted before
-                return false;
+                return "Already accepted trade!";
             } else if (toAccept.getUserName().equals(buyer.getUserName())) {
                 // User cannot accept their own trade
-                return false;
+                return "Cannot accept your own trade";
             } else {
                 String sellType = toAccept.getSellType();
                 String receiveType = toAccept.getReceiveType();
@@ -233,7 +232,7 @@ public class Marketplace {
                             }
                         } else {
                             // Accepting user does not have enough resources to trade
-                            return false;
+                            return "Not enough wood to trade";
                         }
                         break;
                     case "fish":
@@ -247,7 +246,7 @@ public class Marketplace {
                                 buyer.setGold(buyer.getGold() + sellQty);
                             }
                         } else {
-                            return false;
+                            return "Not enough fish to trade";
                         }
                         break;
                     default:
@@ -261,20 +260,21 @@ public class Marketplace {
                                 buyer.setGold(buyer.getGold() + sellQty);
                             }
                         } else {
-                            return false;
+                            return "Not enough gold to trade";
                         }
                         break;
                 }
                 // Trade is completed
                 // Debit the resource of the seller user
-                updateSellerResource(toAccept);
+                acceptingTrade = true;
+                updateSellerResource(fs, toAccept);
                 // Remove the trade from the Map of live trades
+                trades.remove(toAccept);
                 tradesMap.remove(tradeDocumentID);
-                return true;
+                return "Trade successfully accepted!";
             }
         } else {
-            Log.d(TAG, "Trades still being processed.");
-            return false;
+            return "Trades still being processed, please wait";
         }
     }
 
@@ -282,9 +282,10 @@ public class Marketplace {
      * Helper method invoked by acceptTrade() to update the seller's attributes in the DB as well
      * as delete the accepted trade off of the trades collection
      *
+     * @param fs          the current Firestore instance
      * @param toAccept the Trade object that is being accepted
      */
-    public void updateSellerResource(final Trade toAccept) {
+    public synchronized void updateSellerResource(final FirebaseFirestore fs, final Trade toAccept) {
         final String receiveType = toAccept.getReceiveType();
         final int receiveQty = toAccept.getReceiveQty();
         final String userName = toAccept.getUserName();
@@ -299,7 +300,6 @@ public class Marketplace {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            // TODO userName has to be unique
                             // userName is unique so there is only one here
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());

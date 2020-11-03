@@ -151,7 +151,7 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
      */
     @Override
     public void onDestroy() {
-        user.writeToDatabase(userDoc, initialUser);
+        user.writeToDatabase(fs, userDoc, initialUser);
         Log.d(TAG, "Wrote to DB");
         super.onDestroy();
     }
@@ -172,7 +172,7 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
                 "HP: %s / %s", currentHP, MONSTERS.getMonsterHitpoints(currentMonster));
         healthDisplay.setText(healthMaxFormatted);
         String toastMsg = String.format(Locale.getDefault(),
-                "+%s Gold and +%s Exp", MONSTERS.getGoldYield(currentMonster), MONSTERS.getExpYield(currentMonster));
+                "+%s Gold and +%s Exp", MONSTERS.getMonsterGoldYield(currentMonster), MONSTERS.getMonsterExpYield(currentMonster));
         woodAndExpGainDisplay.setText(toastMsg);
         changeMonsterImage();
     }
@@ -235,8 +235,8 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
             currentHP -= user.getCombatGearLevel();
             if (currentHP <= 0) {
                 // If monster is dead, then increment gold and exp
-                user.addGold(MONSTERS.getGoldYield(currentMonster));
-                user.addExp(MONSTERS.getExpYield(currentMonster));
+                user.addGold(MONSTERS.getMonsterGoldYield(currentMonster));
+                user.addExp(MONSTERS.getMonsterExpYield(currentMonster));
                 // Update textViews
                 String goldRes = String.format(Locale.getDefault(), "Gold: %s", user.getGold());
                 goldDisplay.setText(goldRes);

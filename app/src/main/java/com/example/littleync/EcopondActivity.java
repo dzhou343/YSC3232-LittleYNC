@@ -123,7 +123,7 @@ public class EcopondActivity extends AppCompatActivity {
      */
     @Override
     public void onDestroy() {
-        user.writeToDatabase(userDoc, initialUser);
+        user.writeToDatabase(fs, userDoc, initialUser);
         Log.d(TAG, "Wrote to DB");
         super.onDestroy();
     }
