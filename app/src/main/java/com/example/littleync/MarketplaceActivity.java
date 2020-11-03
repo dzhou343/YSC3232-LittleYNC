@@ -3,6 +3,7 @@ package com.example.littleync;
 import com.example.littleync.model.Marketplace;
 import com.example.littleync.model.Resource;
 
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -59,15 +60,14 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     Resource sRecourceType;
     private EditText receiveQty;
     private EditText giveQty;
-    private Button postDealBtn;
+    private Button postTradeBtn;
     private Boolean displayed;
     private Boolean posted;
 
 //    T2
     private ConstraintLayout scrollParent;
     //    for trade button t
-    private Boolean clicked;
-    private Boolean finished;
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -95,21 +95,15 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         receiveQty = findViewById(R.id.receive_qty);
         giveQty = findViewById(R.id.give_qty);
 
-        postDealBtn = findViewById(R.id.post_deal_btn);
-//        postDealBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (posted) {
-//                    postDealBtn.setBackgroundColor(Color.TRANSPARENT);
-//                    postDealBtn.setText("Posting");
-//                    postDealBtn.setTextColor(getApplication().getResources().getColor(R.color.marketplace1_btn));
-//                    posted = false;
-//                } else {
-//                    try {int s = Integer.parseInt(receiveQty.toString());} catch (Exception e) {Log.e("What the hell", e.getMessage());}
-//                    postDeal(receiveType.toString(), Integer.parseInt(receiveQty.toString()), giveType.toString(), Integer.parseInt(giveQty.toString()));}
-//            }
-//    });
-//        posted = false;
+        postTradeBtn = findViewById(R.id.post_trade_btn);
+        postTradeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {int s = Integer.parseInt(receiveQty.toString());} catch (Exception e) {Log.e("What the hell", e.getMessage());}
+                postTrade(receiveType.toString(), Integer.parseInt(receiveQty.toString()), giveType.toString(), Integer.parseInt(giveQty.toString()));}
+
+    });
+        posted = false;
 
         scrollParent = findViewById(R.id.scroll_parent);
         final Button displayExistingTradesBtn = findViewById(R.id.display_existing_trades_btn);
@@ -211,21 +205,12 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void postTrade(View view) {
+    public void postTrade(String receiveType, int receiveQty, String giveType, int giveQty) {
         if (userLoaded && tradesLoaded) {
-            ////        TODO: cast the dropdown option to the proper resource type
-////        sRecourceType = Resource.Fish;
-//
-////        TODO: cast the edittext input to int
-//
-//        int sQty = 5;
-//        int sBill = 10;
-//
-////        TODO: click the green button -> trigger the posting?
-//
-            String tryPost = MARKETPLACE.postTrade(fs, user, "fish", "gold", 0, 11);
+            String tryPost = MARKETPLACE.postTrade(fs, user, giveType, receiveType, giveQty, receiveQty);
             Toast msg = Toast.makeText(this, tryPost, Toast.LENGTH_SHORT);
             msg.show();
+
         } else {
             Log.d(TAG, "User/trades not yet loaded");
         }

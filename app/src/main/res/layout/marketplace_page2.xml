@@ -159,14 +159,13 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
-            android:id="@+id/post_deal_btn"
+            android:id="@+id/post_trade_btn"
             style="@style/marketplace1_btn"
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/receive"
-            app:layout_constraintTop_toTopOf="parent"
-            android:onClick="postTrade" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

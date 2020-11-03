@@ -53,7 +53,7 @@
     <string name="marketplace1_title1">Resource</string>
     <string name="marketplace1_title2">Quantity</string>
     <string name="marketplace1_title3">Amount of gold</string>
-    <string name="marketplace1_btn">Post this deal</string>
+    <string name="marketplace1_btn">Post this trade</string>
     <string name="marketplace2_title1">Username</string>
     <string name="marketplace2_title2">Item</string>
     <string name="marketplace2_title3">Quantity</string>
