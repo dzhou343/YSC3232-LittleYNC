@@ -271,8 +271,8 @@
                     <Button
                         android:id="@+id/display_existing_trades_btn"
                         style="@style/marketplace2_btn_text"
-                        android:layout_width="140dp"
-                        android:text="Click to view existing trades"
+                        android:layout_width="180dp"
+                        android:text="Click to view/refresh existing trades"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

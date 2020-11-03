@@ -38,6 +38,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
 
 public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     // To print to log instead of console
@@ -48,8 +49,8 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     private DocumentReference userDoc;
     private User user;
     private User initialUser;
-    private volatile Boolean userLoaded = false;
-    private volatile Boolean tradesLoaded = false;
+    private volatile boolean userLoaded = false;
+    private volatile boolean tradesLoaded = false;
 
     // For trading
     private Marketplace MARKETPLACE;
@@ -122,6 +123,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         String userID = FirebaseAuth.getInstance().getUid();
         userLoaded = false;
         tradesLoaded = false;
+        assert userID != null;
         userDoc = fs.collection("users").document(userID);
         readUser(userDoc.get());
 
@@ -146,11 +148,12 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         queriedTrades
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            ArrayList<Trade> trades = new ArrayList<Trade>();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
+                            ArrayList<Trade> trades = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 Trade t = document.toObject(Trade.class);
                                 trades.add(t);
@@ -208,8 +211,8 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                 postDealBtn.setBackgroundResource(R.drawable.marketplace2_btn);
                 postDealBtn.setTextColor(0xff0000);
             } else {
-                // TODO proper error msg
-                giveQty.setError("You have input an invalid quantity for trading. Please try again.");
+                Toast fail = Toast.makeText(this, "Failed to post trade", Toast.LENGTH_LONG);
+                fail.show();
             }
         } else {
             Log.d(TAG, "User/trades not yet loaded");
@@ -220,11 +223,11 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         if (userLoaded && tradesLoaded) {
             boolean tryAccept = MARKETPLACE.acceptTrade(user, toAccept.getDocumentID());
             if (tryAccept) {
-                // TODO success msgs
-                Log.d(TAG, user.getUserName() + " accepted " + toAccept.getUserName() + "'s trade");
+                Toast success = Toast.makeText(this, user.getUserName() + " accepted " + toAccept.getUserName() + "'s trade", Toast.LENGTH_LONG);
+                success.show();
             } else {
-                // TODO error msgs
-                Log.d(TAG, "Failed to accept trade");
+                Toast fail = Toast.makeText(this, "Failed to accept trade", Toast.LENGTH_LONG);
+                fail.show();
             }
         } else {
             Log.d(TAG, "User/trades not yet loaded");
@@ -233,10 +236,10 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     protected void populateExistingDeals() {
-        ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
-        int lastRowID = R.id.first_row;
-
         if (userLoaded && tradesLoaded) {
+            ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
+            int lastRowID = R.id.first_row;
+
             for (int i = 0; i < MARKETPLACE.getTrades().size(); i++) {
                 final Trade t = MARKETPLACE.getTrades().get(i);
                 final View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);

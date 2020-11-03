@@ -128,8 +128,7 @@ public class Marketplace {
             // Qty must be positive
             if (sellQty < 0 || receiveQty < 0) {
                 return false;
-            }
-            if (user.getTrades().size() < 5) {
+            } else if (user.getTrades().size() < 5) {
                 switch (sellType) {
                     case "wood":
                         if (user.getWood() >= sellQty) {
@@ -169,6 +168,7 @@ public class Marketplace {
                                 newTrade.writeToDatabase(tradeDoc);
                                 // Add the trade to the user's live trades
                                 user.addTrade(documentID);
+                                trades.add(0, newTrade);
                                 Log.d(TAG, "User trades size: " + user.getTrades().size());
                                 Log.d(TAG, "Wrote to DB, posted trade");
                                 postingTrade = false;
@@ -269,6 +269,7 @@ public class Marketplace {
                 // Debit the resource of the seller user
                 updateSellerResource(toAccept);
                 // Remove the trade from the Map of live trades
+                trades.remove(toAccept);
                 tradesMap.remove(tradeDocumentID);
                 return true;
             }
