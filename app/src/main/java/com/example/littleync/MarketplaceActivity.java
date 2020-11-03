@@ -54,14 +54,16 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     // For trading
     private Marketplace MARKETPLACE;
 
-    //    s-: sell; b-: buy
+//        T1
     Resource sRecourceType;
     private EditText receiveQty;
     private EditText giveQty;
     private Button postDealBtn;
-    private Button displayed;
+    private Boolean displayed;
     private Boolean posted;
 
+//    T2
+    private ConstraintLayout scrollParent;
     //    for trade button t
     private Boolean clicked;
     private Boolean finished;
@@ -108,13 +110,37 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //    });
 //        posted = false;
 
+        scrollParent = findViewById(R.id.scroll_parent);
         final Button displayExistingTradesBtn = findViewById(R.id.display_existing_trades_btn);
-        this.displayed = displayExistingTradesBtn;
+        this.displayed = false;
 //       TODO: check boolean if_displayed
+
         // Populate the scrollview on-demand
         displayExistingTradesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                displayed = true;
+                scrollParent.removeAllViews();
+//                int i = 0;
+//                do {
+//                    View child = scrollParent.getChildAt(i);
+//                    if (child.getId()==R.id.t2_btn_row){
+//                        i += 1;
+//                        continue;
+//                    }
+//                    scrollParent.removeView(child);
+//                }
+//                while (scrollParent.getChildCount() > 1);
+
+//                for (int i = 0; i < scrollParent.getChildCount(); i++) {
+//                    View child = scrollParent.getChildAt(i);
+//                    if (child.getId()==R.id.first_row){
+//                        continue;
+//                    }
+//                    scrollParent.removeView(child);
+//                }
+
+
                 populateExistingDeals();
             }
         });
@@ -234,10 +260,12 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     protected void populateExistingDeals() {
-        ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
-        int lastRowID = R.id.first_row;
+
+        int lastRowID = 0;
 
         if (userLoaded && tradesLoaded) {
+//            Log.d(TAG, String.valueOf(MARKETPLACE.getTrades().size()));
+
             for (int i = 0; i < MARKETPLACE.getTrades().size(); i++) {
                 final Trade t = MARKETPLACE.getTrades().get(i);
                 final View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);
@@ -295,7 +323,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
 //        set id & then constraints
                 int id = View.generateViewId();
-                Log.d("BRO", String.valueOf(id));
+//                Log.d("BRO", String.valueOf(id));
                 new_row.setId(id);
 
                 ConstraintSet set = new ConstraintSet();
@@ -304,7 +332,13 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
                 set.connect(id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
                 set.connect(id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
-                set.connect(id, ConstraintSet.TOP, lastRowID, ConstraintSet.BOTTOM, 0);
+
+                if (i == 0) {
+                    set.connect(id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0);
+                } else {
+                    set.connect(id, ConstraintSet.TOP, lastRowID, ConstraintSet.BOTTOM, 0);
+                }
+
                 set.applyTo(scrollParent);
 
                 lastRowID = id;

@@ -105,7 +105,7 @@
         android:text="@string/marketplace2_title1"
 
         android:layout_marginStart="12dp"
-        app:layout_constraintBottom_toTopOf="@+id/b_listing"
+        app:layout_constraintBottom_toTopOf="@+id/trade_scroll_container"
         app:layout_constraintStart_toStartOf="@+id/box2"
         app:layout_constraintTop_toTopOf="@+id/box2"
         app:layout_constraintVertical_bias="0.256" />
@@ -155,7 +155,7 @@
         app:layout_constraintVertical_bias="0.533" />
 
     <ScrollView
-        android:id="@+id/b_listing"
+        android:id="@+id/trade_scroll_container"
         android:layout_width="300dp"
         android:layout_height="100dp"
         app:layout_constraintBottom_toBottomOf="@+id/box2"
