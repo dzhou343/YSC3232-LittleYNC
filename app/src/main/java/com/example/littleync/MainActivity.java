@@ -160,8 +160,10 @@ public class MainActivity extends AppCompatActivity {
      * @param _loc
      */
     private void computeLocations(Location _loc) {
-        double CENDANA_LAT = 1.3080198;
-        double CENDANA_LON = 103.7723698;
+        double CENDANA_LAT = 1.3079833;
+        double CENDANA_LON = 103.7725314;
+        double CENDANA_LAT2 = 1.3079759;
+        double CENDANA_LON2 = 103.7721854;
         double ELM_LAT = 1.3062946;
         double ELM_LON = 103.7723276;
         double SAGA_LAT = 1.3057288;
@@ -170,19 +172,20 @@ public class MainActivity extends AppCompatActivity {
         double POND_LON = 103.7717348;
         double DOS_LAT = 1.3072026;
         double DOS_LON = 103.7726464;
-        double offset = 0.0005;
+        double offset = 0.0003;
 
 
         /**
          * Find Cendana
          */
-        if ((_loc.getLatitude() >= (CENDANA_LAT - offset)) && ((_loc.getLatitude() <= (CENDANA_LAT + offset)) && (_loc.getLongitude() >= (CENDANA_LON - offset)) && (_loc.getLongitude() <= (CENDANA_LON + offset)))) {
+        if (((_loc.getLatitude() >= (CENDANA_LAT2 - offset)) && ((_loc.getLatitude() <= (CENDANA_LAT2 + offset)) && (_loc.getLongitude() >= (CENDANA_LON2 - offset)) && (_loc.getLongitude() <= (CENDANA_LON2 + offset)))) || ((_loc.getLatitude() >= (CENDANA_LAT - offset)) && ((_loc.getLatitude() <= (CENDANA_LAT + offset)) && (_loc.getLongitude() >= (CENDANA_LON - offset)) && (_loc.getLongitude() <= (CENDANA_LON + offset))))) {
             whereAmINowMap.put("Cendana", true);
             whereAmINowMap.put("Elm", false);
             whereAmINowMap.put("Saga", false);
             whereAmINowMap.put("Ecopond", false);
             whereAmINowMap.put("Armory", false);
         }
+
         /**
          * Find Elm
          */
