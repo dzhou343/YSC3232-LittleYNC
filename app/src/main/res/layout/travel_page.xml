@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:contentDescription="YNC_map_1"
         android:scaleType="centerCrop"
-        android:src="@drawable/travel_page"
+        app:srcCompat="@drawable/travel_map"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
