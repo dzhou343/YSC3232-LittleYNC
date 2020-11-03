@@ -367,10 +367,11 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
     }
 
     private void updateGainText(){
-        int gain = user.getCombatGearLevel();
+        int gain = MONSTERS.getGoldYield(currentMonster);
+        int expGain = MONSTERS.getExpYield(currentMonster);
 
         String combatText = String.format(Locale.getDefault(), "+%s Gold", gain);
-        String expText = String.format(Locale.getDefault(), "+%s Exp", gain);
+        String expText = String.format(Locale.getDefault(), "+%s Exp", expGain);
         SpannableStringBuilder combatSpan = new SpannableStringBuilder(combatText);
         SpannableStringBuilder expSpan = new SpannableStringBuilder(expText);
 
