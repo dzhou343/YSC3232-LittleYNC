@@ -206,67 +206,72 @@ public class Marketplace {
             acceptingTrade = true;
 
             Trade toAccept = tradesMap.get(tradeDocumentID);
-            assert toAccept != null;
-            String sellType = toAccept.getSellType();
-            String receiveType = toAccept.getReceiveType();
-            int sellQty = toAccept.getSellQty();
-            int receiveQty = toAccept.getReceiveQty();
-
-            if (toAccept.getUserName().equals(buyer.getUserName())) {
+            if (toAccept == null) {
+                // Trade must not have been accepted before
                 return false;
-            }
+            } else if (toAccept.getUserName().equals(buyer.getUserName())) {
+                // User cannot accept their own trade
+                return false;
+            } else {
+                String sellType = toAccept.getSellType();
+                String receiveType = toAccept.getReceiveType();
+                int sellQty = toAccept.getSellQty();
+                int receiveQty = toAccept.getReceiveQty();
 
-            switch (receiveType) {
-                case "wood":
-                    if (buyer.getWood() >= receiveQty) {
-                        // Less off the resource from the accepting user
-                        buyer.setWood(buyer.getWood() - receiveQty);
-                        // Debit the resource received
-                        if (sellType.equals("wood")) {
-                            buyer.setWood(buyer.getWood() + sellQty);
-                        } else if (sellType.equals("fish")) {
-                            buyer.setFish(buyer.getFish() + sellQty);
+                switch (receiveType) {
+                    case "wood":
+                        if (buyer.getWood() >= receiveQty) {
+                            // Less off the resource from the accepting user
+                            buyer.setWood(buyer.getWood() - receiveQty);
+                            // Debit the resource received
+                            if (sellType.equals("wood")) {
+                                buyer.setWood(buyer.getWood() + sellQty);
+                            } else if (sellType.equals("fish")) {
+                                buyer.setFish(buyer.getFish() + sellQty);
+                            } else {
+                                buyer.setGold(buyer.getGold() + sellQty);
+                            }
                         } else {
-                            buyer.setGold(buyer.getGold() + sellQty);
+                            // Accepting user does not have enough resources to trade
+                            return false;
                         }
-                    } else {
-                        // Accepting user does not have enough resources to trade
-                        return false;
-                    }
-                    break;
-                case "fish":
-                    if (buyer.getFish() >= receiveQty) {
-                        buyer.setFish(buyer.getFish() - receiveQty);
-                        if (sellType.equals("wood")) {
-                            buyer.setWood(buyer.getWood() + sellQty);
-                        } else if (sellType.equals("fish")) {
-                            buyer.setFish(buyer.getFish() + sellQty);
+                        break;
+                    case "fish":
+                        if (buyer.getFish() >= receiveQty) {
+                            buyer.setFish(buyer.getFish() - receiveQty);
+                            if (sellType.equals("wood")) {
+                                buyer.setWood(buyer.getWood() + sellQty);
+                            } else if (sellType.equals("fish")) {
+                                buyer.setFish(buyer.getFish() + sellQty);
+                            } else {
+                                buyer.setGold(buyer.getGold() + sellQty);
+                            }
                         } else {
-                            buyer.setGold(buyer.getGold() + sellQty);
+                            return false;
                         }
-                    } else {
-                        return false;
-                    }
-                    break;
-                default:
-                    if (buyer.getGold() >= receiveQty) {
-                        buyer.setGold(buyer.getGold() - receiveQty);
-                        if (sellType.equals("wood")) {
-                            buyer.setWood(buyer.getWood() + sellQty);
-                        } else if (sellType.equals("fish")) {
-                            buyer.setFish(buyer.getFish() + sellQty);
+                        break;
+                    default:
+                        if (buyer.getGold() >= receiveQty) {
+                            buyer.setGold(buyer.getGold() - receiveQty);
+                            if (sellType.equals("wood")) {
+                                buyer.setWood(buyer.getWood() + sellQty);
+                            } else if (sellType.equals("fish")) {
+                                buyer.setFish(buyer.getFish() + sellQty);
+                            } else {
+                                buyer.setGold(buyer.getGold() + sellQty);
+                            }
                         } else {
-                            buyer.setGold(buyer.getGold() + sellQty);
+                            return false;
                         }
-                    } else {
-                        return false;
-                    }
-                    break;
+                        break;
+                }
+                // Trade is completed
+                // Debit the resource of the seller user
+                updateSellerResource(toAccept);
+                // Remove the trade from the Map of live trades
+                tradesMap.remove(tradeDocumentID);
+                return true;
             }
-            // Trade is completed
-            // Debit the resource of the seller user
-            updateSellerResource(toAccept);
-            return true;
         } else {
             Log.d(TAG, "Trades still being processed.");
             return false;

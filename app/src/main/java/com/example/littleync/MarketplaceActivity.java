@@ -1,8 +1,8 @@
 package com.example.littleync;
+
 import com.example.littleync.model.Marketplace;
 import com.example.littleync.model.Resource;
 
-import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -54,7 +54,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     // For trading
     private Marketplace MARKETPLACE;
 
-//    s-: sell; b-: buy
+    //    s-: sell; b-: buy
     Resource sRecourceType;
     private EditText receiveQty;
     private EditText giveQty;
@@ -115,7 +115,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         displayExistingTradesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                populateExistingDeals2();
+                populateExistingDeals();
             }
         });
 
@@ -127,8 +127,6 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
         // Setup marketplace for trading
         readTrades();
-
-
     }
 
     /**
@@ -218,22 +216,6 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         }
     }
 
-    // FOR TESTING ONLY, PLEASE IGNORE!
-    public void acceptTradeTest(View view) {
-        if (userLoaded && tradesLoaded) {
-            boolean tryAccept = MARKETPLACE.acceptTrade(user, "UcQQ3PKdtgU10R21jdoM");
-            if (tryAccept) {
-                // TODO success msgs
-                Log.d(TAG, user.getUserName() + " accepted " + "mtrader" + "'s trade");
-            } else {
-                // TODO error msgs
-                Log.d(TAG, "Failed to accept trade");
-            }
-        } else {
-            Log.d(TAG, "User/trades not yet loaded");
-        }
-    }
-
     public void acceptTrade(Trade toAccept) {
         if (userLoaded && tradesLoaded) {
             boolean tryAccept = MARKETPLACE.acceptTrade(user, toAccept.getDocumentID());
@@ -251,94 +233,87 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    protected void populateExistingDeals2(){
-        //        scroll test
-
+    protected void populateExistingDeals() {
         ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
         int lastRowID = R.id.first_row;
 
-        readTrades();
-//        for (Trade t: MARKETPLACE.getTrades()){
-        ArrayList<Trade> existingDeals = MARKETPLACE.getTrades();
-        if (!tradesLoaded || !userLoaded) {
-            Toast populatingFail = Toast.makeText(this, "Failed to load trades.", Toast.LENGTH_LONG);
-            populatingFail.show();
-            return;}
-
-        for (int i = 0; i < existingDeals.size(); i++){
-            final Trade t = existingDeals.get(i);
-            final View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);
+        if (userLoaded && tradesLoaded) {
+            for (int i = 0; i < MARKETPLACE.getTrades().size(); i++) {
+                final Trade t = MARKETPLACE.getTrades().get(i);
+                final View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);
 
 //        set content
-            TextView index = (TextView) new_row.findViewById(R.id.index2);
-            TextView timestamp = (TextView) new_row.findViewById(R.id.timestamp2);
-            TextView username = (TextView) new_row.findViewById(R.id.username2);
-            TextView giving = (TextView) new_row.findViewById(R.id.giving2);
-            TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
-            final ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
-            final Button t2Btn_text = (Button) new_row.findViewById(R.id.t2_btn_text2);
+                TextView index = (TextView) new_row.findViewById(R.id.index2);
+                TextView timestamp = (TextView) new_row.findViewById(R.id.timestamp2);
+                TextView username = (TextView) new_row.findViewById(R.id.username2);
+                TextView giving = (TextView) new_row.findViewById(R.id.giving2);
+                TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
+                final ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
+                final Button t2Btn_text = (Button) new_row.findViewById(R.id.t2_btn_text2);
 
-            boolean sameUser = false;
-            if (t.getUserName().equals(user.getUserName())) {
-                sameUser = true;
-            }
+                boolean sameUser = false;
+                if (t.getUserName().equals(user.getUserName())) {
+                    sameUser = true;
+                }
 
 //            change the appearance of the accept button if the current user posted this particular
 //            trade and make it unclickable as well
-            if (sameUser) {
-                t2Btn.setVisibility(View.INVISIBLE);
-                t2Btn_text.setVisibility(View.VISIBLE);
-                t2Btn_text.setText("Your trade");
-            }
-
-            index.setText(String.valueOf(i + 1));
-            timestamp.setText(t.getTimeOfListing().split("T")[0]);
-            username.setText(t.getUserName());
-            giving.setText(String.format(Locale.getDefault(),"%s x %d", t.getSellType(), t.getSellQty()));
-            receiving.setText(String.format(Locale.getDefault(),"%s x %d", t.getReceiveType(), t.getReceiveQty()));
-
-            final boolean finalSameUser = sameUser;
-            t2Btn_text.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (finalSameUser) {
-                        return;
-                    }
-                    acceptTrade(t);
-                    t2Btn_text.setText("Done!");
-                }
-            });
-
-
-
-            t2Btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                if (sameUser) {
                     t2Btn.setVisibility(View.INVISIBLE);
                     t2Btn_text.setVisibility(View.VISIBLE);
+                    t2Btn_text.setText("Your trade");
                 }
-            });
+
+                index.setText(String.valueOf(i + 1));
+                timestamp.setText(t.getTimeOfListing().split("T")[0]);
+                username.setText(t.getUserName());
+                giving.setText(String.format(Locale.getDefault(), "%s x %d", t.getSellType(), t.getSellQty()));
+                receiving.setText(String.format(Locale.getDefault(), "%s x %d", t.getReceiveType(), t.getReceiveQty()));
+
+                final boolean finalSameUser = sameUser;
+                t2Btn_text.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (finalSameUser) {
+                            return;
+                        }
+                        acceptTrade(t);
+                        t2Btn_text.setText("Done!");
+                    }
+                });
+
+                t2Btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        t2Btn.setVisibility(View.INVISIBLE);
+                        t2Btn_text.setVisibility(View.VISIBLE);
+                    }
+                });
 
 //        add to parent
-            scrollParent.addView(new_row);
+                scrollParent.addView(new_row);
 
 //        set id & then constraints
-            int id = View.generateViewId();
-            Log.d("BRO", String.valueOf(id));
-            new_row.setId(id);
+                int id = View.generateViewId();
+                Log.d("BRO", String.valueOf(id));
+                new_row.setId(id);
 
-            ConstraintSet set = new ConstraintSet();
-            set.constrainWidth(id, ConstraintSet.WRAP_CONTENT);
-            set.constrainHeight(id, ConstraintSet.WRAP_CONTENT);
+                ConstraintSet set = new ConstraintSet();
+                set.constrainWidth(id, ConstraintSet.WRAP_CONTENT);
+                set.constrainHeight(id, ConstraintSet.WRAP_CONTENT);
 
-            set.connect(id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
-            set.connect(id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
-            set.connect(id, ConstraintSet.TOP, lastRowID, ConstraintSet.BOTTOM, 0);
-            set.applyTo(scrollParent);
+                set.connect(id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
+                set.connect(id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
+                set.connect(id, ConstraintSet.TOP, lastRowID, ConstraintSet.BOTTOM, 0);
+                set.applyTo(scrollParent);
 
-            lastRowID = id;
-
-        }}
+                lastRowID = id;
+            }
+        } else {
+            Toast populatingFail = Toast.makeText(this, "Failed to load trades.", Toast.LENGTH_LONG);
+            populatingFail.show();
+        }
+    }
 
 
 //    @RequiresApi(api = Build.VERSION_CODES.O)
@@ -448,13 +423,11 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //    }}
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-    }
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {}
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-    }
+    public void onNothingSelected(AdapterView<?> parent) {}
+
 }
 
 
