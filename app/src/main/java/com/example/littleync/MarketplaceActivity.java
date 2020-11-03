@@ -55,14 +55,16 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     // For trading
     private Marketplace MARKETPLACE;
 
-    //    s-: sell; b-: buy
+//        T1
     Resource sRecourceType;
     private EditText receiveQty;
     private EditText giveQty;
     private Button postDealBtn;
-    private Button displayed;
+    private Boolean displayed;
     private Boolean posted;
 
+//    T2
+    private ConstraintLayout scrollParent;
     //    for trade button t
     private Boolean clicked;
     private Boolean finished;
@@ -109,13 +111,37 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //    });
 //        posted = false;
 
+        scrollParent = findViewById(R.id.scroll_parent);
         final Button displayExistingTradesBtn = findViewById(R.id.display_existing_trades_btn);
-        this.displayed = displayExistingTradesBtn;
+        this.displayed = false;
 //       TODO: check boolean if_displayed
+
         // Populate the scrollview on-demand
         displayExistingTradesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                displayed = true;
+                scrollParent.removeAllViews();
+//                int i = 0;
+//                do {
+//                    View child = scrollParent.getChildAt(i);
+//                    if (child.getId()==R.id.t2_btn_row){
+//                        i += 1;
+//                        continue;
+//                    }
+//                    scrollParent.removeView(child);
+//                }
+//                while (scrollParent.getChildCount() > 1);
+
+//                for (int i = 0; i < scrollParent.getChildCount(); i++) {
+//                    View child = scrollParent.getChildAt(i);
+//                    if (child.getId()==R.id.first_row){
+//                        continue;
+//                    }
+//                    scrollParent.removeView(child);
+//                }
+
+
                 populateExistingDeals();
             }
         });
@@ -215,20 +241,14 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void populateExistingDeals() {
-        if (userLoaded && tradesLoaded) {
-            ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
-            scrollParent.removeAllViews();
-//            for(int i = 0; i < scrollParent.getChildCount(); i++) {
-//                View currentChild = scrollParent.getChildAt(i);
-//                System.out.println("hhhhhhhhhhhhhhhhhhh" + currentChild);
-//                if (!(currentChild instanceof ConstraintLayout)) {
-//                    scrollParent.removeView(currentChild);
-//                }
-//            }
-            int lastRowID = R.id.first_row;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+
+    protected void populateExistingDeals() {
+
+        int lastRowID = 0;
+
+        if (userLoaded && tradesLoaded) {
             for (int i = 0; i < MARKETPLACE.getTrades().size(); i++) {
                 final Trade t = MARKETPLACE.getTrades().get(i);
                 final View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);
@@ -282,7 +302,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
 //        set id & then constraints
                 int id = View.generateViewId();
-                Log.d("BRO", String.valueOf(id));
+//                Log.d("BRO", String.valueOf(id));
                 new_row.setId(id);
 
                 ConstraintSet set = new ConstraintSet();
@@ -291,7 +311,13 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
                 set.connect(id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
                 set.connect(id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
-                set.connect(id, ConstraintSet.TOP, lastRowID, ConstraintSet.BOTTOM, 0);
+
+                if (i == 0) {
+                    set.connect(id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0);
+                } else {
+                    set.connect(id, ConstraintSet.TOP, lastRowID, ConstraintSet.BOTTOM, 0);
+                }
+
                 set.applyTo(scrollParent);
 
                 lastRowID = id;
@@ -301,6 +327,113 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
             populatingFail.show();
         }
     }
+
+
+//    @RequiresApi(api = Build.VERSION_CODES.O)
+//    private void addRow2(){
+//        //        scroll test
+//        ArrayList<String> indexList = new ArrayList<>();
+//        ArrayList<String> timestampList = new ArrayList<>();
+//        ArrayList<String> usernameList = new ArrayList<>();
+//        ArrayList<String> givingList = new ArrayList<>();
+//        ArrayList<String> receivingList  = new ArrayList<>();
+//
+//        ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
+//        int lastRowID = R.id.first_row;
+//
+//        for (int i  = 0; i < 20; i++) {
+////            creating test strings
+//            indexList.add(String.valueOf(i));
+//
+//            LocalDate newDate = LocalDate.of(2020, Month.APRIL, i+1);
+//            String newDateString = newDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy"));
+//            timestampList.add(newDateString);
+//
+//            char c = (char) (i + 64);
+//            char[] chars = new char[8];
+//            Arrays.fill(chars, c);
+//            String newString = new String(chars);
+//            usernameList.add(newString);
+//
+//            givingList.add(String.format("fish x %d", i));
+//            receivingList.add(String.format("gold x %d", i));
+//
+//            View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);
+//
+////        set content
+//            TextView index = (TextView) new_row.findViewById(R.id.index2);
+//            TextView timestamp = (TextView) new_row.findViewById(R.id.timestamp2);
+//            TextView username = (TextView) new_row.findViewById(R.id.username2);
+//            TextView giving = (TextView) new_row.findViewById(R.id.giving2);
+//            TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
+//            final ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
+//
+//            index.setText(indexList.get(i));
+//            timestamp.setText(timestampList.get(i));
+//            username.setText(usernameList.get(i));
+//            giving.setText(givingList.get(i));
+//            receiving.setText(receivingList.get(i));
+//
+//            final Button t2Btn_text = (Button) new_row.findViewById(R.id.t2_btn_text2);
+//
+//            t2Btn_text.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    acceptDeal();
+//                    t2Btn_text.setText("Done!");
+//                }
+//            });
+//
+//            t2Btn.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    t2Btn.setVisibility(View.INVISIBLE);
+//                    t2Btn_text.setVisibility(View.VISIBLE);
+//                }
+//            });
+//
+//
+////        add to parent
+//
+//            scrollParent.addView(new_row);
+//
+//
+////        set id & then constraints
+//            int id = View.generateViewId();
+//            Log.d("BRO", String.valueOf(id));
+//            new_row.setId(id);
+//
+////        Remarks: 1. setting the height & weight to equal to first row doesn't work.
+////        2. setting the height & weight to the exact dim 312 and 40 also don't work
+////        3. setting the dim to 0 also doesn't work
+////        4. seem to need to set it super big
+////         5. try to have another set for row_set
+//
+////            ConstraintLayout firstRow = (ConstraintLayout) findViewById(R.id.first_row);
+////        int h = firstRow.getHeight();
+////        int w = firstRow.getWidth();
+////            TextView firstRowTimestamp = (TextView) findViewById(R.id.timestamp33);
+//
+////        ConstraintSet row_set = new ConstraintSet();
+////        row_set.constrainHeight(id, h);
+////        row_set.constrainWidth(id, w);
+////        row_set.applyTo((ConstraintLayout) new_row);
+////            Log.d("AAAAAAA", String.valueOf(firstRowTimestamp.getWidth()));
+//
+//
+//            ConstraintSet set = new ConstraintSet();
+//            set.constrainWidth(id, ConstraintSet.WRAP_CONTENT);
+//            set.constrainHeight(id, ConstraintSet.WRAP_CONTENT);
+//
+//            set.connect(id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
+//            set.connect(id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
+//            set.connect(id, ConstraintSet.TOP, lastRowID, ConstraintSet.BOTTOM, 0);
+////            set.connect(id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
+//            set.applyTo(scrollParent);
+////            Log.d("BBBBBBBB", String.valueOf(timestamp.getWidth()));
+//
+//            lastRowID = id;
+//    }}
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {}

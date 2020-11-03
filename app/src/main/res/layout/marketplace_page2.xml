@@ -25,7 +25,7 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/reveice"
+            android:id="@+id/receive"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -50,9 +50,10 @@
                 android:layout_width="50dp"
                 android:layout_height="30dp"
                 android:layout_marginStart="8dp"
-                android:dropDownWidth="50dp"
+                android:dropDownWidth="wrap_content"
                 android:entries="@array/marketplace1_spinner"
                 android:spinnerMode="dropdown"
+                android:theme="@style/spinner3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/marketplace3_title1"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -96,10 +97,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/reveice"
+            app:layout_constraintEnd_toEndOf="@+id/receive"
             app:layout_constraintHorizontal_bias="0.47"
-            app:layout_constraintStart_toStartOf="@+id/reveice"
-            app:layout_constraintTop_toBottomOf="@+id/reveice"
+            app:layout_constraintStart_toStartOf="@+id/receive"
+            app:layout_constraintTop_toBottomOf="@+id/receive"
             app:layout_constraintVertical_bias="0.272">
 
             <TextView
@@ -163,7 +164,7 @@
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/reveice"
+            app:layout_constraintStart_toEndOf="@+id/receive"
             app:layout_constraintTop_toTopOf="parent"
             android:onClick="postTrade" />
 
@@ -244,42 +245,42 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ScrollView
-            android:id="@+id/b_listing"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/t2_btn_row"
             android:layout_width="match_parent"
-            android:layout_height="270dp"
+            android:layout_height="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/t2_title">
+
+
+            <Button
+                android:id="@+id/display_existing_trades_btn"
+                style="@style/marketplace2_btn_text"
+                android:layout_width="140dp"
+                android:text="Click to view existing trades"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ScrollView
+            android:id="@+id/trade_scroll_container"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/t2_title">
+            app:layout_constraintTop_toBottomOf="@+id/t2_btn_row">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/scroll_box"
+                android:id="@+id/scroll_parent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/first_row"
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-
-                    <Button
-                        android:id="@+id/display_existing_trades_btn"
-                        style="@style/marketplace2_btn_text"
-                        android:layout_width="150dp"
-                        android:text="Click to load existing trades"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
