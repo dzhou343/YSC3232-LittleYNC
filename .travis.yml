@@ -1,7 +1,7 @@
 language: android
 dist: trusty
 before_install:
-  - yes | sdkmanager "platforms;android-22"
+  - yes | sdkmanager "platforms;android-21"
 # Emulator Management: Create, Start and Wait
 android:
   components:
