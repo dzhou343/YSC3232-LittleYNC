@@ -36,12 +36,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.lang.reflect.Array;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Locale;
 
 public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -64,7 +59,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     private EditText receiveQty;
     private EditText giveQty;
     private Button postDealBtn;
-    private Button trade;
+    private Button displayed;
     private Boolean posted;
 
     //    for trade button t
@@ -113,8 +108,16 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //    });
 //        posted = false;
 
-        final Button tradeXML = findViewById(R.id.tradeButton);
-        this.trade = tradeXML;
+        final Button displayExistingTradesBtn = findViewById(R.id.display_existing_trades_btn);
+        this.displayed = displayExistingTradesBtn;
+//       TODO: check boolean if_displayed
+        // Populate the scrollview on-demand
+        displayExistingTradesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                populateExistingDeals2();
+            }
+        });
 
         String userID = FirebaseAuth.getInstance().getUid();
         userLoaded = false;
@@ -125,8 +128,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         // Setup marketplace for trading
         readTrades();
 
-        // Populate the scrollview with dummy trade objects
-        populateExistingDeals2();
+
     }
 
     /**
@@ -340,7 +342,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
             }
 
             index.setText(String.valueOf(i + 1));
-            timestamp.setText(t.getTimeOfListing());
+            timestamp.setText(t.getTimeOfListing().split("T")[0]);
             username.setText(t.getUserName());
             giving.setText(String.format(Locale.getDefault(),"%s x %d", t.getSellType(), t.getSellQty()));
             receiving.setText(String.format(Locale.getDefault(),"%s x %d", t.getReceiveType(), t.getReceiveQty()));
@@ -428,7 +430,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         ConstraintLayout firstRow = (ConstraintLayout) findViewById(R.id.first_row);
 //        int h = firstRow.getHeight();
 //        int w = firstRow.getWidth();
-        TextView firstRowTimestamp = (TextView) findViewById(R.id.timestamp33);
+        TextView firstRowTimestamp = (TextView) findViewById(R.id.timestamp2);
 
 //        ConstraintSet row_set = new ConstraintSet();
 //        row_set.constrainHeight(id, h);
