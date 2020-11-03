@@ -11,7 +11,8 @@ import android.widget.Button;
 
 
 import com.google.firebase.auth.*;
-
+import static com.example.littleync.MainActivity.fLC;
+import static com.example.littleync.MainActivity.lCB;
 import static com.example.littleync.MainActivity.loginStatus;
 import static com.example.littleync.MainActivity.logoutTrigger;
 import static com.example.littleync.MainActivity.userInstance;
@@ -42,6 +43,9 @@ public class TravelActivity extends AppCompatActivity {
         ecopond = (Button) findViewById(R.id.ecopond_travel_page);
         battleground = (Button) findViewById(R.id.saga_battleground_travel_page);
     }
+    /**
+     * Check for the activated location of the user based on whereAmINowMap to set alpha of button transparent.
+     */
 
     @Override
     public void onStart() {
@@ -68,6 +72,10 @@ public class TravelActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Calls onStop whenever a new page is generated.
+     */
+
     @Override
     public void onStop() {
         super.onStop();
@@ -92,6 +100,7 @@ public class TravelActivity extends AppCompatActivity {
         try{
             loginStatus = false;
             logoutTrigger = 0;
+            fLC.removeLocationUpdates(lCB);
             userInstance.signOut();
             TravelActivity.super.finish();
             }

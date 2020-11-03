@@ -135,6 +135,9 @@ public class CendanaForestActivity extends AppCompatActivity {
         Log.d(TAG, "Wrote to DB");
         logoutTrigger = 0;
         super.onDestroy();
+        /**
+         * Checks that the loginStatus is indeed true, then if it is, start a new TravelActivity Class, and clear all the redundant activities in the stack.
+         */
         if (loginStatus == true) {
             Intent intent = new Intent(this.getApplicationContext(), TravelActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -35,13 +35,14 @@ public class MainActivity extends AppCompatActivity {
     public static int logoutTrigger = 0;
     public static double longitude;
     public static double latitude;
+    public static LocationCallback lCB;
     private EditText emailLogin;
     private EditText passwordLogin;
     private Button loginButton;
     public static String UID = null;
     private Boolean _b = true;
     static User loggedInUser;
-    private FusedLocationProviderClient fLC;
+    public static FusedLocationProviderClient fLC;
     LocationRequest lR;
     public static TreeMap<String, Boolean> whereAmINowMap = new TreeMap<String, Boolean>();
     public static TreeMap<String, Boolean> whereWasIMap = new TreeMap<String, Boolean>();
@@ -277,78 +278,84 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("UID is", String.format(user));
                         UID = user;
                         loginStatus = true;
-                        if ((whereWasIMap.get("initialized") == true) && (loginStatus == true)) {
-                            Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
-                            startActivity(refresh);
-                        } else {
+
+                        //else {
 
 
-                            /**
-                             * Setup the location requests
-                             */
+                        /**
+                         * Setup the location requests
+                         */
 
 
-                            //Checks if the user has location services provided, and to give it if not.
-                            if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-                                // TODO: Consider calling
-                                //    ActivityCompat#requestPermissions
-                                // here to request the missing permissions, and then overriding
-                                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                //                                          int[] grantResults)
-                                // to handle the case where the user grants the permission. See the documentation
-                                // for ActivityCompat#requestPermissions for more details.
-                                return;
+                        //Checks if the user has location services provided, and to give it if not.
+                        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
+
+                        /**
+                         * Setup a LocationRequest to be passed into the Activity Compat's request location method.
+                         */
+                        lR = LocationRequest.create();
+                        lR.setInterval(750);
+                        lR.setFastestInterval(500);
+                        lR.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+                        /** Setup a LocationCallback to be passed into the Activity Compat's request location method.
+                         *
+                         */
+                        lCB = new LocationCallback() {
+                            @RequiresApi(api = Build.VERSION_CODES.N)
+                            @Override
+                            public void onLocationResult(LocationResult lResult) {
+                                if (lResult != null) {
+                                    //compute location works on whereAmINowMap
+                                    computeLocations(lResult.getLastLocation());
+
+                                    if (!whereWasIMap.equals(whereAmINowMap)) {
+                                        logoutTrigger = 0;
+                                        /**
+                                         * Synchronize both whereWasIMap and whereAmINowMap after the if both maps are different statement is started.
+                                         */
+                                        synchronizeLocations(whereWasIMap, whereAmINowMap);
+
+                                        /**
+                                         * Gets the application context and creates a new intent for a new travel page if the person's GPS coordinates has changed enough.
+                                         */
+
+                                        Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
+                                        refresh.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(refresh);
+                                    }
+
+                                    Log.d("Longitude", String.valueOf(lResult.getLastLocation().getLongitude()));
+                                    longitude = Double.valueOf(lResult.getLastLocation().getLongitude());
+                                    Log.d("Latitude", String.valueOf(lResult.getLastLocation().getLatitude()));
+                                    latitude = Double.valueOf(lResult.getLastLocation().getLatitude());
+
+
+                                } else {
+                                    System.out.println("Location result is null");
+                                }
                             }
 
-                            /**
-                             * Setup a LocationRequest to be passed into the Activity Compat's request location method.
-                             */
-                            lR = LocationRequest.create();
-                            lR.setInterval(750);
-                            lR.setFastestInterval(500);
-                            lR.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                        };
 
-                            /** Setup a LocationCallback to be passed into the Activity Compat's request location method.
-                             *
-                             */
-                            LocationCallback lCB = new LocationCallback() {
-                                @RequiresApi(api = Build.VERSION_CODES.N)
-                                @Override
-                                public void onLocationResult(LocationResult lResult) {
-                                    if (lResult != null) {
-                                        //compute location works on whereAmINowMap
-                                        computeLocations(lResult.getLastLocation());
-                                        if (!whereWasIMap.equals(whereAmINowMap)) {
-                                            logoutTrigger = 0;
-                                            synchronizeLocations(whereWasIMap, whereAmINowMap);
-                                            Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
-                                            refresh.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                            startActivity(refresh);
-                                        }
-
-                                        Log.d("Longitude", String.valueOf(lResult.getLastLocation().getLongitude()));
-                                        longitude = Double.valueOf(lResult.getLastLocation().getLongitude());
-                                        Log.d("Latitude", String.valueOf(lResult.getLastLocation().getLatitude()));
-                                        latitude = Double.valueOf(lResult.getLastLocation().getLatitude());
+                        /**
+                         * Initialize a fused Location Provider client with the location requests and it will start executing.
+                         */
+                        fLC = LocationServices.getFusedLocationProviderClient(MainActivity.this);
+                        fLC.requestLocationUpdates(lR, lCB, null);
 
 
-                                    } else {
-                                        System.out.println("Location result is null");
-                                    }
-                                }
-
-                            };
-
-                            /**
-                             * Initialize a fused Location Provider client with the location requests and it will start executing.
-                             */
-                            FusedLocationProviderClient fLC = LocationServices.getFusedLocationProviderClient(MainActivity.this);
-
-                            fLC.requestLocationUpdates(lR, lCB, null);
-
-
-                        }
+                        //}
 
 
                     } else {
@@ -361,6 +368,10 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
+            if ((whereWasIMap.get("initialized") == true) && (loginStatus == false)) {
+                Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
+                startActivity(refresh);
+            }
 
             //}
 
