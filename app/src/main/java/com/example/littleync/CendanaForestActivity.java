@@ -2,7 +2,11 @@ package com.example.littleync;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -42,7 +46,7 @@ public class CendanaForestActivity extends AppCompatActivity {
     private TextView combatGearLevelDisplay;
     private TextView aggLevelDisplay;
     private TextView aggLevelProgressDisplay;
-    private TextView woodAndExpGainDisplay;
+    private TextView gainDisplay;
 
     // Timer attributes
     // Time (in milliseconds) taken to deplete one unit of stamina = 5s
@@ -76,7 +80,7 @@ public class CendanaForestActivity extends AppCompatActivity {
         combatGearLevelDisplay = findViewById(R.id.combat_gear_level);
         aggLevelDisplay = findViewById(R.id.agg_level);
         aggLevelProgressDisplay = findViewById(R.id.agg_level_progress);
-        woodAndExpGainDisplay = findViewById(R.id.toast_msg);
+        gainDisplay = findViewById(R.id.toast_msg);
 
         String userID = FirebaseAuth.getInstance().getUid();
         userLoaded = false;
@@ -161,9 +165,7 @@ public class CendanaForestActivity extends AppCompatActivity {
                                         String aggLevelProgress = String.format(Locale.getDefault(),
                                                 "%s / %s", user.getExp(), user.requiredExperience(user.getAggregateLevel() + 1));
                                         aggLevelProgressDisplay.setText(aggLevelProgress);
-                                        String toastMsg = String.format(Locale.getDefault(),
-                                                "+%s Wood and +%s Exp", user.getWoodchoppingGearLevel(), user.getWoodchoppingGearLevel());
-                                        woodAndExpGainDisplay.setText(toastMsg);
+                                        gainDisplay.setText("");
                                     }
                                 }
         );
@@ -249,6 +251,33 @@ public class CendanaForestActivity extends AppCompatActivity {
     }
 
     /**
+     * Used to update the text display on how much resources were gained after each tick (5 seconds).
+     *
+     * */
+    private void updateGainText(){
+        int gain = user.getWoodchoppingGearLevel();
+
+        String woodText = String.format(Locale.getDefault(), "+%s Wood", gain);
+        String expText = String.format(Locale.getDefault(), "+%s Exp", gain);
+        SpannableStringBuilder woodSpan = new SpannableStringBuilder(woodText);
+        SpannableStringBuilder expSpan = new SpannableStringBuilder(expText);
+
+        int woodColor = Color.parseColor("#8FFF7C");
+        int expColor = Color.parseColor("#FF9999");
+
+        ForegroundColorSpan woodToColor = new ForegroundColorSpan(woodColor);
+        ForegroundColorSpan expToColor = new ForegroundColorSpan(expColor);
+
+        woodSpan.setSpan(woodToColor, 0, woodText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        expSpan.setSpan(expToColor, 0, expText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        woodSpan.append(" and ");
+        woodSpan.append(expSpan);
+
+        gainDisplay.setText(woodSpan);
+    }
+
+    /**
      * Update the stamina left which occurs every 5s, and for each unit, we want to chop wood
      */
     private void updateStamina() {
@@ -259,6 +288,7 @@ public class CendanaForestActivity extends AppCompatActivity {
             // For each unit of stamina consumed we want to chop wood
             if (staminaLeft < TOTAL_STAMINA) {
                 chopWood();
+                updateGainText();
             }
         } else {
             staminaLeft = quotient + 1;

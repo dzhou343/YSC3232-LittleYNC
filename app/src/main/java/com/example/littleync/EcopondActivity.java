@@ -2,7 +2,11 @@ package com.example.littleync;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -42,7 +46,7 @@ public class EcopondActivity extends AppCompatActivity {
     private TextView combatGearLevelDisplay;
     private TextView aggLevelDisplay;
     private TextView aggLevelProgressDisplay;
-    private TextView fishAndExpGainDisplay;
+    private TextView gainDisplay;
 
     // Timer attributes
     // Time (in milliseconds) taken to deplete one unit of stamina = 5s
@@ -76,7 +80,7 @@ public class EcopondActivity extends AppCompatActivity {
         combatGearLevelDisplay = findViewById(R.id.combat_gear_level);
         aggLevelDisplay = findViewById(R.id.agg_level);
         aggLevelProgressDisplay = findViewById(R.id.agg_level_progress);
-        fishAndExpGainDisplay = findViewById(R.id.toast_msg);
+        gainDisplay = findViewById(R.id.toast_msg);
 
         String userID = FirebaseAuth.getInstance().getUid();
         userLoaded = false;
@@ -161,9 +165,7 @@ public class EcopondActivity extends AppCompatActivity {
                                         String aggLevelProgress = String.format(Locale.getDefault(),
                                                 "%s / %s", user.getExp(), user.requiredExperience(user.getAggregateLevel() + 1));
                                         aggLevelProgressDisplay.setText(aggLevelProgress);
-                                        String toastMsg = String.format(Locale.getDefault(),
-                                                "+%s Fish and +%s Exp", user.getFishingGearLevel(), user.getFishingGearLevel());
-                                        fishAndExpGainDisplay.setText(toastMsg);
+                                        gainDisplay.setText("");
                                     }
                                 }
         );
@@ -248,6 +250,30 @@ public class EcopondActivity extends AppCompatActivity {
         timeDisplay.setText(timeLeftFormatted);
     }
 
+    private void updateGainText(){
+        int gain = user.getFishingGearLevel();
+
+        String fishText = String.format(Locale.getDefault(), "+%s Fish", gain);
+        String expText = String.format(Locale.getDefault(), "+%s Exp", gain);
+
+        SpannableStringBuilder fishSpan = new SpannableStringBuilder(fishText);
+        SpannableStringBuilder expSpan = new SpannableStringBuilder(expText);
+
+        int fishColor = Color.parseColor("#8CEAFF");
+        int expColor = Color.parseColor("#FF9999");
+
+        ForegroundColorSpan fishToColor = new ForegroundColorSpan(fishColor);
+        ForegroundColorSpan expToColor = new ForegroundColorSpan(expColor);
+
+        fishSpan.setSpan(fishToColor, 0, fishText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        expSpan.setSpan(expToColor, 0, expText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        fishSpan.append(" and ");
+        fishSpan.append(expSpan);
+
+        gainDisplay.setText(fishSpan);
+    }
+
     /**
      * Update the stamina left which occurs every 5s, and for each unit, we want to fish fish
      */
@@ -259,6 +285,7 @@ public class EcopondActivity extends AppCompatActivity {
             // For each unit of stamina consumed we want to fish fish
             if (staminaLeft < TOTAL_STAMINA) {
                 fishFish();
+                updateGainText();
             }
         } else {
             staminaLeft = quotient + 1;
