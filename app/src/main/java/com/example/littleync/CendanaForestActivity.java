@@ -11,6 +11,8 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -31,6 +33,9 @@ import static com.example.littleync.MainActivity.logoutTrigger;
  * Cendana Forest Activity page where the user can idly chop down trees to gain wood resource
  */
 public class CendanaForestActivity extends AppCompatActivity {
+    private Animation animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
+    private Animation animeFadeOut= AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out);
+
     // To print to log instead of console
     private final static String TAG = "CendanaForestActivity";
 
