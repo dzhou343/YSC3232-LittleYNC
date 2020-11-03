@@ -75,25 +75,25 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
 //        T1 initialization
 //        set up the spinner for the type of resource the user is asking for
-        final Spinner receiveType = (Spinner) findViewById(R.id.receive_type);
-        ArrayAdapter<String> receiveAdapter = new ArrayAdapter<String>(MarketplaceActivity.this,
+        final Spinner receiveType = findViewById(R.id.receive_type);
+        ArrayAdapter<String> receiveAdapter = new ArrayAdapter<>(MarketplaceActivity.this,
                 android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.marketplace1_spinner));
         receiveAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         receiveType.setAdapter(receiveAdapter);
         receiveType.setOnItemSelectedListener(this);
 
 //        set up the spinner for the type of resource the user is trading with
-        final Spinner giveType = (Spinner) findViewById(R.id.give_type);
-        ArrayAdapter<String> giveAdapter = new ArrayAdapter<String>(MarketplaceActivity.this,
+        final Spinner giveType = findViewById(R.id.give_type);
+        ArrayAdapter<String> giveAdapter = new ArrayAdapter<>(MarketplaceActivity.this,
                 android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.marketplace1_spinner));
         giveAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         giveType.setAdapter(giveAdapter);
         giveType.setOnItemSelectedListener(this);
 
-        receiveQty = (EditText) findViewById(R.id.receive_qty);
-        giveQty = (EditText) findViewById(R.id.give_qty);
+        receiveQty = findViewById(R.id.receive_qty);
+        giveQty = findViewById(R.id.give_qty);
 
-        postDealBtn = (Button) findViewById(R.id.post_deal_btn);
+        postDealBtn = findViewById(R.id.post_deal_btn);
 //        postDealBtn.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -198,7 +198,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 ////        TODO: click the green button -> trigger the posting?
 //
             String tryPost = MARKETPLACE.postTrade(fs, user, "fish", "gold", 0, 11);
-            Toast msg = Toast.makeText(this, tryPost, Toast.LENGTH_LONG);
+            Toast msg = Toast.makeText(this, tryPost, Toast.LENGTH_SHORT);
             msg.show();
         } else {
             Log.d(TAG, "User/trades not yet loaded");
@@ -208,7 +208,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     public void acceptTrade(Trade toAccept) {
         if (userLoaded && tradesLoaded) {
             String tryAccept = MARKETPLACE.acceptTrade(fs, user, toAccept.getDocumentID());
-            Toast msg = Toast.makeText(this, tryAccept, Toast.LENGTH_LONG);
+            Toast msg = Toast.makeText(this, tryAccept, Toast.LENGTH_SHORT);
             msg.show();
         } else {
             Log.d(TAG, "User/trades not yet loaded");
@@ -216,9 +216,17 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    protected void populateExistingDeals() {
+    public void populateExistingDeals() {
         if (userLoaded && tradesLoaded) {
             ConstraintLayout scrollParent = findViewById(R.id.scroll_box);
+            scrollParent.removeAllViews();
+//            for(int i = 0; i < scrollParent.getChildCount(); i++) {
+//                View currentChild = scrollParent.getChildAt(i);
+//                System.out.println("hhhhhhhhhhhhhhhhhhh" + currentChild);
+//                if (!(currentChild instanceof ConstraintLayout)) {
+//                    scrollParent.removeView(currentChild);
+//                }
+//            }
             int lastRowID = R.id.first_row;
 
             for (int i = 0; i < MARKETPLACE.getTrades().size(); i++) {
@@ -226,13 +234,13 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                 final View new_row = getLayoutInflater().inflate(R.layout.t2_row, null, false);
 
 //        set content
-                TextView index = (TextView) new_row.findViewById(R.id.index2);
-                TextView timestamp = (TextView) new_row.findViewById(R.id.timestamp2);
-                TextView username = (TextView) new_row.findViewById(R.id.username2);
-                TextView giving = (TextView) new_row.findViewById(R.id.giving2);
-                TextView receiving = (TextView) new_row.findViewById(R.id.receiving2);
-                final ImageButton t2Btn = (ImageButton) new_row.findViewById(R.id.t2_btn2);
-                final Button t2Btn_text = (Button) new_row.findViewById(R.id.t2_btn_text2);
+                TextView index = new_row.findViewById(R.id.index2);
+                TextView timestamp = new_row.findViewById(R.id.timestamp2);
+                TextView username = new_row.findViewById(R.id.username2);
+                TextView giving = new_row.findViewById(R.id.giving2);
+                TextView receiving = new_row.findViewById(R.id.receiving2);
+                final ImageButton t2Btn = new_row.findViewById(R.id.t2_btn2);
+                final Button t2Btn_text = new_row.findViewById(R.id.t2_btn_text2);
 
 //            change the appearance of the accept button if the current user posted this particular
 //            trade and make it unclickable as well
@@ -260,6 +268,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                         }
                     }
                 });
+
                 t2Btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -288,7 +297,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                 lastRowID = id;
             }
         } else {
-            Toast populatingFail = Toast.makeText(this, "Failed to load trades.", Toast.LENGTH_LONG);
+            Toast populatingFail = Toast.makeText(this, "Failed to load trades, try again", Toast.LENGTH_SHORT);
             populatingFail.show();
         }
     }

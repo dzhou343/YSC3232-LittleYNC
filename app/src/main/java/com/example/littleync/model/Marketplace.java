@@ -54,7 +54,7 @@ public class Marketplace {
      *
      * @return ArrayList of active trades to display
      */
-    public ArrayList<Trade> getTrades() {
+    public synchronized ArrayList<Trade> getTrades() {
         return trades;
     }
 
@@ -64,7 +64,7 @@ public class Marketplace {
      * @param user the User whose trades we want to show
      * @return ArrayList of the User's trades to display
      */
-    public ArrayList<Trade> getUserTrades(User user) {
+    public synchronized ArrayList<Trade> getUserTrades(User user) {
         ArrayList<Trade> userTrades = new ArrayList<>();
         for (String tradeDocumentID : user.getTrades()) {
             userTrades.add(tradesMap.get(tradeDocumentID));
@@ -78,7 +78,7 @@ public class Marketplace {
      * @param user            User to remove trade from
      * @param tradeDocumentID that corresponds to the documentID in the trades collection
      */
-    public void deleteTrade(User user, String tradeDocumentID) {
+    public synchronized void deleteTrade(User user, String tradeDocumentID) {
         if (!postingTrade && !acceptingTrade && !deletingTrade) {
             deletingTrade = true;
             // Delete trade from User
@@ -122,7 +122,7 @@ public class Marketplace {
      * @return message to display to user what went right/wrong
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public String postTrade(final FirebaseFirestore fs, final User user, final String sellType, final String receiveType, final int sellQty, final int receiveQty) {
+    public synchronized String postTrade(final FirebaseFirestore fs, final User user, final String sellType, final String receiveType, final int sellQty, final int receiveQty) {
         if (!postingTrade && !acceptingTrade && !deletingTrade) {
             // Qty must be positive
             if (sellQty < 0) {
@@ -202,7 +202,7 @@ public class Marketplace {
      * @param tradeDocumentID that corresponds to the documentID in the trades collection
      * @return message to display to user what went right/wrong
      */
-    public String acceptTrade(FirebaseFirestore fs, User buyer, String tradeDocumentID) {
+    public synchronized String acceptTrade(FirebaseFirestore fs, User buyer, String tradeDocumentID) {
         if (!postingTrade && !acceptingTrade && !deletingTrade) {
             Trade toAccept = tradesMap.get(tradeDocumentID);
             if (toAccept == null) {
@@ -285,7 +285,7 @@ public class Marketplace {
      * @param fs          the current Firestore instance
      * @param toAccept the Trade object that is being accepted
      */
-    public void updateSellerResource(final FirebaseFirestore fs, final Trade toAccept) {
+    public synchronized void updateSellerResource(final FirebaseFirestore fs, final Trade toAccept) {
         final String receiveType = toAccept.getReceiveType();
         final int receiveQty = toAccept.getReceiveQty();
         final String userName = toAccept.getUserName();
