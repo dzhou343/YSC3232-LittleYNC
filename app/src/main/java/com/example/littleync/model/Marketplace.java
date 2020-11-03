@@ -108,10 +108,10 @@ public class Marketplace {
     /**
      * Method called for a User to post a new trade; we need to process this locally in the current
      * User object as well as add the new trade to the trades collection in the DB; this will
-     * return false if the user input negative numbers, if the User does not have enough resources,
-     * or if previous trade actions are still being processed; when this method is invoked, it sets
-     * a flag, postingTrade, that only resolves once this trade is entirely finished being
-     * processed (logically and physically in DB)
+     * return a helpful message if the user input negative numbers, if the User does not have
+     * enough resources, or if previous trade actions are still being processed; when this method
+     * is invoked, it sets a flag, postingTrade, that only resolves once this trade is entirely
+     * finished being processed (logically and physically in DB)
      *
      * @param fs          the current Firestore instance
      * @param user        the User posting the trade
@@ -192,10 +192,10 @@ public class Marketplace {
      * Method called for a User (the buyer) to accept a trade; we need to process this locally in
      * the current User object as well as for the person who posted the trade (the seller), finally
      * we also need to delete this trade from the trades collection in the DB; this will return
-     * false if the buyer does not have enough enough resources, or if previous trade actions are
-     * still being processed; when this method is invoked, it sets a flag, acceptingTrade, that
-     * only resolves once this trade is entirely finished being processed (logically and physically
-     * in DB)
+     * a helpful message if the buyer does not have enough enough resources, or if previous trade
+     * actions are still being processed; when this method is invoked, it sets a flag,
+     * acceptingTrade, that only resolves once this trade is entirely finished being processed
+     * (logically and physically in DB)
      *
      * @param fs          the current Firestore instance
      * @param buyer           the User object that is accepting the trade
@@ -300,7 +300,6 @@ public class Marketplace {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            // TODO userName has to be unique
                             // userName is unique so there is only one here
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
