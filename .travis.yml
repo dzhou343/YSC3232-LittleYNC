@@ -1,46 +1,40 @@
 language: android
-dist: trusty
+notifications:
+  email: false
 before_install:
-  - yes | sdkmanager "platforms;android-21"
-# Emulator Management: Create, Start and Wait
-android:
-  components:
-    - android-21
-    - sys-img-armeabi-v7a-android-21
-    # Uncomment the lines below if you want tow
-    # use the latest revision of Android SDK Tools
-    # - tools
-    # - platform-tools
-
-    # The BuildTools version used by your project
-    - build-tools-30.0.2
-
-    # The SDK version used to compile your project
-   # - android-30
-
-    # Additional components
-    - extra-google-google_play_services
-    - extra-google-m2repository
-    - extra-android-m2repository
-    - sys-img-x86-android-26
-  licenses:
-    - 'build-tools;30.0.2 Android SDK Build-Tools 30.0.2'
-    - 'platforms;android-30 Android SDK Platform 30'
-
-  # Specify at least one system image,
-  # if you need to run emulator(s) during your tests
+  - sudo apt-get -qq update
+  - sudo apt-get install -y pax
 env:
   global:
-      # install timeout in minutes (2 minutes by default)
-    - ADB_INSTALL_TIMEOUT=8
-
-  # Emulator Management: Create, Start and Wait
+    - ANDROID_API_LEVEL=26
+    - ANDROID_BUILD_TOOLS_VERSION=26.0.1
+    - ANDROID_EMU_API_LEVEL=22
+    - ANDROID_ABI=armeabi-v7a
+    - ADB_INSTALL_TIMEOUT=20 # minutes (2 minutes by default)
+    - QEMU_AUDIO_DRV=none # Remove audio
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
+android:
+  components:
+    - tools
+    - platform-tools
+    - tools
+    - build-tools-$ANDROID_BUILD_TOOLS_VERSION
+    - android-$ANDROID_API_LEVEL
+    - android-$ANDROID_EMU_API_LEVEL
+    - extra-android-support
+    - sys-img-$ANDROID_ABI-google_apis-$ANDROID_EMU_API_LEVEL
 before_script:
-  - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
-  - emulator -avd test -no-skin -no-audio -no-window &
+  - echo -e "Host github.com\n\tHostName github.com\n\tUser git\n\tIdentityFile ~/.ssh/id_travisci\n" >> ~/.ssh/config
+  - echo no | android create avd --force -n test -t android-$ANDROID_EMU_API_LEVEL --abi google_apis/$ANDROID_ABI
+  - emulator -avd test -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
-
 script:
-  - android list target
-  - ./gradlew connectedAndroidTest
+  - ./gradlew clean installDebug
+  - ./gradlew check
+  - ./gradlew testDebugUnitTest
+  - ./gradlew connectedDebugAndroidTest
