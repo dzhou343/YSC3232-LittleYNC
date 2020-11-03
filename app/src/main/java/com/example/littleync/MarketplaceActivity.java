@@ -142,19 +142,12 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //                }
 
 
-                populateExistingDeals();
+                readUserAndPopulateTrades();
             }
         });
 
-        String userID = FirebaseAuth.getInstance().getUid();
-        userLoaded = false;
-        tradesLoaded = false;
-        assert userID != null;
-        userDoc = fs.collection("users").document(userID);
-        readUser(userDoc.get());
-
         // Setup marketplace for trading
-        readTrades();
+        readUserAndPopulateTrades();
     }
 
     /**
@@ -168,27 +161,46 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         super.onDestroy();
     }
 
-    public void readTrades() {
-        Query queriedTrades = fs.collection("trades")
-                .orderBy("timeOfListing", Query.Direction.DESCENDING);
-        queriedTrades
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @RequiresApi(api = Build.VERSION_CODES.O)
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            ArrayList<Trade> trades = new ArrayList<>();
-                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                Trade t = document.toObject(Trade.class);
-                                trades.add(t);
-                            }
-                            MARKETPLACE = new Marketplace(trades);
-                            tradesLoaded = true;
-                        }
-                    }
-                });
+    public void readUserAndPopulateTrades() {
+        String userID = FirebaseAuth.getInstance().getUid();
+        userLoaded = false;
+        tradesLoaded = false;
+        assert userID != null;
+        userDoc = fs.collection("users").document(userID);
+        userDoc.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        Log.d(TAG, documentSnapshot.getId() + " => " + documentSnapshot.getData());
+                                        // Store the initial values of the user
+                                        initialUser = documentSnapshot.toObject(User.class);
+                                        // Store the user that this page will manipulate
+                                        user = documentSnapshot.toObject(User.class);
+                                        userLoaded = true;
+
+                                        Query queriedTrades = fs.collection("trades")
+                                                .orderBy("timeOfListing", Query.Direction.DESCENDING);
+                                        queriedTrades
+                                                .get()
+                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                    @RequiresApi(api = Build.VERSION_CODES.O)
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                        if (task.isSuccessful()) {
+                                                            ArrayList<Trade> trades = new ArrayList<>();
+                                                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                                                Trade t = document.toObject(Trade.class);
+                                                                trades.add(t);
+                                                            }
+                                                            MARKETPLACE = new Marketplace(trades);
+                                                            tradesLoaded = true;
+                                                            populateExistingDeals();
+                                                        }
+                                                    }
+                                                });
+                                    }
+                                }
+        );
     }
 
     /**
@@ -200,6 +212,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        Log.d(TAG, documentSnapshot.getId() + " => " + documentSnapshot.getData());
                                         // Store the initial values of the user
                                         initialUser = documentSnapshot.toObject(User.class);
                                         // Store the user that this page will manipulate
@@ -243,7 +256,6 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-
     protected void populateExistingDeals() {
 
         int lastRowID = 0;

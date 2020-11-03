@@ -176,7 +176,7 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
                 "HP: %s / %s", currentHP, MONSTERS.getMonsterHitpoints(currentMonster));
         healthDisplay.setText(healthMaxFormatted);
         String toastMsg = String.format(Locale.getDefault(),
-                "+%s Gold and +%s Exp", MONSTERS.getGoldYield(currentMonster), MONSTERS.getExpYield(currentMonster));
+                "+%s Gold and +%s Exp", MONSTERS.getMonsterGoldYield(currentMonster), MONSTERS.getMonsterExpYield(currentMonster));
         gainDisplay.setText(toastMsg);
         changeMonsterImage();
     }
@@ -367,8 +367,8 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
     }
 
     private void updateGainText(){
-        int gain = MONSTERS.getGoldYield(currentMonster);
-        int expGain = MONSTERS.getExpYield(currentMonster);
+        int gain = MONSTERS.getMonsterGoldYield(currentMonster);
+        int expGain = MONSTERS.getMonsterExpYield(currentMonster);
 
         String combatText = String.format(Locale.getDefault(), "+%s Gold", gain);
         String expText = String.format(Locale.getDefault(), "+%s Exp", expGain);
