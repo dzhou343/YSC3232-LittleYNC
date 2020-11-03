@@ -368,6 +368,10 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
+
+            /**
+             * Assuming the user has logged in before, and would like to go in again.
+             */
             if ((whereWasIMap.get("initialized") == true) && (loginStatus == false)) {
                 Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
                 startActivity(refresh);
