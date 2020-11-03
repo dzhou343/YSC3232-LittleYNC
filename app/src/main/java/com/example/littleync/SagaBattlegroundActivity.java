@@ -2,8 +2,12 @@ package com.example.littleync;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -47,7 +51,7 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
     private TextView combatGearLevelDisplay;
     private TextView aggLevelDisplay;
     private TextView aggLevelProgressDisplay;
-    private TextView woodAndExpGainDisplay;
+    private TextView gainDisplay;
 
     // Timer attributes
     // Time (in milliseconds) taken to deplete one unit of stamina = 5s
@@ -89,7 +93,7 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         combatGearLevelDisplay = findViewById(R.id.combat_gear_level);
         aggLevelDisplay = findViewById(R.id.agg_level);
         aggLevelProgressDisplay = findViewById(R.id.agg_level_progress);
-        woodAndExpGainDisplay = findViewById(R.id.toast_msg);
+        gainDisplay = findViewById(R.id.toast_msg);
 
         String userID = FirebaseAuth.getInstance().getUid();
         userLoaded = false;
@@ -172,8 +176,8 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
                 "HP: %s / %s", currentHP, MONSTERS.getMonsterHitpoints(currentMonster));
         healthDisplay.setText(healthMaxFormatted);
         String toastMsg = String.format(Locale.getDefault(),
-                "+%s Gold and +%s Exp", MONSTERS.getMonsterGoldYield(currentMonster), MONSTERS.getMonsterExpYield(currentMonster));
-        woodAndExpGainDisplay.setText(toastMsg);
+                "+%s Gold and +%s Exp", MONSTERS.getGoldYield(currentMonster), MONSTERS.getExpYield(currentMonster));
+        gainDisplay.setText(toastMsg);
         changeMonsterImage();
     }
 
@@ -218,6 +222,7 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
                                         String aggLevelProgress = String.format(Locale.getDefault(),
                                                 "%s / %s", user.getExp(), user.requiredExperience(user.getAggregateLevel() + 1));
                                         aggLevelProgressDisplay.setText(aggLevelProgress);
+                                        gainDisplay.setText("");
                                     }
                                 }
         );
@@ -245,6 +250,7 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
                 String aggLevelProgress = String.format(Locale.getDefault(),
                         "%s / %s", user.getExp(), user.requiredExperience(user.getAggregateLevel() + 1));
                 aggLevelProgressDisplay.setText(aggLevelProgress);
+                updateGainText();
                 // Reset monster HP to fight again
                 currentHP = MONSTERS.getMonsterHitpoints(currentMonster);
             }
@@ -358,6 +364,30 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         int seconds = (int) (timeLeft / 1000) % 60;
         String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
         timeDisplay.setText(timeLeftFormatted);
+    }
+
+    private void updateGainText(){
+        int gain = MONSTERS.getGoldYield(currentMonster);
+        int expGain = MONSTERS.getExpYield(currentMonster);
+
+        String combatText = String.format(Locale.getDefault(), "+%s Gold", gain);
+        String expText = String.format(Locale.getDefault(), "+%s Exp", expGain);
+        SpannableStringBuilder combatSpan = new SpannableStringBuilder(combatText);
+        SpannableStringBuilder expSpan = new SpannableStringBuilder(expText);
+
+        int combatColor = Color.parseColor("#CCA533");
+        int expColor = Color.parseColor("#FF9999");
+
+        ForegroundColorSpan combatToColor = new ForegroundColorSpan(combatColor);
+        ForegroundColorSpan expToColor = new ForegroundColorSpan(expColor);
+
+        combatSpan.setSpan(combatToColor, 0, combatText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        expSpan.setSpan(expToColor, 0, expText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        combatSpan.append(" and ");
+        combatSpan.append(expSpan);
+
+        gainDisplay.setText(combatSpan);
     }
 
     /**
