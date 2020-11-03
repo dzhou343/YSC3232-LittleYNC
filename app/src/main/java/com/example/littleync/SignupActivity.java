@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 public class SignupActivity extends AppCompatActivity {
 
-    private Login loginObject = new Login();
+    private FirebaseAuth loginObject = FirebaseAuth.getInstance();
     private EditText email;
     private EditText password;
     private EditText password2;
@@ -64,7 +64,7 @@ public class SignupActivity extends AppCompatActivity {
         System.out.println(password.getText().toString());
         System.out.println(password2.getText().toString());
         if (password.getText().toString().equals(password2.getText().toString())) {
-            loginObject.getMyAuthInstance().createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            loginObject.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {

@@ -1,108 +1,102 @@
 package com.example.littleync;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-
-import com.example.littleync.controller.Login;
 import com.example.littleync.model.User;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.*;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.TreeMap;
 
+public class MainActivity extends AppCompatActivity {
+    public static FirebaseAuth userInstance = FirebaseAuth.getInstance();
+    public static boolean loginStatus = false;
+    public static int logoutTrigger = 0;
+    public static double longitude;
+    public static double latitude;
     private EditText emailLogin;
     private EditText passwordLogin;
     private Button loginButton;
     public static String UID = null;
     private Boolean _b = true;
     static User loggedInUser;
+    private FusedLocationProviderClient fLC;
+    LocationRequest lR;
+    public static TreeMap<String, Boolean> whereAmINowMap = new TreeMap<String, Boolean>();
+    public static TreeMap<String, Boolean> whereWasIMap = new TreeMap<String, Boolean>();
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+        whereAmINowMap.put("Cendana", false);
+        whereAmINowMap.put("Elm", false);
+        whereAmINowMap.put("Saga", false);
+        whereAmINowMap.put("Ecopond", false);
+        whereAmINowMap.put("Armory", false);
+        whereAmINowMap.put("initialized", true);
+        whereWasIMap.putAll(whereAmINowMap);
+        //Set the flag of initialized to true.
+        whereWasIMap.put("initialized", false);
 
-        /**
-         * set the logout
-         */
-        Login log = new Login();
-        log.getMyAuthInstance().signOut();
+        userInstance.signOut();
+
+        //final FirebaseAuth log = FirebaseAuth.getInstance();
+        //Make sure you logout before putting on a new reload.
+        /*try {
+            log.getCurrentUser().reload();
+            //Uncomment below to fix crash bug if the user loaded a new version of the app whilst logged in.
+            log.signOut();
+            System.out.println(log.getCurrentUser().getUid());
+            if (log.getCurrentUser() == null) {
+                log.signOut();
+            }
+        } catch (Exception e) {
+            log.signOut();
+        }*/
+
+
+        //log.signOut();
         UID = null;
 
         /**
          * Check if the user is already logged in
          */
-        if (log.getMyAuthInstance().getCurrentUser() != null) {
+        if ((userInstance.getCurrentUser() != null) && (loginStatus == true)) {
+            System.out.println(loginStatus);
             setContentView(R.layout.travel_page);
+
         } else {
             setContentView(R.layout.login_page);
             loginButton = findViewById(R.id.login_btn);
             emailLogin = findViewById(R.id.input_email);
             passwordLogin = findViewById(R.id.input_password);
-
-            /**TODO: figure out the UI
-             *
-             */
-            /*emailLogin.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        emailLogin.setHint("");
-                        emailLogin.setVisibility(View.VISIBLE);
-
-                        try {
-                            System.out.println(emailLogin.getText().toString());
-                            emailLogin.addTextCha ngedListener(new TextWatcher() {
-                                @Override
-                                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                                }
-
-                                @Override
-                                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                    emailLogin.setVisibility(View.VISIBLE);
-                                    //passwordLogin.setVisibility(View.VISIBLE);
-                                }
-
-
-                                @Override
-                                public void afterTextChanged(Editable s) {
-                                    s.toString();
-                                    if (_b) {
-                                        emailLogin.setVisibility(View.VISIBLE);
-                                        //emailLogin.setHint(emailLogin.getText().toString());
-                                        _b = false;
-                                    } else {
-
-                                    }
-
-                                    //passwordLogin.setVisibility(View.VISIBLE);
-
-
-                                }
-                            });
-                        } catch (Exception e) {
-                            System.out.println("OnCreateException");
-                        }
-
-                    } else if (!hasFocus) {
-                    }
-
-                }
-            });*/
-
-
         }
+
+
     }
+
 
     @Override
     protected void onStart() {
@@ -134,18 +128,129 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static final String EXTRA_MESSAGE = "com.example.myfirstapp.LOGIN";
+
+    //This is what happens when the user gives permission to access location for the first time.
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    /**
+     * SynchronizeLocations updates whereAmINowMap with whereWasIMap and ensures that both the maps are identical.
+     *
+     * @param _whereWasI
+     * @param _whereAmI
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void synchronizeLocations(TreeMap<String, Boolean> _whereWasI, TreeMap<String, Boolean> _whereAmI) {
+
+        for (String now : whereAmINowMap.keySet()) {
+            if (!_whereAmI.get(now).equals(_whereWasI.get(now))) {
+                //Updates the _where was I with what is currently the case.
+                whereWasIMap.put(now, _whereAmI.get(now));
+            }
+        }
+    }
+
+    /**
+     * ComputeLocations function updates the whereAmINowMap with the latest location of the user, based on the Location object returned from fusedLocationProviderClient.
+     * whereAmINowMap can only have 1 true value at any one time.
+     *
+     * @param _loc
+     */
+    private void computeLocations(Location _loc) {
+        double CENDANA_LAT = 1.3080198;
+        double CENDANA_LON = 103.7723698;
+        double ELM_LAT = 1.3062946;
+        double ELM_LON = 103.7723276;
+        double SAGA_LAT = 1.3057288;
+        double SAGA_LON = 103.7720902;
+        double POND_LAT = 1.3069067;
+        double POND_LON = 103.7717348;
+        double DOS_LAT = 1.3072026;
+        double DOS_LON = 103.7726464;
+        double offset = 0.0005;
+
+
+        /**
+         * Find Cendana
+         */
+        if ((_loc.getLatitude() >= (CENDANA_LAT - offset)) && ((_loc.getLatitude() <= (CENDANA_LAT + offset)) && (_loc.getLongitude() >= (CENDANA_LON - offset)) && (_loc.getLongitude() <= (CENDANA_LON + offset)))) {
+            whereAmINowMap.put("Cendana", true);
+            whereAmINowMap.put("Elm", false);
+            whereAmINowMap.put("Saga", false);
+            whereAmINowMap.put("Ecopond", false);
+            whereAmINowMap.put("Armory", false);
+        }
+        /**
+         * Find Elm
+         */
+        else if ((_loc.getLatitude() >= (ELM_LAT - offset)) && ((_loc.getLatitude() <= (ELM_LAT + offset)) && (_loc.getLongitude() >= (ELM_LON - offset)) && (_loc.getLongitude() <= (ELM_LON + offset)))) {
+
+            whereAmINowMap.put("Cendana", false);
+            whereAmINowMap.put("Elm", true);
+            whereAmINowMap.put("Saga", false);
+            whereAmINowMap.put("Ecopond", false);
+            whereAmINowMap.put("Armory", false);
+            //whereAmINowMap.put("Elm", !whereAmINowMap.get("Elm"));
+        }
+        /**
+         * Find Saga
+         */
+        else if ((_loc.getLatitude() >= (SAGA_LAT - offset)) && ((_loc.getLatitude() <= (SAGA_LAT + offset)) && (_loc.getLongitude() >= (SAGA_LON - offset)) && (_loc.getLongitude() <= (SAGA_LON + offset)))) {
+            //whereAmINowMap.put("Saga", !whereAmINowMap.get("Saga"));
+
+            whereAmINowMap.put("Cendana", false);
+            whereAmINowMap.put("Elm", false);
+            whereAmINowMap.put("Saga", true);
+            whereAmINowMap.put("Ecopond", false);
+            whereAmINowMap.put("Armory", false);
+        }
+
+        /**
+         * Find Ecopond
+         */
+        else if ((_loc.getLatitude() >= (POND_LAT - offset)) && ((_loc.getLatitude() <= (POND_LAT + offset)) && (_loc.getLongitude() >= (POND_LON - offset)) && (_loc.getLongitude() <= (POND_LON + offset)))) {
+
+            whereAmINowMap.put("Cendana", false);
+            whereAmINowMap.put("Elm", false);
+            whereAmINowMap.put("Saga", false);
+            whereAmINowMap.put("Ecopond", true);
+            whereAmINowMap.put("Armory", false);
+
+        }
+
+        /**
+         * Find Armory
+         */
+        else if ((_loc.getLatitude() >= (DOS_LAT - offset)) && ((_loc.getLatitude() <= (DOS_LAT + offset)) && (_loc.getLongitude() >= (DOS_LON - offset)) && (_loc.getLongitude() <= (DOS_LON + offset)))) {
+
+            whereAmINowMap.put("Cendana", false);
+            whereAmINowMap.put("Elm", false);
+            whereAmINowMap.put("Saga", false);
+            whereAmINowMap.put("Ecopond", false);
+            whereAmINowMap.put("Armory", true);
+        } else {
+            whereAmINowMap.put("Cendana", false);
+            whereAmINowMap.put("Elm", false);
+            whereAmINowMap.put("Saga", false);
+            whereAmINowMap.put("Ecopond", false);
+            whereAmINowMap.put("Armory", false);
+        }
+
+
+    }
+
 
     /**
      * Called when the user taps the Login button
      *
      * @param view
      */
+
+
     public void loginButton(View view) {
-        /**
-         * Creates a new Login() object, to check whether user has already been authenticated.
-         */
-        final Login log = new Login();
 
         /**
          * user variable here holds the current user object.
@@ -156,25 +261,93 @@ public class MainActivity extends AppCompatActivity {
             //final String user = log.getMyAuthInstance().getUid().toString();
 
             //if (!emailLogin.equals(null) && !passwordLogin.equals(null)) {
-            log.getMyAuthInstance().signInWithEmailAndPassword(emailLogin.getText().toString(), passwordLogin.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            userInstance.signInWithEmailAndPassword(emailLogin.getText().toString(), passwordLogin.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         /**
                          * Creates a user object
                          */
-                        final String user = log.getMyAuthInstance().getUid();
+                        final String user = userInstance.getUid();
                         System.out.println();
                         Log.d("Login results:", "successfully signed in!");
                         Log.d("UID is", String.format(user));
                         UID = user;
+                        loginStatus = true;
+                        if ((whereWasIMap.get("initialized") == true) && (loginStatus == true)) {
+                            Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
+                            startActivity(refresh);
+                        } else {
 
-                        /**
-                         * Move to new Travel Activity page
-                         */
 
-                        Intent intent = new Intent(MainActivity.this, TravelActivity.class);
-                        startActivity(intent);
+                            /**
+                             * Setup the location requests
+                             */
+
+
+                            //Checks if the user has location services provided, and to give it if not.
+                            if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                                // TODO: Consider calling
+                                //    ActivityCompat#requestPermissions
+                                // here to request the missing permissions, and then overriding
+                                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                //                                          int[] grantResults)
+                                // to handle the case where the user grants the permission. See the documentation
+                                // for ActivityCompat#requestPermissions for more details.
+                                return;
+                            }
+
+                            /**
+                             * Setup a LocationRequest to be passed into the Activity Compat's request location method.
+                             */
+                            lR = LocationRequest.create();
+                            lR.setInterval(750);
+                            lR.setFastestInterval(500);
+                            lR.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+                            /** Setup a LocationCallback to be passed into the Activity Compat's request location method.
+                             *
+                             */
+                            LocationCallback lCB = new LocationCallback() {
+                                @RequiresApi(api = Build.VERSION_CODES.N)
+                                @Override
+                                public void onLocationResult(LocationResult lResult) {
+                                    if (lResult != null) {
+                                        //compute location works on whereAmINowMap
+                                        computeLocations(lResult.getLastLocation());
+                                        if (!whereWasIMap.equals(whereAmINowMap)) {
+                                            logoutTrigger = 0;
+                                            synchronizeLocations(whereWasIMap, whereAmINowMap);
+                                            Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
+                                            refresh.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            startActivity(refresh);
+                                        }
+
+                                        Log.d("Longitude", String.valueOf(lResult.getLastLocation().getLongitude()));
+                                        longitude = Double.valueOf(lResult.getLastLocation().getLongitude());
+                                        Log.d("Latitude", String.valueOf(lResult.getLastLocation().getLatitude()));
+                                        latitude = Double.valueOf(lResult.getLastLocation().getLatitude());
+
+
+                                    } else {
+                                        System.out.println("Location result is null");
+                                    }
+                                }
+
+                            };
+
+                            /**
+                             * Initialize a fused Location Provider client with the location requests and it will start executing.
+                             */
+                            FusedLocationProviderClient fLC = LocationServices.getFusedLocationProviderClient(MainActivity.this);
+
+                            fLC.requestLocationUpdates(lR, lCB, null);
+
+
+                        }
+
+
                     } else {
                         loginButton.clearFocus();
                         Log.d("Login results:", "nope! Didn't sign in!");

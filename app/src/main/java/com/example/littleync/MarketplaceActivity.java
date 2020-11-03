@@ -3,6 +3,7 @@ import com.example.littleync.model.Marketplace;
 import com.example.littleync.model.Resource;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -41,6 +42,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
+
+import static com.example.littleync.MainActivity.loginStatus;
+import static com.example.littleync.MainActivity.logoutTrigger;
 
 public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     // To print to log instead of console
@@ -135,7 +139,14 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     public void onDestroy() {
         user.writeToDatabase(userDoc, initialUser);
         Log.d(TAG, "Wrote to DB");
+        logoutTrigger = 0;
         super.onDestroy();
+        if (loginStatus == true) {
+            Intent intent = new Intent(this.getApplicationContext(), TravelActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+
     }
 
     public void readTrades() {
