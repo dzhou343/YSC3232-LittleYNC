@@ -168,8 +168,8 @@ public class MainActivity extends AppCompatActivity {
         double ELM_LON = 103.7723276;
         double SAGA_LAT = 1.3057288;
         double SAGA_LON = 103.7720902;
-        double POND_LAT = 1.3069067;
-        double POND_LON = 103.7717348;
+        double POND_LAT = 1.3068497;
+        double POND_LON = 103.7721358;
         double DOS_LAT = 1.3072026;
         double DOS_LON = 103.7726464;
         double offset = 0.0003;
