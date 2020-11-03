@@ -28,7 +28,6 @@ import java.util.Objects;
  */
 public class Marketplace {
     private final String TAG = "Marketplace Class";
-    FirebaseFirestore fs = FirebaseFirestore.getInstance();
     private final ArrayList<Trade> trades;
     private final Map<String, Trade> tradesMap = new HashMap<>();
     private volatile boolean acceptingTrade = false;
@@ -62,7 +61,7 @@ public class Marketplace {
     /**
      * Getter for a specific User's live trades
      *
-     * @param user the User who's trades we want to show
+     * @param user the User whose trades we want to show
      * @return ArrayList of the User's trades to display
      */
     public ArrayList<Trade> getUserTrades(User user) {
@@ -85,7 +84,7 @@ public class Marketplace {
             // Delete trade from User
             user.removeTrade(tradeDocumentID);
             // Delete the trade from trades collection
-            fs.collection("trades").document(tradeDocumentID)
+            FirebaseFirestore.getInstance().collection("trades").document(tradeDocumentID)
                     .delete()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -114,6 +113,7 @@ public class Marketplace {
      * a flag, postingTrade, that only resolves once this trade is entirely finished being
      * processed (logically and physically in DB)
      *
+     * @param fs          the current Firestore instance
      * @param user        the User posting the trade
      * @param sellType    the resource being sold
      * @param receiveType the resource requested
@@ -122,7 +122,7 @@ public class Marketplace {
      * @return message to display to user what went right/wrong
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public String postTrade(final User user, final String sellType, final String receiveType, final int sellQty, final int receiveQty) {
+    public String postTrade(final FirebaseFirestore fs, final User user, final String sellType, final String receiveType, final int sellQty, final int receiveQty) {
         if (!postingTrade && !acceptingTrade && !deletingTrade) {
             // Qty must be positive
             if (sellQty < 0) {
@@ -197,11 +197,12 @@ public class Marketplace {
      * only resolves once this trade is entirely finished being processed (logically and physically
      * in DB)
      *
+     * @param fs          the current Firestore instance
      * @param buyer           the User object that is accepting the trade
      * @param tradeDocumentID that corresponds to the documentID in the trades collection
      * @return message to display to user what went right/wrong
      */
-    public String acceptTrade(User buyer, String tradeDocumentID) {
+    public String acceptTrade(FirebaseFirestore fs, User buyer, String tradeDocumentID) {
         if (!postingTrade && !acceptingTrade && !deletingTrade) {
             Trade toAccept = tradesMap.get(tradeDocumentID);
             if (toAccept == null) {
@@ -266,7 +267,7 @@ public class Marketplace {
                 // Trade is completed
                 // Debit the resource of the seller user
                 acceptingTrade = true;
-                updateSellerResource(toAccept);
+                updateSellerResource(fs, toAccept);
                 // Remove the trade from the Map of live trades
                 trades.remove(toAccept);
                 tradesMap.remove(tradeDocumentID);
@@ -281,9 +282,10 @@ public class Marketplace {
      * Helper method invoked by acceptTrade() to update the seller's attributes in the DB as well
      * as delete the accepted trade off of the trades collection
      *
+     * @param fs          the current Firestore instance
      * @param toAccept the Trade object that is being accepted
      */
-    public void updateSellerResource(final Trade toAccept) {
+    public void updateSellerResource(final FirebaseFirestore fs, final Trade toAccept) {
         final String receiveType = toAccept.getReceiveType();
         final int receiveQty = toAccept.getReceiveQty();
         final String userName = toAccept.getUserName();

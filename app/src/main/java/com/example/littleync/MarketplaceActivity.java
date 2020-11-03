@@ -137,7 +137,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
      */
     @Override
     public void onDestroy() {
-        user.writeToDatabase(userDoc, initialUser);
+        user.writeToDatabase(fs, userDoc, initialUser);
         Log.d(TAG, "Wrote to DB");
         super.onDestroy();
     }
@@ -197,7 +197,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //
 ////        TODO: click the green button -> trigger the posting?
 //
-            String tryPost = MARKETPLACE.postTrade(user, "fish", "gold", 0, 11);
+            String tryPost = MARKETPLACE.postTrade(fs, user, "fish", "gold", 0, 11);
             Toast msg = Toast.makeText(this, tryPost, Toast.LENGTH_LONG);
             msg.show();
         } else {
@@ -207,7 +207,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
     public void acceptTrade(Trade toAccept) {
         if (userLoaded && tradesLoaded) {
-            String tryAccept = MARKETPLACE.acceptTrade(user, toAccept.getDocumentID());
+            String tryAccept = MARKETPLACE.acceptTrade(fs, user, toAccept.getDocumentID());
             Toast msg = Toast.makeText(this, tryAccept, Toast.LENGTH_LONG);
             msg.show();
         } else {
