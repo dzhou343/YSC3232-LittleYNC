@@ -31,24 +31,28 @@ public class ForgotPassword extends AppCompatActivity {
     }
 
     public void resetPassword(View view) {
-        try{emailToReset = forgotPasswordInput.getText().toString();
+        try {
+            resetButton.setEnabled(false);
+            emailToReset = forgotPasswordInput.getText().toString();
             FirebaseAuth.getInstance().sendPasswordResetEmail(emailToReset).addOnCompleteListener(
                     new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
+                                resetButton.setEnabled(true);
                                 Log.d("Forgot Email output", "Successfully reset password");
                                 Toast.makeText(getApplicationContext(), "Success. Please check your email", Toast.LENGTH_LONG).show();
                                 ForgotPassword.super.finish();
                             } else {
+                                resetButton.setEnabled(true);
                                 forgotPasswordInput.setError(task.getException().getMessage());
                                 resetButton.clearFocus();
                             }
                         }
                     }
             );
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
+            resetButton.setEnabled(true);
             forgotPasswordInput.setError(e.getMessage());
             resetButton.clearFocus();
         }

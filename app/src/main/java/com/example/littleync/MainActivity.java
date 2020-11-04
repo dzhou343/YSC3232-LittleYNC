@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
          */
 
         try {
-
+            loginButton.setEnabled(false);
             //final String user = log.getMyAuthInstance().getUid().toString();
 
             //if (!emailLogin.equals(null) && !passwordLogin.equals(null)) {
@@ -269,6 +269,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
+                        loginButton.setEnabled(true);
                         /**
                          * Creates a user object
                          */
@@ -359,6 +360,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                     } else {
+                        loginButton.setEnabled(true);
                         loginButton.clearFocus();
                         Log.d("Login results:", "nope! Didn't sign in!");
                         Log.d("Exception", task.getException().toString());
@@ -380,6 +382,7 @@ public class MainActivity extends AppCompatActivity {
             //}
 
         } catch (Exception e) {
+            loginButton.setEnabled(true);
             loginButton.clearFocus();
             System.out.println(e);
             emailLogin.setError(e.getMessage());

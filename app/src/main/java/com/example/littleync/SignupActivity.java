@@ -59,17 +59,14 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void signUpSubmit(View view) {
-
-        System.out.println(email.getText().toString());
-        System.out.println(password.getText().toString());
-        System.out.println(password2.getText().toString());
+        submitSignUp.setEnabled(false);
         if (password.getText().toString().equals(password2.getText().toString())) {
             loginObject.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
+                        submitSignUp.setEnabled(true);
                         Log.d(TAG, String.format("Sign up successful for user %s", email));
-                        System.out.println(String.format("Sign up successful for %s", email));
                         email.setError(null);
                         password.setError(null);
                         password2.setError(null);
@@ -79,6 +76,7 @@ public class SignupActivity extends AppCompatActivity {
                         //submitSignUp.setText((task.getResult().toString()));
                         SignupActivity.super.finish();
                     } else if (!task.isSuccessful()) {
+                        submitSignUp.setEnabled(true);
                         Log.d(TAG, "login failed");
                         Log.d(TAG, task.toString());
                         Log.d(TAG, task.getException().getMessage());
