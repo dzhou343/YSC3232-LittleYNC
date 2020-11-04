@@ -236,9 +236,10 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                         if (!finalSameUser) {
                             acceptTrade(t);
                             t2Btn_text.setText("Done!");
-
-//                            if the trade
-                        } else {
+                        }
+//                        the user can decide to delete his/her own trade; need to click twice, the second time
+//                        to confirm
+                        else {
                             if (!deleteConfirm) {
                                 t2Btn_text.setText("Delete?");
                                 t2Btn_text.setBackground(getResources().getDrawable(R.drawable.marketplace2_btn2));
