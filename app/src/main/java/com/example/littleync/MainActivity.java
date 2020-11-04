@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         return super.getSupportActionBar();
     }
 
+
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +73,18 @@ public class MainActivity extends AppCompatActivity {
         //Set the flag of initialized to true.
         whereWasIMap.put("initialized", false);
 
-        userInstance.signOut();
+        //This listener will be activated upon successful sign in. We have to trigger the location receiver here and the navigation to next page from here.
+        userInstance.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if ((firebaseAuth.getCurrentUser() != null) && (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) &&
+                        (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
+                    generateLocationReceiverAndNavigateToTravelPage();
+                }
+            }
+
+        });
+
 
         //final FirebaseAuth log = FirebaseAuth.getInstance();
         //Make sure you logout before putting on a new reload.
@@ -134,16 +146,154 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        userInstance.removeAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
+            }
+        });
+    }
+
+    @Override
     protected void onRestart() {
         super.onRestart();
         System.out.print("onRestart");
 
     }
 
+    public void signIn() {
+        try {
+
+            //final String user = log.getMyAuthInstance().getUid().toString();
+
+            //if (!emailLogin.equals(null) && !passwordLogin.equals(null)) {
+            userInstance.signInWithEmailAndPassword(emailLogin.getText().toString(), passwordLogin.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+
+                        /**
+                         * Creates a user object
+                         */
+                        final String user = userInstance.getUid();
+                        System.out.println();
+                        Log.d("Login results:", "successfully signed in!");
+                        Log.d("UID is", String.format(user));
+                        UID = user;
+                        loginStatus = true;
+                        //else {
+                    } else {
+                        loginButton.clearFocus();
+                        Log.d("Login results:", "nope! Didn't sign in!");
+                        Log.d("Exception", task.getException().toString());
+                        emailLogin.setError(task.getException().getMessage());
+                        passwordLogin.setError(task.getException().getMessage());
+                        loginButton.setEnabled(true);
+                    }
+
+                }
+
+            });
+            /**
+             * Assuming the user has logged in before, and would like to go in again.
+             */
+            /*if ((whereWasIMap.get("initialized") == true) && (loginStatus == false)) {
+                Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
+                startActivity(refresh);
+            }*/
+
+            //}
+
+        } catch (Exception e) {
+            loginButton.clearFocus();
+            System.out.println(e);
+            emailLogin.setError(e.getMessage());
+            passwordLogin.setError(e.getMessage());
+            loginButton.setEnabled(true);
+        }
+
+    }
+
+    @SuppressLint("MissingPermission")
+    public void generateLocationReceiverAndNavigateToTravelPage() {
+
+        /**
+         * Setup a LocationRequest to be passed into the Activity Compat's request location method.
+         */
+        lR = LocationRequest.create();
+        lR.setInterval(750);
+        lR.setFastestInterval(500);
+        lR.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        /** Setup a LocationCallback to be passed into the Activity Compat's request location method.
+         *
+         */
+        lCB = new LocationCallback() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onLocationResult(LocationResult lResult) {
+                if (lResult != null) {
+                    //compute location works on whereAmINowMap
+                    computeLocations(lResult.getLastLocation());
+
+                    if (!whereWasIMap.equals(whereAmINowMap)) {
+                        logoutTrigger = 0;
+                        /**
+                         * Synchronize both whereWasIMap and whereAmINowMap after the if both maps are different statement is started.
+                         */
+                        synchronizeLocations(whereWasIMap, whereAmINowMap);
+
+                        /**
+                         * Gets the application context and creates a new intent for a new travel page if the person's GPS coordinates has changed enough.
+                         */
+                        Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
+                        refresh.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(refresh);
+
+                    }
+
+                    Log.d("Longitude", String.valueOf(lResult.getLastLocation().getLongitude()));
+                    longitude = Double.valueOf(lResult.getLastLocation().getLongitude());
+                    Log.d("Latitude", String.valueOf(lResult.getLastLocation().getLatitude()));
+                    latitude = Double.valueOf(lResult.getLastLocation().getLatitude());
+
+
+                } else {
+                    System.out.println("Location result is null");
+
+                }
+            }
+
+        };
+
+        /**
+         * Initialize a fused Location Provider client with the location requests and it will start executing.
+         */
+        fLC = LocationServices.getFusedLocationProviderClient(MainActivity.this);
+        fLC.requestLocationUpdates(lR, lCB, null);
+        loginButton.setEnabled(true);
+        loginStatus = true;
+        userInstance.removeAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
+            }
+        });
+        Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
+        startActivity(refresh);
+    }
+
 
     //This is what happens when the user gives permission to access location for the first time.
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
+        if ((grantResults[0] == PackageManager.PERMISSION_GRANTED) && ((grantResults[1] == PackageManager.PERMISSION_GRANTED))) {
+            signIn();
+        } else {
+            loginButton.setEnabled(true);
+        }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
@@ -266,150 +416,22 @@ public class MainActivity extends AppCompatActivity {
         loginButton.setEnabled(false);
 
         /**
-         * user variable here holds the current user object.
+         * Setup the location requests
          */
-
-        try {
-
-            //final String user = log.getMyAuthInstance().getUid().toString();
-
-            //if (!emailLogin.equals(null) && !passwordLogin.equals(null)) {
-            userInstance.signInWithEmailAndPassword(emailLogin.getText().toString(), passwordLogin.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-
-                        /**
-                         * Assuming the user has logged in before, and would like to go in again.
-                         */
-                        if ((whereWasIMap.get("initialized") == true) && (loginStatus == false)) {
-                            Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
-                            startActivity(refresh);
-                        }
-                        /**
-                         * Creates a user object
-                         */
-                        final String user = userInstance.getUid();
-                        System.out.println();
-                        Log.d("Login results:", "successfully signed in!");
-                        Log.d("UID is", String.format(user));
-                        UID = user;
-                        loginStatus = true;
-
-                        //else {
-
-
-                        /**
-                         * Setup the location requests
-                         */
-
-
-                        //Checks if the user has location services provided, and to give it if not.
-                        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-                            // TODO: Consider calling
-                            //    ActivityCompat#requestPermissions
-                            // here to request the missing permissions, and then overriding
-                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                            //                                          int[] grantResults)
-                            // to handle the case where the user grants the permission. See the documentation
-                            // for ActivityCompat#requestPermissions for more details.
-
-                        }
-
-                        /**
-                         * Setup a LocationRequest to be passed into the Activity Compat's request location method.
-                         */
-                        lR = LocationRequest.create();
-                        lR.setInterval(750);
-                        lR.setFastestInterval(500);
-                        lR.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-                        /** Setup a LocationCallback to be passed into the Activity Compat's request location method.
-                         *
-                         */
-                        lCB = new LocationCallback() {
-                            @RequiresApi(api = Build.VERSION_CODES.N)
-                            @Override
-                            public void onLocationResult(LocationResult lResult) {
-                                if (lResult != null) {
-                                    //compute location works on whereAmINowMap
-                                    computeLocations(lResult.getLastLocation());
-
-                                    if (!whereWasIMap.equals(whereAmINowMap)) {
-                                        logoutTrigger = 0;
-                                        /**
-                                         * Synchronize both whereWasIMap and whereAmINowMap after the if both maps are different statement is started.
-                                         */
-                                        synchronizeLocations(whereWasIMap, whereAmINowMap);
-
-                                        /**
-                                         * Gets the application context and creates a new intent for a new travel page if the person's GPS coordinates has changed enough.
-                                         */
-
-                                        Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
-                                        refresh.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        startActivity(refresh);
-                                    }
-
-                                    Log.d("Longitude", String.valueOf(lResult.getLastLocation().getLongitude()));
-                                    longitude = Double.valueOf(lResult.getLastLocation().getLongitude());
-                                    Log.d("Latitude", String.valueOf(lResult.getLastLocation().getLatitude()));
-                                    latitude = Double.valueOf(lResult.getLastLocation().getLatitude());
-
-
-                                } else {
-                                    System.out.println("Location result is null");
-
-                                }
-                            }
-
-                        };
-
-                        /**
-                         * Initialize a fused Location Provider client with the location requests and it will start executing.
-                         */
-                        fLC = LocationServices.getFusedLocationProviderClient(MainActivity.this);
-                        fLC.requestLocationUpdates(lR, lCB, null);
-                        loginButton.setEnabled(true);
-                        loginStatus = true;
-                        Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
-                        startActivity(refresh);
-
-
-                    } else {
-
-
-                        loginButton.clearFocus();
-                        Log.d("Login results:", "nope! Didn't sign in!");
-                        Log.d("Exception", task.getException().toString());
-                        emailLogin.setError(task.getException().getMessage());
-                        passwordLogin.setError(task.getException().getMessage());
-                        loginButton.setEnabled(true);
-                    }
-
-                }
-
-            });
-            /**
-             * Assuming the user has logged in before, and would like to go in again.
-             */
-            if ((whereWasIMap.get("initialized") == true) && (loginStatus == false)) {
-                Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
-                startActivity(refresh);
-            }
-
-            //}
-
-        } catch (Exception e) {
-            loginButton.clearFocus();
-            System.out.println(e);
-            emailLogin.setError(e.getMessage());
-            passwordLogin.setError(e.getMessage());
-            loginButton.setEnabled(true);
-
-
+        //Checks if the user has location services provided, and to give it if not.
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+        } else {
+            signIn();
         }
+
 
     }
 

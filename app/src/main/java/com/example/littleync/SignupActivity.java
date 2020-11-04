@@ -30,10 +30,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import static com.example.littleync.MainActivity.userInstance;
+
 
 public class SignupActivity extends AppCompatActivity {
-
-    private FirebaseAuth loginObject = FirebaseAuth.getInstance();
     private EditText email;
     private EditText password;
     private EditText password2;
@@ -68,7 +68,7 @@ public class SignupActivity extends AppCompatActivity {
      *
      */
     public void createUser(){
-        loginObject.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        userInstance.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
@@ -82,7 +82,7 @@ public class SignupActivity extends AppCompatActivity {
                     user.writeToDatabaseDirectly(userDoc);
                     //Generate the userName for the person
                     UserProfileChangeRequest updateForProfile = new UserProfileChangeRequest.Builder().setDisplayName(userNameBox.getText().toString()).build();
-                    loginObject.getCurrentUser().updateProfile(updateForProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    userInstance.getCurrentUser().updateProfile(updateForProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
@@ -95,6 +95,7 @@ public class SignupActivity extends AppCompatActivity {
 
                     //submitSignUp.setText((task.getResult().toString()));
                     submitSignUp.setEnabled(true);
+                    userInstance.signOut();
                     SignupActivity.super.finish();
 
                 } else if (!task.isSuccessful()) {
@@ -131,8 +132,7 @@ public class SignupActivity extends AppCompatActivity {
                                         if (!task.getResult().isEmpty()) {
                                             try {
                                                 for (DocumentSnapshot ds : task.getResult().getDocuments()) {
-                                                    System.out.println("DATA IS");
-                                                    System.out.println(ds.getData().toString());
+                                                    Log.d("SIGNUPACTIVITY",ds.getData().toString());
                                                 }
 
                                                 throw new UserNameAlreadyUsed();

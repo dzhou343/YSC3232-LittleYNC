@@ -73,8 +73,8 @@ public class CendanaForestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.cendana_forest_page);
 
+        setContentView(R.layout.cendana_forest_page);
         // User and relevant TextViews
         woodDisplay = findViewById(R.id.wood_res);
         woodchoppingGearLevelDisplay = findViewById(R.id.wood_gear_level);
