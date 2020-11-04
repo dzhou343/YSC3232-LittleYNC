@@ -282,6 +282,8 @@ public class CendanaForestActivity extends AppCompatActivity {
         woodSpan.append(expSpan);
 
         gainDisplay.setText(woodSpan);
+        gainDisplay.startAnimation(animFadeIn);
+        gainDisplay.startAnimation(animeFadeOut);
     }
 
     /**
