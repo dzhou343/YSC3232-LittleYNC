@@ -155,7 +155,7 @@
             android:id="@+id/monster_img"
             android:layout_width="match_parent"
             android:layout_height="180dp"
-            app:srcCompat="@drawable/battle_bruno">
+            app:srcCompat="@drawable/battle_sergey">
 
         </ImageView>
 
