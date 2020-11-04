@@ -175,6 +175,7 @@ public class Marketplace {
                                         // The user does not have enough to deposit
                                         showToast("Not enough wood to trade");
                                         postingTrade = false;
+                                        return;
                                     }
                                     break;
                                 case "fish":
@@ -183,6 +184,7 @@ public class Marketplace {
                                     } else {
                                         showToast("Not enough fish to trade");
                                         postingTrade = false;
+                                        return;
                                     }
                                     break;
                                 default:
@@ -191,6 +193,7 @@ public class Marketplace {
                                     } else {
                                         showToast("Not enough gold to trade");
                                         postingTrade = false;
+                                        return;
                                     }
                                     break;
                             }
@@ -280,6 +283,7 @@ public class Marketplace {
                                     // Accepting user does not have enough resources to trade
                                     showToast("Not enough wood to trade");
                                     acceptingTrade = false;
+                                    return;
                                 }
                                 break;
                             case "fish":
@@ -288,6 +292,7 @@ public class Marketplace {
                                 } else {
                                     showToast("Not enough fish to trade");
                                     acceptingTrade = false;
+                                    return;
                                 }
                                 break;
                             default:
@@ -296,6 +301,7 @@ public class Marketplace {
                                 } else {
                                     showToast("Not enough gold to trade");
                                     acceptingTrade = false;
+                                    return;
                                 }
                                 break;
                         }
