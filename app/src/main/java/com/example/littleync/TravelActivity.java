@@ -62,12 +62,18 @@ public class TravelActivity extends AppCompatActivity implements TravelActivityI
 
     @Override
     public void onStart() {
-        super.onStart();
+        super.onStart();/*
         cTree.setEnabled(whereAmINowMap.get("Cendana"));
         trading.setEnabled(whereAmINowMap.get("Elm"));
         battleground.setEnabled(whereAmINowMap.get("Saga"));
         ecopond.setEnabled(whereAmINowMap.get("Ecopond"));
-        armory.setEnabled(whereAmINowMap.get("Armory"));
+        armory.setEnabled(whereAmINowMap.get("Armory"));*/
+
+        cTree.setEnabled(true);
+        trading.setEnabled(true);
+        battleground.setEnabled(true);
+        ecopond.setEnabled(true);
+        armory.setEnabled(true);
 
         if (whereAmINowMap.get("Cendana") == true) {
             cTree.setAlpha(0);
