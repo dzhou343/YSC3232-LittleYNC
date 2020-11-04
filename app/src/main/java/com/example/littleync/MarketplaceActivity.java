@@ -150,17 +150,6 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         readUserAndPopulateTrades();
     }
 
-    /**
-     * Write the local User and any updates made to it back to the DB
-     * This is called when we press the back button to return to the Main Activity
-     */
-    @Override
-    public synchronized void onDestroy() {
-        user.writeToDatabase(fs, userDoc, initialUser);
-        Log.d(TAG, "Wrote to DB");
-        super.onDestroy();
-    }
-
     public synchronized void readUserAndPopulateTrades() {
         String userID = FirebaseAuth.getInstance().getUid();
         userLoaded = false;
@@ -216,7 +205,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //
 ////        TODO: click the green button -> trigger the posting?
 //
-            String tryPost = MARKETPLACE.postTrade(fs, userDoc, initialUser, user, "fish", "gold", 0, 11);
+            String tryPost = MARKETPLACE.postTrade(fs, userDoc, user, "fish", "gold", 1, 11);
             Toast msg = Toast.makeText(this, tryPost, Toast.LENGTH_SHORT);
             msg.show();
         } else {
@@ -226,7 +215,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
     public synchronized void acceptTrade(Trade toAccept) {
         if (userLoaded && tradesLoaded) {
-            String tryAccept = MARKETPLACE.acceptTrade(fs, userDoc, initialUser, user, toAccept.getDocumentID());
+            String tryAccept = MARKETPLACE.acceptTrade(fs, userDoc, user, toAccept.getDocumentID());
             Toast msg = Toast.makeText(this, tryAccept, Toast.LENGTH_SHORT);
             msg.show();
         } else {
