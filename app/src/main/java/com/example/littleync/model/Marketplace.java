@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Marketplace class to handle the creation, posting, and accepting of trades from User to User;
@@ -87,9 +88,6 @@ public class Marketplace {
                     final User user = documentSnapshot.toObject(User.class);
                     assert user != null;
 
-                    // Delete trade from User
-                    user.removeTrade(tradeDocumentID);
-
                     if (tradesMap.containsKey(tradeDocumentID)) {
                         // Delete trade from DB collection
                         fs.collection("trades").document(tradeDocumentID)
@@ -97,11 +95,27 @@ public class Marketplace {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        user.writeToDatabaseDirectly(userDoc);
-
+                                        // Delete trade from User
+                                        user.removeTrade(tradeDocumentID);
+                                        // Return what the user deposited
+                                        Trade toDelete = tradesMap.get(tradeDocumentID);
+                                        switch (Objects.requireNonNull(toDelete).getSellType()) {
+                                            case "wood":
+                                                    user.addWood(toDelete.getSellQty());
+                                                break;
+                                            case "fish":
+                                                user.addFish(toDelete.getSellQty());
+                                                break;
+                                            default:
+                                                user.addGold(toDelete.getSellQty());
+                                                break;
+                                        }
                                         // Remove from local store
-                                        trades.remove(tradesMap.get(tradeDocumentID));
+                                        trades.remove(toDelete);
                                         tradesMap.remove(tradeDocumentID);
+
+                                        // Write User back to DB
+                                        user.writeToDatabaseDirectly(userDoc);
 
                                         String del = "Deleted!";
                                         deleteButton.setText(del);
