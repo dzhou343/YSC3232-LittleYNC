@@ -3,7 +3,6 @@ package com.example.littleync;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Color;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -24,16 +23,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Locale;
 
-import static com.example.littleync.MainActivity.loginStatus;
-import static com.example.littleync.MainActivity.logoutTrigger;
-
 /**
  * Ecopond Activity page where the user can idly fish for fish to gain fish resource
  */
-public class EcopondActivity extends AppCompatActivity implements EcopondActivityInterface {
+public class EcopondActivity extends AppCompatActivity {
     // To print to log instead of console
     private final static String TAG = "EcopondActivity";
-
 
     // DB attributes
     private final FirebaseFirestore fs = FirebaseFirestore.getInstance();
@@ -108,7 +103,8 @@ public class EcopondActivity extends AppCompatActivity implements EcopondActivit
             public void onClick(View v) {
                 if (timerRunning) {
                     pauseTimer();
-                } else {
+                }
+                else {
                     startTimer();
                 }
             }
@@ -131,17 +127,9 @@ public class EcopondActivity extends AppCompatActivity implements EcopondActivit
      */
     @Override
     public void onDestroy() {
-
         user.writeToDatabase(userDoc, initialUser);
         Log.d(TAG, "Wrote to DB");
-        logoutTrigger = 0;
         super.onDestroy();
-        if (loginStatus == true) {
-            Intent intent = new Intent(this.getApplicationContext(), TravelActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-        }
-
     }
 
     /**
@@ -150,7 +138,6 @@ public class EcopondActivity extends AppCompatActivity implements EcopondActivit
      *
      * @param ds DocumentSnapshot of the User from the DB
      */
-    @Override
     public void readUser(Task<DocumentSnapshot> ds) {
         ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
@@ -189,7 +176,6 @@ public class EcopondActivity extends AppCompatActivity implements EcopondActivit
      * the aggregateLevel, thus, we need to update these TextViews; there is also the check that
      * the User has actually loaded in (since it is loaded in asynchronously)
      */
-    @Override
     public void fishFish() {
         if (userLoaded) {
             user.fishFish();
