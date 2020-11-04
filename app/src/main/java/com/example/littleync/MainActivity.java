@@ -371,13 +371,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityInter
 
                     } else {
 
-                        /**
-                         * Assuming the user has logged in before, and would like to go in again.
-                         */
-                        if ((whereWasIMap.get("initialized") == true) && (loginStatus == false)) {
-                            Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
-                            startActivity(refresh);
-                        }
+
                         loginButton.clearFocus();
                         Log.d("Login results:", "nope! Didn't sign in!");
                         Log.d("Exception", task.getException().toString());
@@ -387,7 +381,15 @@ public class MainActivity extends AppCompatActivity implements MainActivityInter
                     }
 
                 }
+
             });
+            /**
+             * Assuming the user has logged in before, and would like to go in again.
+             */
+            if ((whereWasIMap.get("initialized") == true) && (loginStatus == false)) {
+                Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
+                startActivity(refresh);
+            }
 
             //}
 
@@ -397,6 +399,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityInter
             emailLogin.setError(e.getMessage());
             passwordLogin.setError(e.getMessage());
             loginButton.setEnabled(true);
+
 
         }
 
