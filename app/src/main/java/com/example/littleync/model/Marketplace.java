@@ -357,7 +357,15 @@ public class Marketplace {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             // userName is unique so there is only one here
-                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                if (document == null) {
+                                    showToast("User does not exist anymore");
+                                    String NA = "N/A";
+                                    acceptButton.setText(NA);
+                                    acceptButton.setBackgroundColor(Color.RED);
+                                }
+
+                                assert document != null;
                                 Log.d(TAG, document.getId() + " => " + document.getData());
 
                                 // Update seller User object
