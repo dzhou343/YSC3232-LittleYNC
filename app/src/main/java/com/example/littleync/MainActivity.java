@@ -1,7 +1,9 @@
 package com.example.littleync;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -47,10 +49,19 @@ public class MainActivity extends AppCompatActivity {
     public static TreeMap<String, Boolean> whereAmINowMap = new TreeMap<String, Boolean>();
     public static TreeMap<String, Boolean> whereWasIMap = new TreeMap<String, Boolean>();
 
+
+    @Nullable
+    @Override
+    public ActionBar getSupportActionBar() {
+        return super.getSupportActionBar();
+    }
+
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setSubtitle(String.format("Please sign in or sign up below."));
         whereAmINowMap.put("Cendana", false);
         whereAmINowMap.put("Elm", false);
         whereAmINowMap.put("Saga", false);
@@ -303,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
                             //                                          int[] grantResults)
                             // to handle the case where the user grants the permission. See the documentation
                             // for ActivityCompat#requestPermissions for more details.
-                            
+
                         }
 
                         /**
@@ -345,7 +356,6 @@ public class MainActivity extends AppCompatActivity {
                                     longitude = Double.valueOf(lResult.getLastLocation().getLongitude());
                                     Log.d("Latitude", String.valueOf(lResult.getLastLocation().getLatitude()));
                                     latitude = Double.valueOf(lResult.getLastLocation().getLatitude());
-
 
 
                                 } else {
