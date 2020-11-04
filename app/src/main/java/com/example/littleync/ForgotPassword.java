@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class ForgotPassword extends AppCompatActivity implements ForgotPasswordInterface {
+public class ForgotPassword extends AppCompatActivity {
 
     private EditText forgotPasswordInput;
     private String emailToReset;
@@ -30,7 +30,6 @@ public class ForgotPassword extends AppCompatActivity implements ForgotPasswordI
         resetButton = findViewById(R.id.submit_forgot_password);
     }
 
-    @Override
     public void resetPassword(View view) {
         try {
             resetButton.setEnabled(false);

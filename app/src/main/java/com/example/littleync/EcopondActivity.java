@@ -30,7 +30,7 @@ import static com.example.littleync.MainActivity.logoutTrigger;
 /**
  * Ecopond Activity page where the user can idly fish for fish to gain fish resource
  */
-public class EcopondActivity extends AppCompatActivity implements EcopondActivityInterface {
+public class EcopondActivity extends AppCompatActivity {
     // To print to log instead of console
     private final static String TAG = "EcopondActivity";
 
@@ -135,7 +135,7 @@ public class EcopondActivity extends AppCompatActivity implements EcopondActivit
         Log.d(TAG, "Wrote to DB");
         logoutTrigger = 0;
         super.onDestroy();
-        if (loginStatus == true) {
+        if (loginStatus) {
             Intent intent = new Intent(this.getApplicationContext(), TravelActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);

@@ -30,7 +30,7 @@ import static com.example.littleync.MainActivity.logoutTrigger;
 /**
  * Cendana Forest Activity page where the user can idly chop down trees to gain wood resource
  */
-public class CendanaForestActivity extends AppCompatActivity implements CendanaForestActivityInterface {
+public class CendanaForestActivity extends AppCompatActivity {
     // To print to log instead of console
     private final static String TAG = "CendanaForestActivity";
 
@@ -129,7 +129,6 @@ public class CendanaForestActivity extends AppCompatActivity implements CendanaF
      * Write the local User and any updates made to it back to the DB; this is called when we press
      * the back button to return to the Main Activity
      */
-    @Override
     public void onDestroy() {
         user.writeToDatabase(fs, userDoc, initialUser);
         Log.d(TAG, "Wrote to DB");
@@ -138,7 +137,7 @@ public class CendanaForestActivity extends AppCompatActivity implements CendanaF
         /**
          * Checks that the loginStatus is indeed true, then if it is, start a new TravelActivity Class, and clear all the redundant activities in the stack.
          */
-        if (loginStatus == true) {
+        if (loginStatus) {
             Intent intent = new Intent(this.getApplicationContext(), TravelActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
@@ -152,7 +151,6 @@ public class CendanaForestActivity extends AppCompatActivity implements CendanaF
      *
      * @param ds DocumentSnapshot of the User from the DB
      */
-    @Override
     public void readUser(Task<DocumentSnapshot> ds) {
         ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
@@ -191,7 +189,6 @@ public class CendanaForestActivity extends AppCompatActivity implements CendanaF
      * the aggregateLevel, thus, we need to update these TextViews; there is also the check that
      * the User has actually loaded in (since it is loaded in asynchronously)
      */
-    @Override
     public void chopWood() {
         if (userLoaded) {
             user.chopWood();

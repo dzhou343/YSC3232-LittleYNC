@@ -44,7 +44,7 @@ import java.util.Objects;
 import static com.example.littleync.MainActivity.loginStatus;
 import static com.example.littleync.MainActivity.logoutTrigger;
 
-public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, MarketplaceActivityInterface {
+public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     // To print to log instead of console
     private final static String TAG = "MarketplaceActivity";
 

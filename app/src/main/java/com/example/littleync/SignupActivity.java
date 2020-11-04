@@ -28,7 +28,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 
-public class SignupActivity extends AppCompatActivity implements SignupActivityInterface {
+public class SignupActivity extends AppCompatActivity {
 
     private FirebaseAuth loginObject = FirebaseAuth.getInstance();
     private EditText email;
@@ -60,7 +60,6 @@ public class SignupActivity extends AppCompatActivity implements SignupActivityI
         this.userNameBox = userName;
     }
 
-    @Override
     public void signUpSubmit(View view) {
         submitSignUp.setEnabled(false);
         try {
