@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/marketplace1_spinner_default"
-    android:layout_width="20dp"
-    android:layout_height="10dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
     style="?attr/spinnerDropDownItemStyle"
-    android:background="@drawable/ic_baseline_arrow_drop_down_24"
-    android:backgroundTint="#FFE0B2">
+    android:background="#FFE0B2"
+    android:fontFamily="@font/advent_pro_semibold"
+    android:textSize="12sp"
+    >
 
 </TextView>

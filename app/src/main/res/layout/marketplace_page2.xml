@@ -47,13 +47,12 @@
 
             <Spinner
                 android:id="@+id/receive_type"
-                android:layout_width="50dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:dropDownWidth="wrap_content"
                 android:entries="@array/marketplace1_spinner"
                 android:spinnerMode="dropdown"
-                android:theme="@style/spinner3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/marketplace3_title1"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -114,10 +113,10 @@
 
             <Spinner
                 android:id="@+id/sell_type"
-                android:layout_width="50dp"
-                android:layout_height="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:dropDownWidth="50dp"
+                android:dropDownWidth="wrap_content"
                 android:entries="@array/marketplace1_spinner"
                 android:spinnerMode="dropdown"
                 app:layout_constraintBottom_toBottomOf="parent"
