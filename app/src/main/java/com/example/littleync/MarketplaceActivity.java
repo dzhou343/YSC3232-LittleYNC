@@ -3,7 +3,6 @@ package com.example.littleync;
 import com.example.littleync.model.Marketplace;
 import com.example.littleync.model.Resource;
 
-import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -40,9 +39,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
-
-import static com.example.littleync.MainActivity.loginStatus;
-import static com.example.littleync.MainActivity.logoutTrigger;
 
 public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     // To print to log instead of console
@@ -199,17 +195,9 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void postTrade(String sellType, String receiveType, int sellQty, int receiveQty) {
+    public synchronized void postTrade(String sellType, String receiveType, int sellQty, int receiveQty) {
         if (userLoaded && tradesLoaded) {
             MARKETPLACE.postTrade(fs, sellType, receiveType, sellQty, receiveQty);
-        } else {
-            Log.d(TAG, "User/trades not yet loaded");
-        }
-    }
-
-    public synchronized void acceptTrade(Trade toAccept) {
-        if (userLoaded && tradesLoaded) {
-            MARKETPLACE.acceptTrade(fs, toAccept.getDocumentID());
         } else {
             Log.d(TAG, "User/trades not yet loaded");
         }
@@ -259,8 +247,13 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                     @Override
                     public void onClick(View v) {
                         if (!finalSameUser) {
-                            acceptTrade(t);
-                            t2Btn_text.setText("Done!");
+                            synchronized (MarketplaceActivity.this) {
+                                if (userLoaded && tradesLoaded) {
+                                    MARKETPLACE.acceptTrade(fs, t2Btn_text, t.getDocumentID());
+                                } else {
+                                    Log.d(TAG, "User/trades not yet loaded");
+                                }
+                            }
                         } else {
                             if (!finalDeleteConfirm) {
                                 t2Btn_text.setText("Delete?");

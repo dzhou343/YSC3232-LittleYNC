@@ -1,8 +1,10 @@
 package com.example.littleync.model;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -248,7 +250,7 @@ public class Marketplace {
      * @param fs              the current Firestore instance
      * @param tradeDocumentID that corresponds to the documentID in the trades collection
      */
-    public synchronized void acceptTrade(final FirebaseFirestore fs, final String tradeDocumentID) {
+    public synchronized void acceptTrade(final FirebaseFirestore fs, final TextView acceptButton, final String tradeDocumentID) {
         if (!postingTrade && !acceptingTrade && !deletingTrade) {
             acceptingTrade = true;
 
@@ -281,6 +283,7 @@ public class Marketplace {
                                     buyer.setWood(buyer.getWood() - receiveQty);
                                 } else {
                                     // Accepting user does not have enough resources to trade
+                                    acceptButton.setBackgroundColor(Color.RED);
                                     showToast("Not enough wood to trade");
                                     acceptingTrade = false;
                                     return;
@@ -290,6 +293,7 @@ public class Marketplace {
                                 if (buyer.getFish() >= receiveQty) {
                                     buyer.setFish(buyer.getFish() - receiveQty);
                                 } else {
+                                    acceptButton.setBackgroundColor(Color.RED);
                                     showToast("Not enough fish to trade");
                                     acceptingTrade = false;
                                     return;
@@ -299,6 +303,7 @@ public class Marketplace {
                                 if (buyer.getGold() >= receiveQty) {
                                     buyer.setGold(buyer.getGold() - receiveQty);
                                 } else {
+                                    acceptButton.setBackgroundColor(Color.RED);
                                     showToast("Not enough gold to trade");
                                     acceptingTrade = false;
                                     return;
@@ -307,7 +312,7 @@ public class Marketplace {
                         }
                         // Trade is possible
                         // Debit the resource of the seller user
-                        updateSellerResource(fs, toAccept);
+                        updateSellerResource(fs, acceptButton, toAccept);
                         // Debit the resource of the buyer
                         if (sellType.equals("wood")) {
                             buyer.addWood(sellQty);
@@ -336,7 +341,7 @@ public class Marketplace {
      * @param fs       the current Firestore instance
      * @param toAccept the Trade object that is being accepted
      */
-    public synchronized void updateSellerResource(final FirebaseFirestore fs, final Trade toAccept) {
+    public synchronized void updateSellerResource(final FirebaseFirestore fs, final TextView acceptButton, final Trade toAccept) {
         final String receiveType = toAccept.getReceiveType();
         final int receiveQty = toAccept.getReceiveQty();
         final String userName = toAccept.getUserName();
@@ -378,6 +383,8 @@ public class Marketplace {
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
+                                                String success = "Done!";
+                                                acceptButton.setText(success);
                                                 showToast("Trade accepted!");
                                                 acceptingTrade = false;
                                             }
