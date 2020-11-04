@@ -3,6 +3,7 @@ package com.example.littleync;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -23,10 +24,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Locale;
 
+import static com.example.littleync.MainActivity.loginStatus;
+import static com.example.littleync.MainActivity.logoutTrigger;
+
 /**
  * Cendana Forest Activity page where the user can idly chop down trees to gain wood resource
  */
-public class CendanaForestActivity extends AppCompatActivity {
+public class CendanaForestActivity extends AppCompatActivity implements CendanaForestActivityInterface {
     // To print to log instead of console
     private final static String TAG = "CendanaForestActivity";
 
@@ -129,7 +133,17 @@ public class CendanaForestActivity extends AppCompatActivity {
     public void onDestroy() {
         user.writeToDatabase(userDoc, initialUser);
         Log.d(TAG, "Wrote to DB");
+        logoutTrigger = 0;
         super.onDestroy();
+        /**
+         * Checks that the loginStatus is indeed true, then if it is, start a new TravelActivity Class, and clear all the redundant activities in the stack.
+         */
+        if (loginStatus == true) {
+            Intent intent = new Intent(this.getApplicationContext(), TravelActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+
     }
 
     /**
@@ -138,6 +152,7 @@ public class CendanaForestActivity extends AppCompatActivity {
      *
      * @param ds DocumentSnapshot of the User from the DB
      */
+    @Override
     public void readUser(Task<DocumentSnapshot> ds) {
         ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
@@ -176,6 +191,7 @@ public class CendanaForestActivity extends AppCompatActivity {
      * the aggregateLevel, thus, we need to update these TextViews; there is also the check that
      * the User has actually loaded in (since it is loaded in asynchronously)
      */
+    @Override
     public void chopWood() {
         if (userLoaded) {
             user.chopWood();
