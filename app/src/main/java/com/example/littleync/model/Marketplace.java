@@ -10,7 +10,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -75,32 +77,44 @@ public class Marketplace {
     /**
      * Delete a User's active trade
      *
-     * @param user            User to remove trade from
      * @param tradeDocumentID that corresponds to the documentID in the trades collection
      */
-    public synchronized void deleteTrade(final FirebaseFirestore fs, final DocumentReference userDoc, final User initialUser, final User user, String tradeDocumentID) {
+    public synchronized void deleteTrade(final FirebaseFirestore fs, final String tradeDocumentID) {
         if (!postingTrade && !acceptingTrade && !deletingTrade) {
             deletingTrade = true;
-            // Delete trade from User
-            user.removeTrade(tradeDocumentID);
-            // Delete the trade from trades collection
-            fs.collection("trades").document(tradeDocumentID)
-                    .delete()
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            user.writeToDatabase(fs, userDoc, initialUser);
-                            Log.d(TAG, "Trade successfully deleted");
-                            deletingTrade = false;
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w(TAG, "Error deleting Trade", e);
-                            deletingTrade = false;
-                        }
-                    });
+
+            String userID = FirebaseAuth.getInstance().getUid();
+            assert userID != null;
+            final DocumentReference userDoc = fs.collection("users").document(userID);
+            userDoc.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    final User user = documentSnapshot.toObject(User.class);
+                    assert user != null;
+
+                    // Delete trade from User
+                    user.removeTrade(tradeDocumentID);
+
+                    // Delete trade from DB collection
+                    fs.collection("trades").document(tradeDocumentID)
+                            .delete()
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    user.writeToDatabaseDirectly(userDoc);
+                                    Log.d(TAG, "Trade successfully deleted");
+                                    deletingTrade = false;
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w(TAG, "Error deleting Trade", e);
+                                    deletingTrade = false;
+                                }
+                            });
+                }
+            });
         } else {
             Log.d(TAG, "Trades still being processed.");
         }
@@ -115,84 +129,90 @@ public class Marketplace {
      * finished being processed (logically and physically in DB)
      *
      * @param fs          the current Firestore instance
-     * @param user        the User posting the trade
      * @param sellType    the resource being sold
      * @param receiveType the resource requested
      * @param sellQty     the amount of resource being sold
      * @param receiveQty  the amount of resource requested
-     * @return message to display to user what went right/wrong
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public synchronized String postTrade(final FirebaseFirestore fs, final DocumentReference userDoc, final User user, final String sellType, final String receiveType, final int sellQty, final int receiveQty) {
+    public synchronized void postTrade(final FirebaseFirestore fs, final String sellType, final String receiveType, final int sellQty, final int receiveQty) {
         if (!postingTrade && !acceptingTrade && !deletingTrade) {
             postingTrade = true;
-            // Qty must be positive
+
             if (sellQty < 0) {
                 postingTrade = false;
-                return "Sell qty must be > 0";
             } else if (receiveQty < 0) {
                 postingTrade = false;
-                return "Receive qty must be > 0";
-            } else if (user.getTrades().size() < 5) {
-                switch (sellType) {
-                    case "wood":
-                        if (user.getWood() >= sellQty) {
-                            // Deposit the resource the user wants to trade
-                            user.setWood(user.getWood() - sellQty);
-                        } else {
-                            // The user does not have enough to deposit
-                            postingTrade = false;
-                            return "Not enough wood to trade";
-                        }
-                        break;
-                    case "fish":
-                        if (user.getFish() >= sellQty) {
-                            user.setFish(user.getFish() - sellQty);
-                        } else {
-                            postingTrade = false;
-                            return "Not enough fish to trade";
-                        }
-                        break;
-                    default:
-                        if (user.getGold() >= sellQty) {
-                            user.setGold(user.getGold() - sellQty);
-                        } else {
-                            postingTrade = false;
-                            return "Not enough gold to trade";
-                        }
-                        break;
-                }
-                // If the user has enough of the resource to deposit, then we can
-                // proceed with physically processing the trade
-                // Write trade to DB
-                fs.collection("trades")
-                        .add(new Trade())
-                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                String documentID = documentReference.getId();
-                                Trade newTrade = new Trade(documentID, user.getUserName(), sellType, receiveType, sellQty, receiveQty, LocalDateTime.now().toString());
-                                DocumentReference tradeDoc = fs.collection("trades").document(documentID);
-                                newTrade.writeToDatabase(tradeDoc);
-                                // Add the trade to the user's live trades
-                                user.addTrade(documentID);
-                                trades.add(0, newTrade);
-                                Log.d(TAG, "User trades size: " + user.getTrades().size());
-                                user.writeToDatabaseDirectly(userDoc);
-                                Log.d(TAG, "Wrote to DB, posted trade");
-                                postingTrade = false;
-                            }
-                        });
-                // Return true to display that the trade was successfully posted
-                return "Trade successfully posted!";
             } else {
-                // The user already has 5 live trades, which is the max
-                // Return false to display that the trade was unsuccessful
-                postingTrade = false;
-                return "Cannot have more than 5 live trades";
+                String userID = FirebaseAuth.getInstance().getUid();
+                assert userID != null;
+                final DocumentReference userDoc = fs.collection("users").document(userID);
+                userDoc.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Log.d(TAG, documentSnapshot.getId() + " => " + documentSnapshot.getData());
+
+                        final User user = documentSnapshot.toObject(User.class);
+                        assert user != null;
+
+                        if (user.getTrades().size() < 5) {
+                            switch (sellType) {
+                                case "wood":
+                                    if (user.getWood() >= sellQty) {
+                                        // Deposit the resource the user wants to trade
+                                        user.setWood(user.getWood() - sellQty);
+                                    } else {
+                                        // The user does not have enough to deposit
+                                        postingTrade = false;
+                                    }
+                                    break;
+                                case "fish":
+                                    if (user.getFish() >= sellQty) {
+                                        user.setFish(user.getFish() - sellQty);
+                                    } else {
+                                        postingTrade = false;
+                                    }
+                                    break;
+                                default:
+                                    if (user.getGold() >= sellQty) {
+                                        user.setGold(user.getGold() - sellQty);
+                                    } else {
+                                        postingTrade = false;
+                                    }
+                                    break;
+                            }
+
+                            // If the user has enough of the resource to deposit, then we can
+                            // proceed with physically processing the trade
+                            // Write trade to DB
+                            fs.collection("trades")
+                                    .add(new Trade())
+                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                        @Override
+                                        public void onSuccess(DocumentReference documentReference) {
+                                            String documentID = documentReference.getId();
+                                            Trade newTrade = new Trade(documentID, user.getUserName(), sellType, receiveType, sellQty, receiveQty, LocalDateTime.now().toString());
+                                            DocumentReference tradeDoc = fs.collection("trades").document(documentID);
+                                            newTrade.writeToDatabase(tradeDoc);
+                                            // Add the trade to the user's live trades
+                                            user.addTrade(documentID);
+                                            trades.add(0, newTrade);
+                                            Log.d(TAG, "User trades size: " + user.getTrades().size());
+                                            user.writeToDatabaseDirectly(userDoc);
+                                            Log.d(TAG, "Wrote to DB, posted trade");
+                                            postingTrade = false;
+                                        }
+                                    });
+                        } else {
+                            // The user already has 5 live trades, which is the max
+                            // Return false to display that the trade was unsuccessful
+                            postingTrade = false;
+                        }
+                    }
+                });
             }
         } else {
-            return "Trades still being processed, please wait";
+            Log.d(TAG, "Trades still being processed, please wait");
         }
     }
 
@@ -205,90 +225,93 @@ public class Marketplace {
      * acceptingTrade, that only resolves once this trade is entirely finished being processed
      * (logically and physically in DB)
      *
-     * @param fs          the current Firestore instance
-     * @param buyer           the User object that is accepting the trade
+     * @param fs              the current Firestore instance
      * @param tradeDocumentID that corresponds to the documentID in the trades collection
-     * @return message to display to user what went right/wrong
      */
-    public synchronized String acceptTrade(final FirebaseFirestore fs, final DocumentReference userDoc, User buyer, String tradeDocumentID) {
+    public synchronized void acceptTrade(final FirebaseFirestore fs, final String tradeDocumentID) {
         if (!postingTrade && !acceptingTrade && !deletingTrade) {
             acceptingTrade = true;
-            Trade toAccept = tradesMap.get(tradeDocumentID);
+
+            final Trade toAccept = tradesMap.get(tradeDocumentID);
             if (toAccept == null) {
                 // Trade must not have been accepted before
                 acceptingTrade = false;
-                return "Already accepted trade!";
-            } else if (toAccept.getUserName().equals(buyer.getUserName())) {
-                // User cannot accept their own trade
-                acceptingTrade = false;
-                return "Cannot accept your own trade";
             } else {
-                String sellType = toAccept.getSellType();
-                String receiveType = toAccept.getReceiveType();
-                int sellQty = toAccept.getSellQty();
-                int receiveQty = toAccept.getReceiveQty();
+                final String sellType = toAccept.getSellType();
+                final String receiveType = toAccept.getReceiveType();
+                final int sellQty = toAccept.getSellQty();
+                final int receiveQty = toAccept.getReceiveQty();
 
-                switch (receiveType) {
-                    case "wood":
-                        if (buyer.getWood() >= receiveQty) {
-                            // Less off the resource from the accepting user
-                            buyer.setWood(buyer.getWood() - receiveQty);
-                            // Debit the resource received
-                            if (sellType.equals("wood")) {
-                                buyer.setWood(buyer.getWood() + sellQty);
-                            } else if (sellType.equals("fish")) {
-                                buyer.setFish(buyer.getFish() + sellQty);
-                            } else {
-                                buyer.setGold(buyer.getGold() + sellQty);
-                            }
-                        } else {
-                            // Accepting user does not have enough resources to trade
-                            acceptingTrade = false;
-                            return "Not enough wood to trade";
+                String userID = FirebaseAuth.getInstance().getUid();
+                assert userID != null;
+                final DocumentReference userDoc = fs.collection("users").document(userID);
+                userDoc.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Log.d(TAG, documentSnapshot.getId() + " => " + documentSnapshot.getData());
+
+                        final User buyer = documentSnapshot.toObject(User.class);
+                        assert buyer != null;
+
+                        switch (receiveType) {
+                            case "wood":
+                                if (buyer.getWood() >= receiveQty) {
+                                    // Less off the resource from the accepting user
+                                    buyer.setWood(buyer.getWood() - receiveQty);
+                                    // Debit the resource received
+                                    if (sellType.equals("wood")) {
+                                        buyer.setWood(buyer.getWood() + sellQty);
+                                    } else if (sellType.equals("fish")) {
+                                        buyer.setFish(buyer.getFish() + sellQty);
+                                    } else {
+                                        buyer.setGold(buyer.getGold() + sellQty);
+                                    }
+                                } else {
+                                    // Accepting user does not have enough resources to trade
+                                    acceptingTrade = false;
+                                }
+                                break;
+                            case "fish":
+                                if (buyer.getFish() >= receiveQty) {
+                                    buyer.setFish(buyer.getFish() - receiveQty);
+                                    if (sellType.equals("wood")) {
+                                        buyer.setWood(buyer.getWood() + sellQty);
+                                    } else if (sellType.equals("fish")) {
+                                        buyer.setFish(buyer.getFish() + sellQty);
+                                    } else {
+                                        buyer.setGold(buyer.getGold() + sellQty);
+                                    }
+                                } else {
+                                    acceptingTrade = false;
+                                }
+                                break;
+                            default:
+                                if (buyer.getGold() >= receiveQty) {
+                                    buyer.setGold(buyer.getGold() - receiveQty);
+                                    if (sellType.equals("wood")) {
+                                        buyer.setWood(buyer.getWood() + sellQty);
+                                    } else if (sellType.equals("fish")) {
+                                        buyer.setFish(buyer.getFish() + sellQty);
+                                    } else {
+                                        buyer.setGold(buyer.getGold() + sellQty);
+                                    }
+                                } else {
+                                    acceptingTrade = false;
+                                }
+                                break;
                         }
-                        break;
-                    case "fish":
-                        if (buyer.getFish() >= receiveQty) {
-                            buyer.setFish(buyer.getFish() - receiveQty);
-                            if (sellType.equals("wood")) {
-                                buyer.setWood(buyer.getWood() + sellQty);
-                            } else if (sellType.equals("fish")) {
-                                buyer.setFish(buyer.getFish() + sellQty);
-                            } else {
-                                buyer.setGold(buyer.getGold() + sellQty);
-                            }
-                        } else {
-                            acceptingTrade = false;
-                            return "Not enough fish to trade";
-                        }
-                        break;
-                    default:
-                        if (buyer.getGold() >= receiveQty) {
-                            buyer.setGold(buyer.getGold() - receiveQty);
-                            if (sellType.equals("wood")) {
-                                buyer.setWood(buyer.getWood() + sellQty);
-                            } else if (sellType.equals("fish")) {
-                                buyer.setFish(buyer.getFish() + sellQty);
-                            } else {
-                                buyer.setGold(buyer.getGold() + sellQty);
-                            }
-                        } else {
-                            acceptingTrade = false;
-                            return "Not enough gold to trade";
-                        }
-                        break;
-                }
-                // Trade is completed
-                // Debit the resource of the seller user
-                updateSellerResource(fs, toAccept);
-                // Remove the trade from the Map of live trades
-                trades.remove(toAccept);
-                tradesMap.remove(tradeDocumentID);
-                buyer.writeToDatabaseDirectly(userDoc);
-                return "Trade successfully accepted!";
+                        // Trade is completed
+                        // Debit the resource of the seller user
+                        updateSellerResource(fs, toAccept);
+                        // Remove the trade from the Map of live trades
+                        trades.remove(toAccept);
+                        tradesMap.remove(tradeDocumentID);
+                        buyer.writeToDatabaseDirectly(userDoc);
+                    }
+                });
             }
         } else {
-            return "Trades still being processed, please wait";
+            Log.d(TAG, "Trades still being processed, please wait");
         }
     }
 
@@ -296,7 +319,7 @@ public class Marketplace {
      * Helper method invoked by acceptTrade() to update the seller's attributes in the DB as well
      * as delete the accepted trade off of the trades collection
      *
-     * @param fs          the current Firestore instance
+     * @param fs       the current Firestore instance
      * @param toAccept the Trade object that is being accepted
      */
     public synchronized void updateSellerResource(final FirebaseFirestore fs, final Trade toAccept) {

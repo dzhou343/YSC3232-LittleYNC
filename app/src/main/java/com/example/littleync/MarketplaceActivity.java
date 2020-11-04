@@ -205,8 +205,8 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //
 ////        TODO: click the green button -> trigger the posting?
 //
-            String tryPost = MARKETPLACE.postTrade(fs, userDoc, user, "fish", "gold", 1, 11);
-            Toast msg = Toast.makeText(this, tryPost, Toast.LENGTH_SHORT);
+            MARKETPLACE.postTrade(fs, "fish", "gold", 1, 11);
+            Toast msg = Toast.makeText(this, "Posted", Toast.LENGTH_SHORT);
             msg.show();
         } else {
             Log.d(TAG, "User/trades not yet loaded");
@@ -215,8 +215,8 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
     public synchronized void acceptTrade(Trade toAccept) {
         if (userLoaded && tradesLoaded) {
-            String tryAccept = MARKETPLACE.acceptTrade(fs, userDoc, user, toAccept.getDocumentID());
-            Toast msg = Toast.makeText(this, tryAccept, Toast.LENGTH_SHORT);
+            MARKETPLACE.acceptTrade(fs, toAccept.getDocumentID());
+            Toast msg = Toast.makeText(this, "Success", Toast.LENGTH_SHORT);
             msg.show();
         } else {
             Log.d(TAG, "User/trades not yet loaded");
