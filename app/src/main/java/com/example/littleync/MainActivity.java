@@ -365,7 +365,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityInter
                         fLC = LocationServices.getFusedLocationProviderClient(MainActivity.this);
                         fLC.requestLocationUpdates(lR, lCB, null);
                         loginButton.setEnabled(true);
-
+                        Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
+                        startActivity(refresh);
 
 
                     } else {
