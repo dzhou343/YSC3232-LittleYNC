@@ -89,8 +89,8 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //        set up the spinner for the type of resource the user is trading with
         sellType = findViewById(R.id.sell_type);
         ArrayAdapter<String> sellAdapter = new ArrayAdapter<>(MarketplaceActivity.this,
-                android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.marketplace1_spinner));
-        sellAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                R.layout.marketplace_spinner_default, getResources().getStringArray(R.array.marketplace1_spinner));
+        sellAdapter.setDropDownViewResource(R.layout.marketplace_spinner_dropdown);
         sellType.setAdapter(sellAdapter);
         sellType.setOnItemSelectedListener(this);
 
