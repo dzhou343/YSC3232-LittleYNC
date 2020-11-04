@@ -129,21 +129,13 @@ public class CendanaForestActivity extends AppCompatActivity {
      * Write the local User and any updates made to it back to the DB; this is called when we press
      * the back button to return to the Main Activity
      */
-    public void onDestroy() {
+    public void onStop() {
         user.writeToDatabase(fs, userDoc, initialUser);
         Log.d(TAG, "Wrote to DB");
         logoutTrigger = 0;
-        super.onDestroy();
-        /**
-         * Checks that the loginStatus is indeed true, then if it is, start a new TravelActivity Class, and clear all the redundant activities in the stack.
-         */
-        if (loginStatus) {
-            Intent intent = new Intent(this.getApplicationContext(), TravelActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-        }
-
+        super.onStop();
     }
+
 
     /**
      * Read in User by userID, update all the textViews at top of page, flags that the User has
