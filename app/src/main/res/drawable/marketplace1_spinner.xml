@@ -4,13 +4,13 @@
         <layer-list>
             <item>
                 <shape android:shape="rectangle">
-                    <solid android:color="#FFF9C4"></solid>
+                    <solid android:color="#80DEEA"></solid>
                     <corners android:radius="5dp"/>
                     <padding android:left="5dp"/>
                 </shape>
             </item>
             <item>
-                <bitmap app:srcCompat="@drawable/ic_marketplace1_spinner" android:gravity="center">
+                <bitmap app:srcCompat="@drawable/ic_marketplace1_spinner" android:gravity="center|end">
                 </bitmap>
                 <color android:color="#FFF9C4"></color>
             </item>

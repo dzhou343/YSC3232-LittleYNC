@@ -35,7 +35,7 @@ import static com.example.littleync.MainActivity.logoutTrigger;
 /**
  * Saga Battleground Activity page where the user can idly battle monsters to gain gold resource
  */
-public class SagaBattlegroundActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, SagaBattlegroundActivityInterface {
+public class SagaBattlegroundActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     // To print to log instead of console
     private final static String TAG = "SagaBattleActivity";
 
@@ -158,11 +158,11 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
      */
     @Override
     public void onDestroy() {
-        user.writeToDatabase(userDoc, initialUser);
+        user.writeToDatabase(fs, userDoc, initialUser);
         Log.d(TAG, "Wrote to DB");
         logoutTrigger = 0;
         super.onDestroy();
-        if (loginStatus == true) {
+        if (loginStatus) {
             Intent intent = new Intent(this.getApplicationContext(), TravelActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
@@ -187,7 +187,7 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
                 "HP: %s / %s", currentHP, MONSTERS.getMonsterHitpoints(currentMonster));
         healthDisplay.setText(healthMaxFormatted);
         String toastMsg = String.format(Locale.getDefault(),
-                "+%s Gold and +%s Exp", MONSTERS.getGoldYield(currentMonster), MONSTERS.getExpYield(currentMonster));
+                "+%s Gold and +%s Exp", MONSTERS.getMonsterGoldYield(currentMonster), MONSTERS.getMonsterExpYield(currentMonster));
         gainDisplay.setText(toastMsg);
         changeMonsterImage();
     }
@@ -207,7 +207,6 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
      *
      * @param ds DocumentSnapshot of the User from the DB
      */
-    @Override
     public void readUser(Task<DocumentSnapshot> ds) {
         ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
@@ -247,15 +246,14 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
      * these TextViews; there is also the check that the User has actually loaded in (since it is
      * loaded in asynchronously)
      */
-    @Override
     public void fight() {
         if (userLoaded) {
             // Deal damage to monster
             currentHP -= user.getCombatGearLevel();
             if (currentHP <= 0) {
                 // If monster is dead, then increment gold and exp
-                user.addGold(MONSTERS.getGoldYield(currentMonster));
-                user.addExp(MONSTERS.getExpYield(currentMonster));
+                user.addGold(MONSTERS.getMonsterGoldYield(currentMonster));
+                user.addExp(MONSTERS.getMonsterExpYield(currentMonster));
                 // Update textViews
                 String goldRes = String.format(Locale.getDefault(), "Gold: %s", user.getGold());
                 goldDisplay.setText(goldRes);
@@ -381,8 +379,8 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
     }
 
     private void updateGainText(){
-        int gain = MONSTERS.getGoldYield(currentMonster);
-        int expGain = MONSTERS.getExpYield(currentMonster);
+        int gain = MONSTERS.getMonsterGoldYield(currentMonster);
+        int expGain = MONSTERS.getMonsterExpYield(currentMonster);
 
         String combatText = String.format(Locale.getDefault(), "+%s Gold", gain);
         String expText = String.format(Locale.getDefault(), "+%s Exp", expGain);

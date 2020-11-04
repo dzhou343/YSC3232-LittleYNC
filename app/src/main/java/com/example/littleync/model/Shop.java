@@ -33,7 +33,7 @@ public class Shop {
      * @param user the User object to upgrade
      * @return whether or not the User has enough resources to upgrade
      */
-    public Boolean increaseWoodchoppingLevel(User user) {
+    public boolean increaseWoodchoppingLevel(User user) {
         int currentLevel = user.getWoodchoppingGearLevel();
         int currentFish = user.getFish();
         int currentGold = user.getGold();
@@ -56,7 +56,7 @@ public class Shop {
      * @param user the User object to upgrade
      * @return whether or not the User has enough resources to upgrade
      */
-    public Boolean increaseFishingGearLevel(User user) {
+    public boolean increaseFishingGearLevel(User user) {
         int currentLevel = user.getFishingGearLevel();
         int currentWood = user.getWood();
         int currentGold = user.getGold();
@@ -78,7 +78,7 @@ public class Shop {
      * @param user the User object to upgrade
      * @return whether or not the User has enough resources to upgrade
      */
-    public Boolean increaseCombatGearLevel(User user) {
+    public boolean increaseCombatGearLevel(User user) {
         int currentLevel = user.getCombatGearLevel();
         int currentFish = user.getFish();
         int currentWood = user.getWood();

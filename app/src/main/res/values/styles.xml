@@ -35,9 +35,30 @@
 
     </style>
 
+    <style name="spinner3">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@android:color/background_dark</item>
+        <item name="android:background">#FFE0B2</item>
+        <item name="fontFamily">@font/advent_pro_semibold</item>
+        <item name="android:textStyle"></item>
+    </style>
+
     <style name="marketplace2_btn">
         <item name="android:layout_height">20dp</item>
         <item name="android:layout_width">50dp</item>
         <item name="android:background">@drawable/marketplace2_btn</item>
     </style>
+
+    <style name="marketplace2_btn_text">
+        <item name="android:layout_height">20dp</item>
+        <item name="android:layout_width">50dp</item>
+        <item name="android:background">@drawable/marketplace2_btn</item>
+        <item name="android:textColor">@android:color/background_dark</item>
+        <item name="android:textSize">11sp</item>
+        <item name="fontFamily">@font/advent_pro_semibold</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
 </resources>
