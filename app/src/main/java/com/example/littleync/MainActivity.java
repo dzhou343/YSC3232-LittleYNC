@@ -255,13 +255,14 @@ public class MainActivity extends AppCompatActivity implements MainActivityInter
 
     @Override
     public void loginButton(View view) {
+        loginButton.setEnabled(false);
 
         /**
          * user variable here holds the current user object.
          */
 
         try {
-            loginButton.setEnabled(false);
+
             //final String user = log.getMyAuthInstance().getUid().toString();
 
             //if (!emailLogin.equals(null) && !passwordLogin.equals(null)) {
@@ -269,7 +270,14 @@ public class MainActivity extends AppCompatActivity implements MainActivityInter
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        loginButton.setEnabled(true);
+
+                        /**
+                         * Assuming the user has logged in before, and would like to go in again.
+                         */
+                        if ((whereWasIMap.get("initialized") == true) && (loginStatus == false)) {
+                            Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
+                            startActivity(refresh);
+                        }
                         /**
                          * Creates a user object
                          */
@@ -342,8 +350,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityInter
                                     latitude = Double.valueOf(lResult.getLastLocation().getLatitude());
 
 
+
                                 } else {
                                     System.out.println("Location result is null");
+
                                 }
                             }
 
@@ -354,39 +364,38 @@ public class MainActivity extends AppCompatActivity implements MainActivityInter
                          */
                         fLC = LocationServices.getFusedLocationProviderClient(MainActivity.this);
                         fLC.requestLocationUpdates(lR, lCB, null);
+                        loginButton.setEnabled(true);
 
-
-                        //}
 
 
                     } else {
-                        loginButton.setEnabled(true);
+
+                        /**
+                         * Assuming the user has logged in before, and would like to go in again.
+                         */
+                        if ((whereWasIMap.get("initialized") == true) && (loginStatus == false)) {
+                            Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
+                            startActivity(refresh);
+                        }
                         loginButton.clearFocus();
                         Log.d("Login results:", "nope! Didn't sign in!");
                         Log.d("Exception", task.getException().toString());
                         emailLogin.setError(task.getException().getMessage());
                         passwordLogin.setError(task.getException().getMessage());
+                        loginButton.setEnabled(true);
                     }
 
                 }
             });
 
-            /**
-             * Assuming the user has logged in before, and would like to go in again.
-             */
-            if ((whereWasIMap.get("initialized") == true) && (loginStatus == false)) {
-                Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
-                startActivity(refresh);
-            }
-
             //}
 
         } catch (Exception e) {
-            loginButton.setEnabled(true);
             loginButton.clearFocus();
             System.out.println(e);
             emailLogin.setError(e.getMessage());
             passwordLogin.setError(e.getMessage());
+            loginButton.setEnabled(true);
 
         }
 

@@ -40,22 +40,22 @@ public class ForgotPassword extends AppCompatActivity implements ForgotPasswordI
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                resetButton.setEnabled(true);
                                 Log.d("Forgot Email output", "Successfully reset password");
                                 Toast.makeText(getApplicationContext(), "Success. Please check your email", Toast.LENGTH_LONG).show();
+                                resetButton.setEnabled(true);
                                 ForgotPassword.super.finish();
                             } else {
-                                resetButton.setEnabled(true);
                                 forgotPasswordInput.setError(task.getException().getMessage());
                                 resetButton.clearFocus();
+                                resetButton.setEnabled(true);
                             }
                         }
                     }
             );
         } catch (Exception e) {
-            resetButton.setEnabled(true);
             forgotPasswordInput.setError(e.getMessage());
             resetButton.clearFocus();
+            resetButton.setEnabled(true);
         }
 
     }

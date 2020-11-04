@@ -1,5 +1,7 @@
 package com.example.littleync;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -17,6 +19,7 @@ import static com.example.littleync.MainActivity.loginStatus;
 import static com.example.littleync.MainActivity.logoutTrigger;
 import static com.example.littleync.MainActivity.userInstance;
 import static com.example.littleync.MainActivity.whereAmINowMap;
+import static com.example.littleync.MainActivity.whereWasIMap;
 
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -32,11 +35,21 @@ public class TravelActivity extends AppCompatActivity implements TravelActivityI
     private Button ecopond;
     private Button battleground;
 
+    @Nullable
+    @Override
+    public ActionBar getSupportActionBar() {
+        return super.getSupportActionBar();
+    }
+
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Hides the back button on travel page.
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setSubtitle(String.format("Welcome %s",userInstance.getCurrentUser().getDisplayName()));
         setContentView(R.layout.travel_page);
+        //Disable the home button on the travel page.
         cTree = (Button) findViewById(R.id.cendana_forest_travel);
         armory = (Button) findViewById(R.id.armory_travel_page);
         trading = (Button) findViewById(R.id.buttery_trading_travel_page);
@@ -101,6 +114,7 @@ public class TravelActivity extends AppCompatActivity implements TravelActivityI
         try{
             loginStatus = false;
             logoutTrigger = 0;
+            whereWasIMap.put("initialized", false);
             fLC.removeLocationUpdates(lCB);
             userInstance.signOut();
             TravelActivity.super.finish();
