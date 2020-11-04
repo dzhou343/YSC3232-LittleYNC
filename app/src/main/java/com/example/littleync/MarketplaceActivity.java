@@ -3,6 +3,7 @@ package com.example.littleync;
 import com.example.littleync.model.Marketplace;
 import com.example.littleync.model.Resource;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -40,7 +41,10 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
 
-public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+import static com.example.littleync.MainActivity.loginStatus;
+import static com.example.littleync.MainActivity.logoutTrigger;
+
+public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, MarketplaceActivityInterface {
     // To print to log instead of console
     private final static String TAG = "MarketplaceActivity";
 

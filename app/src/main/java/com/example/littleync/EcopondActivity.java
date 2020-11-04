@@ -3,6 +3,7 @@ package com.example.littleync;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -23,12 +24,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Locale;
 
+import static com.example.littleync.MainActivity.loginStatus;
+import static com.example.littleync.MainActivity.logoutTrigger;
+
 /**
  * Ecopond Activity page where the user can idly fish for fish to gain fish resource
  */
-public class EcopondActivity extends AppCompatActivity {
+public class EcopondActivity extends AppCompatActivity implements EcopondActivityInterface {
     // To print to log instead of console
     private final static String TAG = "EcopondActivity";
+
 
     // DB attributes
     private final FirebaseFirestore fs = FirebaseFirestore.getInstance();
@@ -103,8 +108,7 @@ public class EcopondActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (timerRunning) {
                     pauseTimer();
-                }
-                else {
+                } else {
                     startTimer();
                 }
             }
@@ -129,7 +133,14 @@ public class EcopondActivity extends AppCompatActivity {
     public void onDestroy() {
         user.writeToDatabase(fs, userDoc, initialUser);
         Log.d(TAG, "Wrote to DB");
+        logoutTrigger = 0;
         super.onDestroy();
+        if (loginStatus == true) {
+            Intent intent = new Intent(this.getApplicationContext(), TravelActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+
     }
 
     /**
