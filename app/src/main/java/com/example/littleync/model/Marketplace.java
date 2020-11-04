@@ -78,17 +78,18 @@ public class Marketplace {
      * @param user            User to remove trade from
      * @param tradeDocumentID that corresponds to the documentID in the trades collection
      */
-    public synchronized void deleteTrade(User user, String tradeDocumentID) {
+    public synchronized void deleteTrade(final FirebaseFirestore fs, final DocumentReference userDoc, final User initialUser, final User user, String tradeDocumentID) {
         if (!postingTrade && !acceptingTrade && !deletingTrade) {
             deletingTrade = true;
             // Delete trade from User
             user.removeTrade(tradeDocumentID);
             // Delete the trade from trades collection
-            FirebaseFirestore.getInstance().collection("trades").document(tradeDocumentID)
+            fs.collection("trades").document(tradeDocumentID)
                     .delete()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
+                            user.writeToDatabase(fs, userDoc, initialUser);
                             Log.d(TAG, "Trade successfully deleted");
                             deletingTrade = false;
                         }
@@ -122,7 +123,7 @@ public class Marketplace {
      * @return message to display to user what went right/wrong
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public synchronized String postTrade(final FirebaseFirestore fs, final User user, final String sellType, final String receiveType, final int sellQty, final int receiveQty) {
+    public synchronized String postTrade(final FirebaseFirestore fs, final DocumentReference userDoc, final User initialUser, final User user, final String sellType, final String receiveType, final int sellQty, final int receiveQty) {
         if (!postingTrade && !acceptingTrade && !deletingTrade) {
             // Qty must be positive
             if (sellQty < 0) {
@@ -172,6 +173,7 @@ public class Marketplace {
                                 user.addTrade(documentID);
                                 trades.add(0, newTrade);
                                 Log.d(TAG, "User trades size: " + user.getTrades().size());
+                                user.writeToDatabase(fs, userDoc, initialUser);
                                 Log.d(TAG, "Wrote to DB, posted trade");
                                 postingTrade = false;
                             }
@@ -202,7 +204,7 @@ public class Marketplace {
      * @param tradeDocumentID that corresponds to the documentID in the trades collection
      * @return message to display to user what went right/wrong
      */
-    public synchronized String acceptTrade(FirebaseFirestore fs, User buyer, String tradeDocumentID) {
+    public synchronized String acceptTrade(final FirebaseFirestore fs, final DocumentReference userDoc, final User initialUser, User buyer, String tradeDocumentID) {
         if (!postingTrade && !acceptingTrade && !deletingTrade) {
             Trade toAccept = tradesMap.get(tradeDocumentID);
             if (toAccept == null) {
@@ -271,6 +273,7 @@ public class Marketplace {
                 // Remove the trade from the Map of live trades
                 trades.remove(toAccept);
                 tradesMap.remove(tradeDocumentID);
+                buyer.writeToDatabase(fs, userDoc, initialUser);
                 return "Trade successfully accepted!";
             }
         } else {

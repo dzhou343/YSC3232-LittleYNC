@@ -155,13 +155,13 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
      * This is called when we press the back button to return to the Main Activity
      */
     @Override
-    public void onDestroy() {
+    public synchronized void onDestroy() {
         user.writeToDatabase(fs, userDoc, initialUser);
         Log.d(TAG, "Wrote to DB");
         super.onDestroy();
     }
 
-    public void readUserAndPopulateTrades() {
+    public synchronized void readUserAndPopulateTrades() {
         String userID = FirebaseAuth.getInstance().getUid();
         userLoaded = false;
         tradesLoaded = false;
@@ -203,28 +203,8 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         );
     }
 
-    /**
-     * Read in User by userID, update all the textViews at top of page
-     *
-     * @param ds
-     */
-    public void readUser(Task<DocumentSnapshot> ds) {
-        ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        Log.d(TAG, documentSnapshot.getId() + " => " + documentSnapshot.getData());
-                                        // Store the initial values of the user
-                                        initialUser = documentSnapshot.toObject(User.class);
-                                        // Store the user that this page will manipulate
-                                        user = documentSnapshot.toObject(User.class);
-                                        userLoaded = true;
-                                    }
-                                }
-        );
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void postTrade(View view) {
+    public synchronized void postTrade(View view) {
         if (userLoaded && tradesLoaded) {
             ////        TODO: cast the dropdown option to the proper resource type
 ////        sRecourceType = Resource.Fish;
@@ -236,7 +216,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //
 ////        TODO: click the green button -> trigger the posting?
 //
-            String tryPost = MARKETPLACE.postTrade(fs, user, "fish", "gold", 0, 11);
+            String tryPost = MARKETPLACE.postTrade(fs, userDoc, initialUser, user, "fish", "gold", 0, 11);
             Toast msg = Toast.makeText(this, tryPost, Toast.LENGTH_SHORT);
             msg.show();
         } else {
@@ -244,9 +224,9 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         }
     }
 
-    public void acceptTrade(Trade toAccept) {
+    public synchronized void acceptTrade(Trade toAccept) {
         if (userLoaded && tradesLoaded) {
-            String tryAccept = MARKETPLACE.acceptTrade(fs, user, toAccept.getDocumentID());
+            String tryAccept = MARKETPLACE.acceptTrade(fs, userDoc, initialUser, user, toAccept.getDocumentID());
             Toast msg = Toast.makeText(this, tryAccept, Toast.LENGTH_SHORT);
             msg.show();
         } else {
@@ -256,7 +236,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    protected void populateExistingDeals() {
+    protected synchronized void populateExistingDeals() {
 
         int lastRowID = 0;
 
