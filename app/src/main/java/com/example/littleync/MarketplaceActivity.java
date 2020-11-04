@@ -83,8 +83,8 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //        set up the spinner for the type of resource the user is asking for
         receiveType = findViewById(R.id.receive_type);
         ArrayAdapter<String> receiveAdapter = new ArrayAdapter<>(MarketplaceActivity.this,
-                android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.marketplace1_spinner));
-        receiveAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                R.layout.marketplace_spinner_default, getResources().getStringArray(R.array.marketplace1_spinner));
+        receiveAdapter.setDropDownViewResource(R.layout.marketplace_spinner_dropdown);
         receiveType.setAdapter(receiveAdapter);
         receiveType.setOnItemSelectedListener(this);
 
@@ -109,7 +109,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                     postTrade(receiveTypeStr, receiveQtyInt, giveTypeStr, giveQtyInt);
                 } catch (Exception e) {Log.e("What the hell", e.getMessage());}
 
-//                TODO: debug onclick, delete button, dropdown appearance, automatic refresh
+//                TODO: delete button, dropdown appearance, automatic refresh
             }});
 
         posted = false;
@@ -248,6 +248,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         }
     }
 
+    public void deleteTrade(){}
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     protected void populateExistingDeals() {
@@ -285,12 +286,23 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                 receiving.setText(String.format(Locale.getDefault(), "%s x %d", t.getReceiveType(), t.getReceiveQty()));
 
                 final boolean finalSameUser = sameUser;
+                boolean deleteConfirm = false;
+                final boolean finalDeleteConfirm = deleteConfirm;
                 t2Btn_text.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (!finalSameUser) {
                             acceptTrade(t);
                             t2Btn_text.setText("Done!");
+                        } else {
+                            if (!finalDeleteConfirm) {
+                                t2Btn_text.setText("Delete?");
+                                t2Btn_text.setBackground(getResources().getDrawable(R.drawable.marketplace2_btn2));
+                            } else {
+                                deleteTrade();
+                                t2Btn_text.setText("Deleted!");
+                            }
+
                         }
                     }
                 });

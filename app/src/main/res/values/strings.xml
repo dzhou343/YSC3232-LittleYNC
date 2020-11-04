@@ -61,9 +61,9 @@
     <string name="marketplace2_title5">Accept this trade</string>
 
     <string-array name="marketplace1_spinner">
-        <item>fish</item>
-        <item>wood</item>
-        <item>gold</item>
+        <item><u>fish</u></item>
+        <item><u>wood</u></item>
+        <item><u>gold</u></item>
     </string-array>
 
     <!-- For loading Stamina attributes -->
