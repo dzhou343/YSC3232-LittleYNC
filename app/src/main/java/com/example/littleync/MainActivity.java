@@ -362,6 +362,7 @@ public class MainActivity extends AppCompatActivity {
                         fLC = LocationServices.getFusedLocationProviderClient(MainActivity.this);
                         fLC.requestLocationUpdates(lR, lCB, null);
                         loginButton.setEnabled(true);
+                        loginStatus = true;
                         Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
                         startActivity(refresh);
 
