@@ -63,6 +63,10 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     private Button postTradeBtn;
     private Boolean displayed;
     private Boolean posted;
+    private Spinner receiveType;
+    private Spinner giveType;
+    private String receiveTypeStr;
+    private String giveTypeStr;
 
 //    T2
     private ConstraintLayout scrollParent;
@@ -77,7 +81,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
 //        T1 initialization
 //        set up the spinner for the type of resource the user is asking for
-        final Spinner receiveType = findViewById(R.id.receive_type);
+        receiveType = findViewById(R.id.receive_type);
         ArrayAdapter<String> receiveAdapter = new ArrayAdapter<>(MarketplaceActivity.this,
                 android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.marketplace1_spinner));
         receiveAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -85,7 +89,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         receiveType.setOnItemSelectedListener(this);
 
 //        set up the spinner for the type of resource the user is trading with
-        final Spinner giveType = findViewById(R.id.give_type);
+        giveType = findViewById(R.id.give_type);
         ArrayAdapter<String> giveAdapter = new ArrayAdapter<>(MarketplaceActivity.this,
                 android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.marketplace1_spinner));
         giveAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -99,10 +103,15 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         postTradeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {int s = Integer.parseInt(receiveQty.toString());} catch (Exception e) {Log.e("What the hell", e.getMessage());}
-                postTrade(receiveType.toString(), Integer.parseInt(receiveQty.toString()), giveType.toString(), Integer.parseInt(giveQty.toString()));}
+                try {
+                    int receiveQtyInt = Integer.parseInt(receiveQty.getText().toString());
+                    int giveQtyInt = Integer.parseInt(giveQty.getText().toString());
+                    postTrade(receiveTypeStr, receiveQtyInt, giveTypeStr, giveQtyInt);
+                } catch (Exception e) {Log.e("What the hell", e.getMessage());}
 
-    });
+//                TODO: debug onclick, delete button, dropdown appearance, automatic refresh
+            }});
+
         posted = false;
 
         scrollParent = findViewById(R.id.scroll_parent);
@@ -165,7 +174,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                         Log.d(TAG, documentSnapshot.getId() + " => " + documentSnapshot.getData());
-                                        // Store the initial values of the user
+                                        // Store 12345678the initial values of the user
                                         initialUser = documentSnapshot.toObject(User.class);
                                         // Store the user that this page will manipulate
                                         user = documentSnapshot.toObject(User.class);
@@ -433,7 +442,17 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //    }}
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {}
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        switch (parent.getId()){
+            case R.id.receive_type:
+                receiveTypeStr = parent.getItemAtPosition(position).toString();
+                break;
+            case R.id.give_type:
+                giveTypeStr = parent.getItemAtPosition(position).toString();
+                break;
+        }
+    }
+
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {}
