@@ -2,6 +2,7 @@ package com.example.littleync;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -27,6 +28,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Locale;
+
+import static com.example.littleync.MainActivity.loginStatus;
+import static com.example.littleync.MainActivity.logoutTrigger;
 
 /**
  * Saga Battleground Activity page where the user can idly battle monsters to gain gold resource
@@ -131,8 +135,7 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
             public void onClick(View v) {
                 if (timerRunning) {
                     pauseTimer();
-                }
-                else {
+                } else {
                     startTimer();
                 }
             }
@@ -157,7 +160,15 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
     public void onDestroy() {
         user.writeToDatabase(fs, userDoc, initialUser);
         Log.d(TAG, "Wrote to DB");
+        logoutTrigger = 0;
         super.onDestroy();
+        if (loginStatus) {
+            Intent intent = new Intent(this.getApplicationContext(), TravelActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+
+
     }
 
     /**
@@ -187,7 +198,8 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
      * @param parent spinner
      */
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {}
+    public void onNothingSelected(AdapterView<?> parent) {
+    }
 
     /**
      * Read in User by userID, update all the textViews at top of page, flags that the User has
@@ -267,7 +279,7 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
      * Change the monster image depending on the monster selected to battle
      */
     private void changeMonsterImage() {
-        switch(currentMonster) {
+        switch (currentMonster) {
             case "Prof. Bodin":
                 monsterDisplay.setImageResource(R.drawable.battle_bruno);
                 break;

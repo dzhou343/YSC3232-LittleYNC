@@ -176,17 +176,9 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void postTrade(String sellType, String receiveType, int sellQty, int receiveQty) {
+    public synchronized void postTrade(String sellType, String receiveType, int sellQty, int receiveQty) {
         if (userLoaded && tradesLoaded) {
             MARKETPLACE.postTrade(fs, sellType, receiveType, sellQty, receiveQty);
-        } else {
-            Log.d(TAG, "User/trades not yet loaded");
-        }
-    }
-
-    public synchronized void acceptTrade(Trade toAccept) {
-        if (userLoaded && tradesLoaded) {
-            MARKETPLACE.acceptTrade(fs, toAccept.getDocumentID());
         } else {
             Log.d(TAG, "User/trades not yet loaded");
         }
@@ -234,12 +226,14 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                     @Override
                     public void onClick(View v) {
                         if (!finalSameUser) {
-                            acceptTrade(t);
-                            t2Btn_text.setText("Done!");
-                        }
-//                        the user can decide to delete his/her own trade; need to click twice, the second time
-//                        to confirm
-                        else {
+                            synchronized (MarketplaceActivity.this) {
+                                if (userLoaded && tradesLoaded) {
+                                    MARKETPLACE.acceptTrade(fs, t2Btn_text, t.getDocumentID());
+                                } else {
+                                    Log.d(TAG, "User/trades not yet loaded");
+                                }
+                            }
+                        } else {
                             if (!deleteConfirm) {
                                 t2Btn_text.setText("Delete?");
                                 t2Btn_text.setBackground(getResources().getDrawable(R.drawable.marketplace2_btn2));
@@ -248,7 +242,6 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                                 deleteTrade();
                                 t2Btn_text.setText("Deleted!");
                             }
-
                         }
                     }
                 });
