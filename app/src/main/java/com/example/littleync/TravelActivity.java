@@ -108,7 +108,7 @@ public class TravelActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
-        if (logoutTrigger < 2) {
+        if (logoutTrigger < 1) {
             logoutTrigger++;
          } else {
             TravelActivity.super.finish();
