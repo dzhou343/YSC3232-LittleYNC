@@ -46,7 +46,7 @@ import java.util.Locale;
 import static com.example.littleync.MainActivity.loginStatus;
 import static com.example.littleync.MainActivity.logoutTrigger;
 
-public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class MarketplaceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, MarketplaceActivityInterface {
     // To print to log instead of console
     private final static String TAG = "MarketplaceActivity";
 
@@ -149,6 +149,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
     }
 
+    @Override
     public void readTrades() {
         Query queriedTrades = fs.collection("trades")
                 .orderBy("timeOfListing", Query.Direction.DESCENDING);
@@ -176,6 +177,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
      *
      * @param ds
      */
+    @Override
     public void readUser(Task<DocumentSnapshot> ds) {
         ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
@@ -191,12 +193,14 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     }
 
     // err I don't think this does anything. delete?
+    @Override
     public void tradePage(View view) {
         Log.d(TAG, TAG);
         FirebaseAuth fb = FirebaseAuth.getInstance();
         Log.d(TAG, fb.getCurrentUser().getUid().toString());
     }
 
+    @Override
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void postTrade(View view) {
         if (userLoaded && tradesLoaded) {
@@ -226,6 +230,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     }
 
     // FOR TESTING ONLY, PLEASE IGNORE!
+    @Override
     public void acceptTradeTest(View view) {
         if (userLoaded && tradesLoaded) {
             boolean tryAccept = MARKETPLACE.acceptTrade(user, "UcQQ3PKdtgU10R21jdoM");
@@ -241,6 +246,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         }
     }
 
+    @Override
     public void acceptTrade(Trade toAccept) {
         if (userLoaded && tradesLoaded) {
             boolean tryAccept = MARKETPLACE.acceptTrade(user, toAccept.getDocumentID());

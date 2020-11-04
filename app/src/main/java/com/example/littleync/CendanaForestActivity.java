@@ -30,7 +30,7 @@ import static com.example.littleync.MainActivity.logoutTrigger;
 /**
  * Cendana Forest Activity page where the user can idly chop down trees to gain wood resource
  */
-public class CendanaForestActivity extends AppCompatActivity {
+public class CendanaForestActivity extends AppCompatActivity implements CendanaForestActivityInterface {
     // To print to log instead of console
     private final static String TAG = "CendanaForestActivity";
 
@@ -152,6 +152,7 @@ public class CendanaForestActivity extends AppCompatActivity {
      *
      * @param ds DocumentSnapshot of the User from the DB
      */
+    @Override
     public void readUser(Task<DocumentSnapshot> ds) {
         ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
@@ -190,6 +191,7 @@ public class CendanaForestActivity extends AppCompatActivity {
      * the aggregateLevel, thus, we need to update these TextViews; there is also the check that
      * the User has actually loaded in (since it is loaded in asynchronously)
      */
+    @Override
     public void chopWood() {
         if (userLoaded) {
             user.chopWood();

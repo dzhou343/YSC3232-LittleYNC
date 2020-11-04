@@ -35,7 +35,7 @@ import static com.example.littleync.MainActivity.logoutTrigger;
 /**
  * Saga Battleground Activity page where the user can idly battle monsters to gain gold resource
  */
-public class SagaBattlegroundActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class SagaBattlegroundActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, SagaBattlegroundActivityInterface {
     // To print to log instead of console
     private final static String TAG = "SagaBattleActivity";
 
@@ -207,6 +207,7 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
      *
      * @param ds DocumentSnapshot of the User from the DB
      */
+    @Override
     public void readUser(Task<DocumentSnapshot> ds) {
         ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
@@ -246,6 +247,7 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
      * these TextViews; there is also the check that the User has actually loaded in (since it is
      * loaded in asynchronously)
      */
+    @Override
     public void fight() {
         if (userLoaded) {
             // Deal damage to monster

@@ -26,7 +26,7 @@ import static com.example.littleync.MainActivity.logoutTrigger;
  * Armory Activity page which allows the user to upgrade their woodchopping, fishing, and/or combat
  * gear
  */
-public class ArmoryActivity extends AppCompatActivity {
+public class ArmoryActivity extends AppCompatActivity implements ArmoryActivityInterface {
     // To print to log instead of console
     private final static String TAG = "ArmoryActivity";
 
@@ -116,6 +116,7 @@ public class ArmoryActivity extends AppCompatActivity {
      *
      * @param ds DocumentSnapshot of the User from the DB
      */
+    @Override
     public void readUser(Task<DocumentSnapshot> ds) {
         ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
@@ -136,6 +137,7 @@ public class ArmoryActivity extends AppCompatActivity {
     /**
      * To set the TextView displays relevant to upgrading the upgrading the woodchopping gear
      */
+    @Override
     public void setWoodUpgrade() {
         int currentLevel = user.getWoodchoppingGearLevel();
         String toLevel = String.format(Locale.getDefault(), "%s -> %s", currentLevel, currentLevel + 1);
@@ -148,6 +150,7 @@ public class ArmoryActivity extends AppCompatActivity {
     /**
      * To set the TextView displays relevant to upgrading the upgrading the fishing gear
      */
+    @Override
     public void setFishUpgrade() {
         int currentLevel = user.getFishingGearLevel();
         String toLevel = String.format(Locale.getDefault(), "%s -> %s", currentLevel, currentLevel + 1);
@@ -160,6 +163,7 @@ public class ArmoryActivity extends AppCompatActivity {
     /**
      * To set the TextView displays relevant to upgrading the upgrading the combat gear
      */
+    @Override
     public void setCombatUpgrade() {
         int currentLevel = user.getCombatGearLevel();
         String toLevel = String.format(Locale.getDefault(), "%s -> %s", currentLevel, currentLevel + 1);
@@ -173,6 +177,7 @@ public class ArmoryActivity extends AppCompatActivity {
      * To refresh the TextView displays on the entire page, called each time the user presses a
      * button; this called in readUser(), so User is definitely already loaded in
      */
+    @Override
     public void refreshScreen() {
         String woodRes = String.format(Locale.getDefault(), "Wood: %s", user.getWood());
         woodDisplay.setText(woodRes);
@@ -203,6 +208,7 @@ public class ArmoryActivity extends AppCompatActivity {
      *
      * @param view for Android
      */
+    @Override
     public void upgradeWood(View view) {
         if (userLoaded) {
             if (SHOP.increaseWoodchoppingLevel(user)) {
@@ -225,6 +231,7 @@ public class ArmoryActivity extends AppCompatActivity {
      *
      * @param view for Android
      */
+    @Override
     public void upgradeFish(View view) {
         if (userLoaded) {
             if (SHOP.increaseFishingGearLevel(user)) {
@@ -247,6 +254,7 @@ public class ArmoryActivity extends AppCompatActivity {
      *
      * @param view for Android
      */
+    @Override
     public void upgradeCombat(View view) {
         if (userLoaded) {
             if (SHOP.increaseCombatGearLevel(user)) {

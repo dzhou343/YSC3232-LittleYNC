@@ -29,7 +29,7 @@ import com.google.firebase.auth.*;
 
 import java.util.TreeMap;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainActivityInterface {
     public static FirebaseAuth userInstance = FirebaseAuth.getInstance();
     public static boolean loginStatus = false;
     public static int logoutTrigger = 0;
@@ -131,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     //This is what happens when the user gives permission to access location for the first time.
-    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -254,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
      */
 
 
+    @Override
     public void loginButton(View view) {
 
         /**
@@ -398,12 +398,14 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      * @return new screen for forgot password
      */
+    @Override
     public void forgotPasswordScreen(View view) {
         Intent intent = new Intent(this, ForgotPassword.class);
         startActivity(intent);
     }
 
     // Called when the user presses the sign-up text.
+    @Override
     public void signUp(View view) {
         Intent intent = new Intent(this, SignupActivity.class);
         startActivity(intent);

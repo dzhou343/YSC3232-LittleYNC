@@ -26,7 +26,7 @@ import android.widget.EditText;
 import java.util.ArrayList;
 
 
-public class SignupActivity extends AppCompatActivity {
+public class SignupActivity extends AppCompatActivity implements SignupActivityInterface {
 
     private FirebaseAuth loginObject = FirebaseAuth.getInstance();
     private EditText email;
@@ -58,6 +58,7 @@ public class SignupActivity extends AppCompatActivity {
         this.userNameBox = userName;
     }
 
+    @Override
     public void signUpSubmit(View view) {
         submitSignUp.setEnabled(false);
         if (password.getText().toString().equals(password2.getText().toString())) {
@@ -70,7 +71,7 @@ public class SignupActivity extends AppCompatActivity {
                         email.setError(null);
                         password.setError(null);
                         password2.setError(null);
-                        User user = new User(userNameBox.getText().toString(), 1,1,1,1,0,0,0,new ArrayList<String>(),0);
+                        User user = new User(userNameBox.getText().toString(), 1, 1, 1, 1, 0, 0, 0, new ArrayList<String>(), 0);
                         userDoc = fs.collection("users").document(FirebaseAuth.getInstance().getUid().toString());
                         user.writeToDatabaseDirectly(userDoc);
                         //submitSignUp.setText((task.getResult().toString()));

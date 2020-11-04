@@ -30,7 +30,7 @@ import static com.example.littleync.MainActivity.logoutTrigger;
 /**
  * Ecopond Activity page where the user can idly fish for fish to gain fish resource
  */
-public class EcopondActivity extends AppCompatActivity {
+public class EcopondActivity extends AppCompatActivity implements EcopondActivityInterface {
     // To print to log instead of console
     private final static String TAG = "EcopondActivity";
 
@@ -150,6 +150,7 @@ public class EcopondActivity extends AppCompatActivity {
      *
      * @param ds DocumentSnapshot of the User from the DB
      */
+    @Override
     public void readUser(Task<DocumentSnapshot> ds) {
         ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
@@ -188,6 +189,7 @@ public class EcopondActivity extends AppCompatActivity {
      * the aggregateLevel, thus, we need to update these TextViews; there is also the check that
      * the User has actually loaded in (since it is loaded in asynchronously)
      */
+    @Override
     public void fishFish() {
         if (userLoaded) {
             user.fishFish();

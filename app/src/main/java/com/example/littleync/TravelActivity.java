@@ -24,7 +24,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 
-public class TravelActivity extends AppCompatActivity {
+public class TravelActivity extends AppCompatActivity implements TravelActivityInterface {
 
     private Button cTree;
     private Button armory;
@@ -96,6 +96,7 @@ public class TravelActivity extends AppCompatActivity {
         }
     }*/
 
+    @Override
     public void logoutButton(View view) {
         try{
             loginStatus = false;
@@ -110,6 +111,7 @@ public class TravelActivity extends AppCompatActivity {
         }
 
     }
+    @Override
     public void cendanaForestButton(View view) {
         Intent intent = new Intent(this, CendanaForestActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -117,6 +119,7 @@ public class TravelActivity extends AppCompatActivity {
 
     }
 
+    @Override
     public void armoryButton(View view) {
         Intent intent = new Intent(this, ArmoryActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -124,18 +127,21 @@ public class TravelActivity extends AppCompatActivity {
     }
 
 
+    @Override
     public void goToMarketplace(View view) {
         Intent intent = new Intent(this, MarketplaceActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
+    @Override
     public void battleButton(View view) {
         Intent intent = new Intent(this, SagaBattlegroundActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
+    @Override
     public void fishButton(View view) {
         Intent intent = new Intent(this, EcopondActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
