@@ -24,7 +24,6 @@ public class User {
     private int gold;
     private ArrayList<String> trades;
     private int exp;
-    private final ArrayList<String> newTrades = new ArrayList<>();
 
     /**
      * Constructor for the User; only called in sign-up page when we need to initialize
@@ -117,7 +116,6 @@ public class User {
                                               int deltaFish = finalUser.getFish() - initialUser.getFish();
                                               int deltaGold = finalUser.getGold() - initialUser.getGold();
                                               ArrayList<String> deltaTrades = finalUser.getTrades();
-                                              deltaTrades.addAll(newTrades);
 
                                               // Write to DB
                                               Map<String, Object> docData = new HashMap<>();
@@ -240,7 +238,6 @@ public class User {
      */
     public void addTrade(String documentID) {
         trades.add(documentID);
-        newTrades.add(documentID);
     }
 
     /**

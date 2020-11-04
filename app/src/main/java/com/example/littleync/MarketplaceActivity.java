@@ -3,7 +3,6 @@ package com.example.littleync;
 import com.example.littleync.model.Marketplace;
 import com.example.littleync.model.Resource;
 
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -59,14 +58,14 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //        T1
     Resource sRecourceType;
     private EditText receiveQty;
-    private EditText giveQty;
+    private EditText sellQty;
     private Button postTradeBtn;
     private Boolean displayed;
     private Boolean posted;
     private Spinner receiveType;
-    private Spinner giveType;
+    private Spinner sellType;
     private String receiveTypeStr;
-    private String giveTypeStr;
+    private String sellTypeStr;
 
 //    T2
     private ConstraintLayout scrollParent;
@@ -89,15 +88,15 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         receiveType.setOnItemSelectedListener(this);
 
 //        set up the spinner for the type of resource the user is trading with
-        giveType = findViewById(R.id.give_type);
-        ArrayAdapter<String> giveAdapter = new ArrayAdapter<>(MarketplaceActivity.this,
+        sellType = findViewById(R.id.sell_type);
+        ArrayAdapter<String> sellAdapter = new ArrayAdapter<>(MarketplaceActivity.this,
                 android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.marketplace1_spinner));
-        giveAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        giveType.setAdapter(giveAdapter);
-        giveType.setOnItemSelectedListener(this);
+        sellAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sellType.setAdapter(sellAdapter);
+        sellType.setOnItemSelectedListener(this);
 
         receiveQty = findViewById(R.id.receive_qty);
-        giveQty = findViewById(R.id.give_qty);
+        sellQty = findViewById(R.id.sell_qty);
 
         postTradeBtn = findViewById(R.id.post_trade_btn);
         postTradeBtn.setOnClickListener(new View.OnClickListener() {
@@ -105,8 +104,8 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
             public void onClick(View v) {
                 try {
                     int receiveQtyInt = Integer.parseInt(receiveQty.getText().toString());
-                    int giveQtyInt = Integer.parseInt(giveQty.getText().toString());
-                    postTrade(receiveTypeStr, receiveQtyInt, giveTypeStr, giveQtyInt);
+                    int sellQtyInt = Integer.parseInt(sellQty.getText().toString());
+                    postTrade(sellTypeStr, receiveTypeStr, sellQtyInt, receiveQtyInt);
                 } catch (Exception e) {Log.e("What the hell", e.getMessage());}
 
 //                TODO: delete button, dropdown appearance, automatic refresh
@@ -153,18 +152,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         readUserAndPopulateTrades();
     }
 
-    /**
-     * Write the local User and any updates made to it back to the DB
-     * This is called when we press the back button to return to the Main Activity
-     */
-    @Override
-    public void onDestroy() {
-        user.writeToDatabase(fs, userDoc, initialUser);
-        Log.d(TAG, "Wrote to DB");
-        super.onDestroy();
-    }
-
-    public void readUserAndPopulateTrades() {
+    public synchronized void readUserAndPopulateTrades() {
         String userID = FirebaseAuth.getInstance().getUid();
         userLoaded = false;
         tradesLoaded = false;
@@ -174,7 +162,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                         Log.d(TAG, documentSnapshot.getId() + " => " + documentSnapshot.getData());
-                                        // Store 12345678the initial values of the user
+                                        // Store the initial values of the user
                                         initialUser = documentSnapshot.toObject(User.class);
                                         // Store the user that this page will manipulate
                                         user = documentSnapshot.toObject(User.class);
@@ -195,7 +183,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                                                                 Trade t = document.toObject(Trade.class);
                                                                 trades.add(t);
                                                             }
-                                                            MARKETPLACE = new Marketplace(trades);
+                                                            MARKETPLACE = new Marketplace(getApplicationContext(), trades);
                                                             tradesLoaded = true;
                                                             populateExistingDeals();
                                                         }
@@ -206,43 +194,18 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         );
     }
 
-    /**
-     * Read in User by userID, update all the textViews at top of page
-     *
-     * @param ds
-     */
-    public void readUser(Task<DocumentSnapshot> ds) {
-        ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        Log.d(TAG, documentSnapshot.getId() + " => " + documentSnapshot.getData());
-                                        // Store the initial values of the user
-                                        initialUser = documentSnapshot.toObject(User.class);
-                                        // Store the user that this page will manipulate
-                                        user = documentSnapshot.toObject(User.class);
-                                        userLoaded = true;
-                                    }
-                                }
-        );
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void postTrade(String receiveType, int receiveQty, String giveType, int giveQty) {
+    public void postTrade(String sellType, String receiveType, int sellQty, int receiveQty) {
         if (userLoaded && tradesLoaded) {
-            String tryPost = MARKETPLACE.postTrade(fs, user, giveType, receiveType, giveQty, receiveQty);
-            Toast msg = Toast.makeText(this, tryPost, Toast.LENGTH_SHORT);
-            msg.show();
-
+            MARKETPLACE.postTrade(fs, sellType, receiveType, sellQty, receiveQty);
         } else {
             Log.d(TAG, "User/trades not yet loaded");
         }
     }
 
-    public void acceptTrade(Trade toAccept) {
+    public synchronized void acceptTrade(Trade toAccept) {
         if (userLoaded && tradesLoaded) {
-            String tryAccept = MARKETPLACE.acceptTrade(fs, user, toAccept.getDocumentID());
-            Toast msg = Toast.makeText(this, tryAccept, Toast.LENGTH_SHORT);
-            msg.show();
+            MARKETPLACE.acceptTrade(fs, toAccept.getDocumentID());
         } else {
             Log.d(TAG, "User/trades not yet loaded");
         }
@@ -251,7 +214,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     public void deleteTrade(){}
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    protected void populateExistingDeals() {
+    protected synchronized void populateExistingDeals() {
 
         int lastRowID = 0;
 
@@ -459,8 +422,8 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
             case R.id.receive_type:
                 receiveTypeStr = parent.getItemAtPosition(position).toString();
                 break;
-            case R.id.give_type:
-                giveTypeStr = parent.getItemAtPosition(position).toString();
+            case R.id.sell_type:
+                sellTypeStr = parent.getItemAtPosition(position).toString();
                 break;
         }
     }
