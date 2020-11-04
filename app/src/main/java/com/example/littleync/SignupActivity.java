@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.littleync.controller.Login;
+import com.example.littleync.controller.UserNameAlreadyUsed;
 import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -14,7 +14,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 /**
  * Import the EditText and button type inside of the signup_page
@@ -60,51 +63,99 @@ public class SignupActivity extends AppCompatActivity {
         this.userNameBox = userName;
     }
 
+    /**createUser() sends a request to firebase only when we have ensured that the passwords match and that the username is unique.
+     * It does not take in any parameters as the email, username, and password information are all taken from SignUpActivity class.
+     *
+     */
+    public void createUser(){
+        loginObject.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), String.format("Sign up successful for user %s", userNameBox.getText().toString()), Toast.LENGTH_LONG).show();
+                    Log.d(TAG, String.format("Sign up successful for user %s", userNameBox.getText().toString()));
+                    email.setError(null);
+                    password.setError(null);
+                    password2.setError(null);
+                    User user = new User(userNameBox.getText().toString(), 1, 1, 1, 1, 0, 0, 0, new ArrayList<String>(), 0);
+                    userDoc = fs.collection("users").document(FirebaseAuth.getInstance().getUid().toString());
+                    user.writeToDatabaseDirectly(userDoc);
+                    //Generate the userName for the person
+                    UserProfileChangeRequest updateForProfile = new UserProfileChangeRequest.Builder().setDisplayName(userNameBox.getText().toString()).build();
+                    loginObject.getCurrentUser().updateProfile(updateForProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d("USER PROFILE", "UPDATED SUCCESS");
+                            } else {
+                                Log.d("USER PROFILE", "UPDATED FAILED");
+                            }
+                        }
+                    });
+
+                    //submitSignUp.setText((task.getResult().toString()));
+                    submitSignUp.setEnabled(true);
+                    SignupActivity.super.finish();
+
+                } else if (!task.isSuccessful()) {
+                    Log.d(TAG, "login failed");
+                    Log.d(TAG, task.toString());
+                    Log.d(TAG, task.getException().getMessage());
+                    email.setError(task.getException().getMessage());
+                    password.setError(task.getException().getMessage());
+                    password2.setError(task.getException().getMessage());
+                    Toast.makeText(getApplicationContext(), String.format("Sign up failure for user %s: %s", userNameBox.getText().toString(), task.getException().getMessage()), Toast.LENGTH_LONG).show();
+                    submitSignUp.setEnabled(true);
+                }
+            }
+        });
+    }
+
+    /**
+     * signUpSubmit is the button which is linked to the signup button on the signup page.
+     * @param view
+     */
     public void signUpSubmit(View view) {
         submitSignUp.setEnabled(false);
         try {
             if (password.getText().toString().equals(password2.getText().toString())) {
-                loginObject.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), String.format("Sign up successful for user %s", userNameBox.getText().toString()), Toast.LENGTH_LONG).show();
-                            Log.d(TAG, String.format("Sign up successful for user %s", userNameBox.getText().toString()));
-                            email.setError(null);
-                            password.setError(null);
-                            password2.setError(null);
-                            User user = new User(userNameBox.getText().toString(), 1, 1, 1, 1, 0, 0, 0, new ArrayList<String>(), 0);
-                            userDoc = fs.collection("users").document(FirebaseAuth.getInstance().getUid().toString());
-                            user.writeToDatabaseDirectly(userDoc);
-                            UserProfileChangeRequest updateForProfile = new UserProfileChangeRequest.Builder().setDisplayName(userNameBox.getText().toString()).build();
-                            loginObject.getCurrentUser().updateProfile(updateForProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                Query queryExistingUserName = fs.collection("users")
+                        .whereEqualTo("userName", userNameBox.getText().toString());
+                synchronized (this) {
+                    queryExistingUserName
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()){
-                                        Log.d("USER PROFILE","UPDATED SUCCESS");
-                                    }
-                                    else{
-                                        Log.d("USER PROFILE","UPDATED FAILED");
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        if (!task.getResult().isEmpty()) {
+                                            try {
+                                                for (DocumentSnapshot ds : task.getResult().getDocuments()) {
+                                                    System.out.println("DATA IS");
+                                                    System.out.println(ds.getData().toString());
+                                                }
+
+                                                throw new UserNameAlreadyUsed();
+                                            } catch (UserNameAlreadyUsed u) {
+                                                Toast.makeText(getApplicationContext(), String.format("ERROR: %s", u.getMessage()), Toast.LENGTH_LONG).show();
+                                                userNameBox.setError(u.getMessage());
+                                                email.setError(u.getMessage());
+                                                password.setError(u.getMessage());
+                                                password2.setError(u.getMessage());
+                                                Log.d("ERROR", u.getMessage());
+                                                submitSignUp.setEnabled(true);
+                                            }
+                                        } else {
+                                            System.out.println("DS IS NULL");
+                                            createUser();
+                                        }
                                     }
                                 }
                             });
 
-                            //submitSignUp.setText((task.getResult().toString()));
-                            submitSignUp.setEnabled(true);
-                            SignupActivity.super.finish();
 
-                        } else if (!task.isSuccessful()) {
-                            Log.d(TAG, "login failed");
-                            Log.d(TAG, task.toString());
-                            Log.d(TAG, task.getException().getMessage());
-                            email.setError(task.getException().getMessage());
-                            password.setError(task.getException().getMessage());
-                            password2.setError(task.getException().getMessage());
-                            Toast.makeText(getApplicationContext(), String.format("Sign up failure for user %s: %s", userNameBox.getText().toString(), task.getException().getMessage()), Toast.LENGTH_LONG).show();
-                            submitSignUp.setEnabled(true);
-                        }
-                    }
-                });
+
+                }
 
             } else {
                 Toast.makeText(getApplicationContext(), String.format("Sign up failure for user %s: %s", userNameBox.getText().toString(), "passwords don't match!"), Toast.LENGTH_LONG).show();
@@ -123,6 +174,7 @@ public class SignupActivity extends AppCompatActivity {
             Log.d("ERROR", e.getMessage());
             submitSignUp.setEnabled(true);
         }
+
 
     }
 
