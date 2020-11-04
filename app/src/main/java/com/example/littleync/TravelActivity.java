@@ -62,13 +62,17 @@ public class TravelActivity extends AppCompatActivity {
 
     @Override
     public void onStart() {
-        super.onStart();/*
+        super.onStart();
+
+        //UNMUTE THIS FOR DEPLOYMENT ON ANDROID PHONE
+        /*
         cTree.setEnabled(whereAmINowMap.get("Cendana"));
         trading.setEnabled(whereAmINowMap.get("Elm"));
         battleground.setEnabled(whereAmINowMap.get("Saga"));
         ecopond.setEnabled(whereAmINowMap.get("Ecopond"));
         armory.setEnabled(whereAmINowMap.get("Armory"));*/
 
+        //MUTE THIS FOR DEVELOPMENT ON WINDOWS MACHINES
         cTree.setEnabled(true);
         trading.setEnabled(true);
         battleground.setEnabled(true);
@@ -91,6 +95,12 @@ public class TravelActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        logoutTrigger --;
+    }
+
     /**
      * Calls onStop whenever a new page is generated.
      */
@@ -100,7 +110,7 @@ public class TravelActivity extends AppCompatActivity {
         super.onStop();
         if (logoutTrigger < 2) {
             logoutTrigger++;
-        } else {
+         } else {
             TravelActivity.super.finish();
         }
 

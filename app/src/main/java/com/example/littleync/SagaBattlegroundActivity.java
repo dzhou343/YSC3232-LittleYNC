@@ -162,11 +162,6 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         Log.d(TAG, "Wrote to DB");
         logoutTrigger = 0;
         super.onDestroy();
-        if (loginStatus) {
-            Intent intent = new Intent(this.getApplicationContext(), TravelActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-        }
 
 
     }
