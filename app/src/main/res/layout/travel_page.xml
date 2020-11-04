@@ -21,7 +21,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/armory_travel_page"
         android:layout_width="113dp"
         android:layout_height="99dp"
         android:layout_marginStart="257dp"
@@ -29,15 +29,18 @@
         android:layout_marginEnd="41dp"
         android:layout_marginBottom="344dp"
         android:onClick="armoryButton"
+        android:enabled="false"
+        android:clickable="true"
         android:text="Armory"
-        android:alpha="0"
+        android:alpha="0.7"
+        android:backgroundTint="@android:color/background_dark"
         app:layout_constraintBottom_toBottomOf="@+id/YNC_map_1"
         app:layout_constraintEnd_toEndOf="@+id/YNC_map_1"
         app:layout_constraintStart_toStartOf="@+id/YNC_map_1"
         app:layout_constraintTop_toTopOf="@+id/YNC_map_1" />
 
     <Button
-        android:id="@+id/buttery_trading_hub"
+        android:id="@+id/buttery_trading_travel_page"
         android:layout_width="138dp"
         android:layout_height="84dp"
         android:layout_marginStart="241dp"
@@ -45,55 +48,85 @@
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="165dp"
         android:onClick="goToMarketplace"
+        android:clickable="true"
         android:text="@string/marketplace_name"
-        android:alpha="0"
+        android:alpha="0.7"
+        android:backgroundTint="@android:color/background_dark"
+        android:enabled="false"
         app:layout_constraintBottom_toBottomOf="@+id/YNC_map_1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/YNC_map_1"
         app:layout_constraintTop_toTopOf="@+id/YNC_map_1" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/cendana_forest_travel"
         android:layout_width="158dp"
         android:layout_height="90dp"
         android:layout_marginTop="16dp"
         android:onClick="cendanaForestButton"
+        android:clickable="true"
         android:text="@string/woodcutting_name"
-        android:alpha="0"
+        android:alpha="0.7"
+        android:backgroundTint="@android:color/background_dark"
+        android:enabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.532"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/saga_battleground_travel_page"
         android:layout_width="160dp"
         android:layout_height="104dp"
         android:layout_marginStart="47dp"
         android:layout_marginTop="460dp"
         android:layout_marginEnd="204dp"
         android:layout_marginBottom="39dp"
+        android:alpha="0.7"
+        android:backgroundTint="@android:color/background_dark"
+        android:clickable="true"
+        android:enabled="false"
         android:onClick="battleButton"
         android:text="@string/battleground_name"
-        android:alpha="0"
         app:layout_constraintBottom_toBottomOf="@+id/YNC_map_1"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/YNC_map_1"
-        app:layout_constraintTop_toTopOf="@+id/YNC_map_1" />
+        app:layout_constraintTop_toTopOf="@+id/YNC_map_1"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
-        android:id="@+id/button6"
+
+        android:id="@+id/ecopond_travel_page"
         android:layout_width="146dp"
         android:layout_height="108dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="175dp"
         android:layout_marginEnd="249dp"
         android:layout_marginBottom="320dp"
-        android:alpha="0"
+        android:alpha="0.7"
+        android:backgroundTint="@android:color/background_dark"
         android:onClick="fishButton"
+        android:clickable="true"
+        android:enabled="false"
         android:text="@string/fishing_name"
         app:layout_constraintBottom_toBottomOf="@+id/YNC_map_1"
         app:layout_constraintEnd_toEndOf="@+id/YNC_map_1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/YNC_map_1" />
+
+    <Button
+        android:id="@+id/logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:enabled="true"
+        android:clickable="true"
+        android:onClick="logoutButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.466"
+        app:layout_constraintStart_toEndOf="@+id/cendana_forest_travel"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.028" />
 </androidx.constraintlayout.widget.ConstraintLayout>
