@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="tutorial_text_style">
+        <item name="fontFamily">@font/advent_pro_semibold</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">#C89FFD</item>
+        <item name="background">transparent</item>
+        <item name="android:paddingHorizontal">20dp</item>
+
+    </style>
+</resources>

@@ -60,4 +60,18 @@
         <item name="android:textAllCaps">false</item>
     </style>
 
+    <style name="tutorial_title_style">
+        <item name="fontFamily">@font/advent_pro_semibold</item>
+        <item name="android:textColor">#C89FFD</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+
+    <style name="tutorial_text_style">
+        <item name="fontFamily">@font/advent_pro_semibold</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">#C89FFD</item>
+        <item name="background">transparent</item>
+
+
+    </style>
 </resources>

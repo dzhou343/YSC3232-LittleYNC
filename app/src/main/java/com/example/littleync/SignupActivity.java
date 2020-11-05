@@ -3,6 +3,7 @@ package com.example.littleync;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -178,5 +179,9 @@ public class SignupActivity extends AppCompatActivity {
 
     }
 
+    public void goToTutorial(View view){
+        Intent intent = new Intent(this, Tutorial.class);
+        startActivity(intent);
+    }
 
 }

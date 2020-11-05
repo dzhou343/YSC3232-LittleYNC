@@ -71,4 +71,16 @@
     <string name="go_to_random_page_for_testing_purpose">Go to random page for testing purpose</string>
     <string name="email">EMAIL</string>
     <string name="password">PASSWORD</string>
+
+    <!-- For tutorials -->
+    <string name="tutorial_title"><u>Tutorial</u></string>
+    <string name="read_the_tutorial"><u>Read the tutorial here.</u></string>
+    <string name="tutorial_0">Welcome to LittleYNC! Please read the following short guide for a better experience:</string>
+    <string name="tutorial_1">1. There are 2 primary resources in the game - fish and wood, and 1 currency. You can cut wood in Cendana Forest and fish in Eco Pond. To gain gold, you have to battle against monsters in Saga Battleground.
+    </string>
+    <string name="tutorial_2">2. This is an idle game. To proceed with an activity, all you need is to start the timer and restart the timer when your stamina is replenished. You will gain both the corresponding resource and experience points from each activity.</string>
+    <string name="tutorial_3">3. You will only gain gold and experience points after a monster is defeated. You will gain nothing if you exit Saga Battleground before a monster is defeated.</string>
+    <string name="tutorial_4">4. You can upgrade your fishing rod, woodcutting axe and monster-battling sword to more efficient ones in Dean of Students Office with some resources.</string>
+    <string name="tutorial_5">5. You can trade with other users fish, wood or gold with any of the three in Elm Buttery Marketplace. You have to have enough resources to exchange to successfully post a trade. Each user is entitled to a total of 5 trades in the duration of the game, so use your trades carefully. You can also delete your trade.</string>
+    <string name="tutorial_6">6. Check the leaderboard to see your ranking!</string>
 </resources>
