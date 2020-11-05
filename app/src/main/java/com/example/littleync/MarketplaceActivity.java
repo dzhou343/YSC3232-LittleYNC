@@ -46,16 +46,14 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
     // DB attributes
     private final FirebaseFirestore fs = FirebaseFirestore.getInstance();
-    private DocumentReference userDoc;
     private User user;
-    private User initialUser;
     private volatile boolean userLoaded = false;
     private volatile boolean tradesLoaded = false;
 
     // For trading
     private Marketplace MARKETPLACE;
 
-//        T1
+    //        T1
     Resource sRecourceType;
     private EditText receiveQty;
     private EditText sellQty;
@@ -67,7 +65,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     private String receiveTypeStr;
     private String sellTypeStr;
 
-//    T2
+    //    T2
     private ConstraintLayout scrollParent;
     private Boolean deleteConfirm = false;
     //    for trade button t
@@ -107,17 +105,19 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                     int receiveQtyInt = Integer.parseInt(receiveQty.getText().toString());
                     int sellQtyInt = Integer.parseInt(sellQty.getText().toString());
                     postTrade(sellTypeStr, receiveTypeStr, sellQtyInt, receiveQtyInt);
-                } catch (Exception e) {Log.e("What the hell", e.getMessage());}
+                } catch (Exception e) {
+                    Log.e("What the hell", e.getMessage());
+                }
 
 //                TODO: delete button, dropdown appearance, automatic refresh
-            }});
+            }
+        });
 
         posted = false;
 
         scrollParent = findViewById(R.id.scroll_parent);
         final Button displayExistingTradesBtn = findViewById(R.id.display_existing_trades_btn);
         this.displayed = false;
-
 
         // Populate the scrollview on-demand
         displayExistingTradesBtn.setOnClickListener(new View.OnClickListener() {
@@ -138,41 +138,38 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         userLoaded = false;
         tradesLoaded = false;
         assert userID != null;
-        userDoc = fs.collection("users").document(userID);
+        DocumentReference userDoc = fs.collection("users").document(userID);
         userDoc.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        Log.d(TAG, documentSnapshot.getId() + " => " + documentSnapshot.getData());
-                                        // Store the initial values of the user
-                                        initialUser = documentSnapshot.toObject(User.class);
-                                        // Store the user that this page will manipulate
-                                        user = documentSnapshot.toObject(User.class);
-                                        userLoaded = true;
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Log.d(TAG, documentSnapshot.getId() + " => " + documentSnapshot.getData());
+                // Store the user that this page will manipulate
+                user = documentSnapshot.toObject(User.class);
+                userLoaded = true;
 
-                                        Query queriedTrades = fs.collection("trades")
-                                                .orderBy("timeOfListing", Query.Direction.DESCENDING);
-                                        queriedTrades
-                                                .get()
-                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                    @RequiresApi(api = Build.VERSION_CODES.O)
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                        if (task.isSuccessful()) {
-                                                            ArrayList<Trade> trades = new ArrayList<>();
-                                                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                                                Trade t = document.toObject(Trade.class);
-                                                                trades.add(t);
-                                                            }
-                                                            MARKETPLACE = new Marketplace(getApplicationContext(), trades);
-                                                            tradesLoaded = true;
-                                                            populateExistingDeals();
-                                                        }
-                                                    }
-                                                });
+                Query queriedTrades = fs.collection("trades")
+                        .orderBy("timeOfListing", Query.Direction.DESCENDING);
+                queriedTrades
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @RequiresApi(api = Build.VERSION_CODES.O)
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    ArrayList<Trade> trades = new ArrayList<>();
+                                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                        Log.d(TAG, document.getId() + " => " + document.getData());
+                                        Trade t = document.toObject(Trade.class);
+                                        trades.add(t);
                                     }
+                                    MARKETPLACE = new Marketplace(getApplicationContext(), trades);
+                                    tradesLoaded = true;
+                                    populateExistingDeals();
                                 }
-        );
+                            }
+                        });
+            }
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -184,7 +181,21 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
         }
     }
 
-    public void deleteTrade(){}
+    public synchronized void acceptTrade(TextView acceptButton, String documentID) {
+        if (userLoaded && tradesLoaded) {
+            MARKETPLACE.acceptTrade(fs, acceptButton, documentID);
+        } else {
+            Log.d(TAG, "User/trades not yet loaded");
+        }
+    }
+
+    public synchronized void deleteTrade(TextView deleteButton, String documentID) {
+        if (userLoaded && tradesLoaded) {
+            MARKETPLACE.deleteTrade(fs, deleteButton, documentID);
+        } else {
+            Log.d(TAG, "User/trades not yet loaded");
+        }
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     protected synchronized void populateExistingDeals() {
@@ -226,21 +237,14 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                     @Override
                     public void onClick(View v) {
                         if (!finalSameUser) {
-                            synchronized (MarketplaceActivity.this) {
-                                if (userLoaded && tradesLoaded) {
-                                    MARKETPLACE.acceptTrade(fs, t2Btn_text, t.getDocumentID());
-                                } else {
-                                    Log.d(TAG, "User/trades not yet loaded");
-                                }
-                            }
+                            acceptTrade(t2Btn_text, t.getDocumentID());
                         } else {
                             if (!deleteConfirm) {
                                 t2Btn_text.setText("Delete?");
                                 t2Btn_text.setBackground(getResources().getDrawable(R.drawable.marketplace2_btn2));
                                 deleteConfirm = true;
                             } else {
-                                deleteTrade();
-                                t2Btn_text.setText("Deleted!");
+                                deleteTrade(t2Btn_text, t.getDocumentID());
                             }
                         }
                     }
@@ -288,7 +292,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        switch (parent.getId()){
+        switch (parent.getId()) {
             case R.id.receive_type:
                 receiveTypeStr = parent.getItemAtPosition(position).toString();
                 break;
@@ -297,7 +301,6 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                 break;
         }
     }
-
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {}
