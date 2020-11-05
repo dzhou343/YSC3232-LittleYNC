@@ -245,6 +245,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                                 deleteConfirm = true;
                             } else {
                                 deleteTrade(t2Btn_text, t.getDocumentID());
+                                deleteConfirm = false;
                             }
                         }
                     }
