@@ -28,7 +28,7 @@ android:
     - 'platforms;android-30 Android SDK Platform 30'
 
 script:
-  - ./gradlew build
+  - ./gradlew test
 
   # Specify at least one system image,
   # if you need to run emulator(s) during your tests
