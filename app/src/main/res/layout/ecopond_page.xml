@@ -5,7 +5,7 @@
     android:id="@+id/pond"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EcopondActivity"
+    tools:context=".actionActivities.EcopondActivity"
     android:background="@android:color/background_dark"
     android:orientation="vertical">
 
@@ -155,7 +155,7 @@
     </ImageView>
 
     <TextView
-        android:id="@+id/toast_msg"
+        android:id="@+id/gain_display"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"

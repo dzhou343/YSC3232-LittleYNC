@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.littleync.R;
 import com.example.littleync.model.Shop;
 import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
