@@ -5,7 +5,7 @@ Please see the wiki for git workflow.
 
  
 Conventions used for this project:
-1) Snake_case for XML variables
+1) snake_case for XML variables
 2) camelCase for Java classes
 
 
