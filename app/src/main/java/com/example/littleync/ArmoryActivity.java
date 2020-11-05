@@ -1,4 +1,4 @@
-package com.example.littleync.actionActivities;
+package com.example.littleync;
 
 import androidx.appcompat.app.AppCompatActivity;
 

@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 
 
-import com.example.littleync.actionActivities.ArmoryActivity;
 import com.example.littleync.actionActivities.CendanaForestActivity;
 import com.example.littleync.actionActivities.EcopondActivity;
 import com.example.littleync.actionActivities.SagaBattlegroundActivity;

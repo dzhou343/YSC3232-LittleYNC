@@ -84,7 +84,7 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".actionActivities.ArmoryActivity"
+            android:name=".ArmoryActivity"
             android:parentActivityName=".TravelActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
