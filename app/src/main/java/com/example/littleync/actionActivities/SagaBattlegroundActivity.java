@@ -1,4 +1,4 @@
-package com.example.littleync;
+package com.example.littleync.actionActivities;
 
 import android.graphics.Color;
 import android.text.SpannableStringBuilder;
@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.example.littleync.R;
 import com.example.littleync.model.Monsters;
 
 import java.util.Locale;
@@ -21,17 +22,32 @@ import java.util.Locale;
  * Saga Battleground Activity page where the user can idly battle monsters to gain gold resource
  */
 public class SagaBattlegroundActivity extends ActionActivity implements AdapterView.OnItemSelectedListener {
-    // Monster attributes
+
+    // Monster-specific attributes
     private final Monsters MONSTERS = new Monsters();
     private String currentMonster;
     private int currentHP;
     private TextView healthDisplay;
     private ImageView monsterDisplay;
 
+    /**
+     * Sets the tag for the Log
+     */
     public SagaBattlegroundActivity() {
         super("SagaBattlegroundActivity");
     }
 
+    /**
+     * Sets the correct content view
+     */
+    @Override
+    protected void settingContentView() {
+        setContentView(R.layout.battleground_page);
+    }
+
+    /**
+     * Create the spinner to select and initiate the monster to battle
+     */
     @Override
     protected void createSpinners() {
         // Initializing Spinner
@@ -51,7 +67,7 @@ public class SagaBattlegroundActivity extends ActionActivity implements AdapterV
     }
 
     /**
-     * Update current monster being fought, and relevant TextViews and image
+     * Updates the current monster being fought, and relevant TextViews and image
      *
      * @param parent   spinner
      * @param view     for Android
@@ -69,18 +85,16 @@ public class SagaBattlegroundActivity extends ActionActivity implements AdapterV
     }
 
     /**
-     * Default for spinner
+     * Sets the default for the spinner
      *
      * @param parent spinner
      */
     @Override
     public void onNothingSelected(AdapterView<?> parent) {}
 
-    @Override
-    protected void settingContentView() {
-        setContentView(R.layout.battleground_page);
-    }
-
+    /**
+     * On this page, since it's the battleground, we want to deal damage to monsters
+     */
     @Override
     protected void action() {
         // Deal damage to monster
@@ -102,12 +116,16 @@ public class SagaBattlegroundActivity extends ActionActivity implements AdapterV
         healthDisplay.setText(healthMaxFormatted);
     }
 
-    protected void updateGainText() {
+    /**
+     * Sets the toast-message-like display depending on the action
+     */
+    private void updateGainText() {
         int gain = MONSTERS.getMonsterGoldYield(currentMonster);
         int expGain = MONSTERS.getMonsterExpYield(currentMonster);
 
         String combatText = String.format(Locale.getDefault(), "+%s Gold", gain);
         String expText = String.format(Locale.getDefault(), "+%s Exp", expGain);
+
         SpannableStringBuilder combatSpan = new SpannableStringBuilder(combatText);
         SpannableStringBuilder expSpan = new SpannableStringBuilder(expText);
 
@@ -127,7 +145,7 @@ public class SagaBattlegroundActivity extends ActionActivity implements AdapterV
     }
 
     /**
-     * Change the monster image depending on the monster selected to battle
+     * Changes the monster image
      */
     private void changeMonsterImage() {
         switch (currentMonster) {

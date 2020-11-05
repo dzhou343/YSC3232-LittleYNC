@@ -5,7 +5,7 @@
     android:id="@+id/armory"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ArmoryActivity"
+    tools:context=".actionActivities.ArmoryActivity"
     android:background="@android:color/background_dark"
     android:orientation="vertical">
 

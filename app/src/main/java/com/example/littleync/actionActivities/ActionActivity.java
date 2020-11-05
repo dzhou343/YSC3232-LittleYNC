@@ -1,4 +1,4 @@
-package com.example.littleync;
+package com.example.littleync.actionActivities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.littleync.R;
+import com.example.littleync.TravelActivity;
 import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -23,6 +25,10 @@ import java.util.Locale;
 import static com.example.littleync.MainActivity.loginStatus;
 import static com.example.littleync.MainActivity.logoutTrigger;
 
+/**
+ * Abstract class we implement for woodchopping, fishing, and combat. All three of these activites
+ * are extremely similar, with the main difference being the action that gets performed
+ */
 public abstract class ActionActivity extends AppCompatActivity {
     // To print to log instead of console
     private final String TAG;
@@ -58,25 +64,24 @@ public abstract class ActionActivity extends AppCompatActivity {
     private TextView timeDisplay;
     private TextView staminaDisplay;
 
-//    public ActionActivity(String TAG, TextView woodDisplay, TextView woodchoppingGearLevelDisplay, TextView fishDisplay, TextView fishingGearLevelDisplay, TextView goldDisplay, TextView combatGearLevelDisplay, TextView aggLevelDisplay, TextView aggLevelProgressDisplay, TextView gainDisplay) {
-//        this.TAG = TAG;
-//        this.woodDisplay = woodDisplay;
-//        this.woodchoppingGearLevelDisplay = woodchoppingGearLevelDisplay;
-//        this.fishDisplay = fishDisplay;
-//        this.fishingGearLevelDisplay = fishingGearLevelDisplay;
-//        this.goldDisplay = goldDisplay;
-//        this.combatGearLevelDisplay = combatGearLevelDisplay;
-//        this.aggLevelDisplay = aggLevelDisplay;
-//        this.aggLevelProgressDisplay = aggLevelProgressDisplay;
-//        this.gainDisplay = gainDisplay;
-//    }
-
+    /**
+     * Constructor for this abstract class which just sets the Log print for us to debug
+     *
+     * @param TAG name of the class which implements this
+     */
     public ActionActivity(String TAG) {
         this.TAG = TAG;
     }
 
+    /**
+     * Sets the correct content view for the abstract class implementing, called in onCreate()
+     */
     protected abstract void settingContentView();
 
+    /**
+     * Create spinners in onCreate, called in onCreate(); only used for SagaBattleGroundActivity
+     * @see SagaBattlegroundActivity
+     */
     protected abstract void createSpinners();
 
     /**
@@ -100,18 +105,20 @@ public abstract class ActionActivity extends AppCompatActivity {
         aggLevelProgressDisplay = findViewById(R.id.agg_level_progress);
         gainDisplay = findViewById(R.id.gain_display);
 
+        // Load in the User from the DB
         String userID = FirebaseAuth.getInstance().getUid();
         userLoaded = false;
         assert userID != null;
         userDoc = fs.collection("users").document(userID);
         readUser(userDoc.get());
 
+        // Create spinners if necessary
         createSpinners();
 
         // Timer stuff
         // By default, initialize stamina to full when the activity is created
         // Initialize 1) start/pause/resume button, 2) the reset button and 3) the dynamic time
-        // display textview. By default, the reset button is initialized to invisible.
+        // display TextView. By default, the reset button is initialized to invisible.
         staminaDisplay = findViewById(R.id.stamina_section);
         startPauseResumeBtn = findViewById(R.id.start_pause_resume_button);
         resetBtn = findViewById(R.id.reset_button);
@@ -123,13 +130,11 @@ public abstract class ActionActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (timerRunning) {
                     pauseTimer();
-                }
-                else {
+                } else {
                     startTimer();
                 }
             }
         });
-
         resetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,9 +161,11 @@ public abstract class ActionActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }
-
     }
 
+    /**
+     * Refreshes the TextViews that display the User attributes at the top of the page
+     */
     private void refreshUserAttributes() {
         String woodRes = String.format(Locale.getDefault(), "Wood: %s", user.getWood());
         woodDisplay.setText(woodRes);
@@ -180,7 +187,7 @@ public abstract class ActionActivity extends AppCompatActivity {
     }
 
     /**
-     * Read in User by userID, update all the textViews at top of page, flags that the User has
+     * Read in User by userID, update all the textViews at top of page, and flags that the User has
      * been loaded in
      *
      * @param ds DocumentSnapshot of the User from the DB
@@ -201,12 +208,15 @@ public abstract class ActionActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * To be implemented by the concrete class; this differs depending on whether we want to chop
+     * wood, fish for fish, or battle monsters
+     */
     protected abstract void action();
 
     /**
-     * Call the user.chopWood() method, which updates wood and exp, and has the potential to update
-     * the aggregateLevel, thus, we need to update these TextViews; there is also the check that
-     * the User has actually loaded in (since it is loaded in asynchronously)
+     * Call the actio() method, which has the potential to update the TextViews; there is also the
+     * check that the User has actually loaded in (since it is loaded in asynchronously)
      */
     private void actionAndRefresh() {
         if (userLoaded) {
@@ -218,7 +228,7 @@ public abstract class ActionActivity extends AppCompatActivity {
     }
 
     /**
-     * Begin the timer counting down
+     * Begins the timer counting down
      */
     private void startTimer() {
         myTimer = new CountDownTimer(TOTAL_TIME_PER_SESSION, 1000) {
@@ -244,7 +254,7 @@ public abstract class ActionActivity extends AppCompatActivity {
     }
 
     /**
-     * Pause the timer
+     * Pauses the timer
      */
     private void pauseTimer() {
         myTimer.cancel();
@@ -254,7 +264,7 @@ public abstract class ActionActivity extends AppCompatActivity {
     }
 
     /**
-     * Reset the timer
+     * Resets the timer
      */
     private void resetTimer() {
         timeLeft = TOTAL_TIME_PER_SESSION;
@@ -266,7 +276,7 @@ public abstract class ActionActivity extends AppCompatActivity {
     }
 
     /**
-     * Update text for the timer
+     * Updates text for the timer
      */
     private void updateCountdownText() {
         // Conversion from milliseconds to minutes and seconds
@@ -277,7 +287,8 @@ public abstract class ActionActivity extends AppCompatActivity {
     }
 
     /**
-     * Update the stamina left which occurs every 5s, and for each unit, we want to chop wood
+     * Updates the stamina left which occurs every 5s, and for each unit, we want to conduct the
+     * action
      */
     private void updateStamina() {
         int staminaLeft;

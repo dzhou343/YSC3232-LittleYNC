@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SagaBattlegroundActivity">
+    tools:context=".actionActivities.SagaBattlegroundActivity">
 
     <LinearLayout
         android:id="@+id/battleground"
@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:background="@android:color/background_dark"
         android:orientation="vertical"
-        tools:context=".SagaBattlegroundActivity">
+        tools:context=".actionActivities.SagaBattlegroundActivity">
 
         <LinearLayout
             android:id="@+id/Dashboard"
