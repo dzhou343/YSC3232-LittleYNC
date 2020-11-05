@@ -35,13 +35,12 @@
 
     </style>
 
-    <style name="spinner3">
+    <style name="spinner3" parent="android:Widget.TextView.SpinnerItem">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@android:color/background_dark</item>
         <item name="android:background">@drawable/marketplace_spinner_dropdown_background</item>
         <item name="fontFamily">@font/advent_pro_semibold</item>
-        <item name="android:textStyle"></item>
     </style>
 
     <style name="marketplace2_btn">

@@ -4,8 +4,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:padding="5dp"
-    style="?attr/spinnerDropDownItemStyle"
-    android:background="#FFE0B2"
+    style="@style/spinner3"
+    android:background="#AED581"
     android:fontFamily="@font/advent_pro_semibold"
     android:textSize="12sp"
     >
