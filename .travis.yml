@@ -16,7 +16,7 @@ android:
     - build-tools-30.0.2
 
     # The SDK version used to compile your project
-   # - android-30
+    # - android-30
 
     # Additional components
     - extra-google-google_play_services
@@ -27,6 +27,8 @@ android:
     - 'build-tools;30.0.2 Android SDK Build-Tools 30.0.2'
     - 'platforms;android-30 Android SDK Platform 30'
 
+script:
+  - ./gradlew test
+
   # Specify at least one system image,
   # if you need to run emulator(s) during your tests
-
