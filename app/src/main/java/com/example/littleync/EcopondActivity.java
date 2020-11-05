@@ -11,6 +11,8 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -65,6 +67,9 @@ public class EcopondActivity extends AppCompatActivity {
     private CountDownTimer myTimer;
     private TextView timeDisplay;
     private TextView staminaDisplay;
+
+    // Animation attributes
+    private Animation animFadeOut;
 
     /**
      * Initialize the objects and TextViews required for this page, including stamina computations
@@ -294,6 +299,8 @@ public class EcopondActivity extends AppCompatActivity {
             if (staminaLeft < TOTAL_STAMINA) {
                 fishFish();
                 updateGainText();
+                animFadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+                gainDisplay.startAnimation(animFadeOut);
             }
         } else {
             staminaLeft = quotient + 1;

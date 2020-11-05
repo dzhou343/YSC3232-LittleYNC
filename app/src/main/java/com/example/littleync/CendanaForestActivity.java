@@ -11,6 +11,8 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -31,6 +33,7 @@ import static com.example.littleync.MainActivity.logoutTrigger;
  * Cendana Forest Activity page where the user can idly chop down trees to gain wood resource
  */
 public class CendanaForestActivity extends AppCompatActivity {
+
     // To print to log instead of console
     private final static String TAG = "CendanaForestActivity";
 
@@ -64,6 +67,10 @@ public class CendanaForestActivity extends AppCompatActivity {
     private CountDownTimer myTimer;
     private TextView timeDisplay;
     private TextView staminaDisplay;
+
+    // Animation attributes
+    private Animation animFadeOut;
+
 
     /**
      * Initialize the objects and TextViews required for this page, including stamina computations
@@ -276,7 +283,9 @@ public class CendanaForestActivity extends AppCompatActivity {
         woodSpan.append(" and ");
         woodSpan.append(expSpan);
 
+
         gainDisplay.setText(woodSpan);
+
     }
 
     /**
@@ -291,6 +300,8 @@ public class CendanaForestActivity extends AppCompatActivity {
             if (staminaLeft < TOTAL_STAMINA) {
                 chopWood();
                 updateGainText();
+                animFadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+                gainDisplay.startAnimation(animFadeOut);
             }
         } else {
             staminaLeft = quotient + 1;

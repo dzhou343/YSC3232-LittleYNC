@@ -11,6 +11,8 @@ import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -76,6 +78,9 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
     private int currentHP;
     private TextView healthDisplay;
     private ImageView monsterDisplay;
+
+    // Animation attributes
+    private Animation animFadeOut;
 
     /**
      * Initialize the objects and TextViews required for this page, including stamina computations
@@ -181,9 +186,6 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
         String healthMaxFormatted = String.format(Locale.getDefault(),
                 "HP: %s / %s", currentHP, MONSTERS.getMonsterHitpoints(currentMonster));
         healthDisplay.setText(healthMaxFormatted);
-        String toastMsg = String.format(Locale.getDefault(),
-                "+%s Gold and +%s Exp", MONSTERS.getMonsterGoldYield(currentMonster), MONSTERS.getMonsterExpYield(currentMonster));
-        gainDisplay.setText(toastMsg);
         changeMonsterImage();
     }
 
@@ -258,6 +260,8 @@ public class SagaBattlegroundActivity extends AppCompatActivity implements Adapt
                         "%s / %s", user.getExp(), user.requiredExperience(user.getAggregateLevel() + 1));
                 aggLevelProgressDisplay.setText(aggLevelProgress);
                 updateGainText();
+                animFadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+                gainDisplay.startAnimation(animFadeOut);
                 // Reset monster HP to fight again
                 currentHP = MONSTERS.getMonsterHitpoints(currentMonster);
             }
