@@ -132,10 +132,11 @@ public class Marketplace {
                                 });
                     } else {
                         showToast("Trade already deleted!");
+                        deletingTrade = false;
                     }
                 };
             });
-        } else{
+        } else {
                 showToast("Trades still being processed, please wait");
             }
         }
