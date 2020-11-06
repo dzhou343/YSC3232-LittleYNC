@@ -85,23 +85,6 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-
-        //final FirebaseAuth log = FirebaseAuth.getInstance();
-        //Make sure you logout before putting on a new reload.
-        /*try {
-            log.getCurrentUser().reload();
-            //Uncomment below to fix crash bug if the user loaded a new version of the app whilst logged in.
-            log.signOut();
-            System.out.println(log.getCurrentUser().getUid());
-            if (log.getCurrentUser() == null) {
-                log.signOut();
-            }
-        } catch (Exception e) {
-            log.signOut();
-        }*/
-
-
-        //log.signOut();
         UID = null;
 
         /**
@@ -166,9 +149,6 @@ public class MainActivity extends AppCompatActivity {
     public void signIn() {
         try {
 
-            //final String user = log.getMyAuthInstance().getUid().toString();
-
-            //if (!emailLogin.equals(null) && !passwordLogin.equals(null)) {
             userInstance.signInWithEmailAndPassword(emailLogin.getText().toString(), passwordLogin.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
@@ -199,12 +179,6 @@ public class MainActivity extends AppCompatActivity {
             /**
              * Assuming the user has logged in before, and would like to go in again.
              */
-            /*if ((whereWasIMap.get("initialized") == true) && (loginStatus == false)) {
-                Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
-                startActivity(refresh);
-            }*/
-
-            //}
 
         } catch (Exception e) {
             loginButton.clearFocus();
