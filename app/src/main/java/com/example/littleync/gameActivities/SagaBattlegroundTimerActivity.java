@@ -55,7 +55,7 @@ public class SagaBattlegroundTimerActivity extends ActionTimerActivity implement
         enemySpinner.setAdapter(enemyAdapter);
         enemySpinner.setOnItemSelectedListener(this);
         healthDisplay = findViewById(R.id.health_display);
-        monsterDisplay = findViewById(R.id.page_img);
+        monsterDisplay = findViewById(R.id.monster_img);
     }
 
     /**
