@@ -32,12 +32,6 @@ public class EcopondActivity extends ActionActivity {
     }
 
     /**
-     * No spinners needed for this page
-     */
-    @Override
-    protected void createSpinners() {}
-
-    /**
      * On this page, since it's the Ecopond, we want to fish
      */
     @Override

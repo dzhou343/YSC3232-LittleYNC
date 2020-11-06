@@ -3,7 +3,6 @@ package com.example.littleync.model;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import android.util.LayoutDirection;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -77,7 +76,7 @@ public class Marketplace {
     private void showToast(String msg) {
         View toastLayout = inflater.inflate(R.layout.toast_custom, null);
 
-        TextView text = (TextView) toastLayout.findViewById(R.id.text);
+        TextView text = toastLayout.findViewById(R.id.text);
         text.setText(msg);
 
         Toast toast = new Toast(context.getApplicationContext());
@@ -119,7 +118,7 @@ public class Marketplace {
                                         Trade toDelete = tradesMap.get(tradeDocumentID);
                                         switch (Objects.requireNonNull(toDelete).getSellType()) {
                                             case "wood":
-                                                    user.addWood(toDelete.getSellQty());
+                                                user.addWood(toDelete.getSellQty());
                                                 break;
                                             case "fish":
                                                 user.addFish(toDelete.getSellQty());
@@ -152,7 +151,7 @@ public class Marketplace {
                         showToast("Trade already deleted!");
                         deletingTrade = false;
                     }
-                };
+                }
             });
         } else {
                 showToast("Trades still being processed, please wait");

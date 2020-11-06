@@ -32,12 +32,6 @@ public class CendanaForestActivity extends ActionActivity {
     }
 
     /**
-     * No spinners needed for this page
-     */
-    @Override
-    protected void createSpinners() {}
-
-    /**
      * On this page, since it's the forest, we want to chop wood
      */
     @Override

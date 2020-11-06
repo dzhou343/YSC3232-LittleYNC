@@ -2,7 +2,6 @@ package com.example.littleync;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -246,6 +245,7 @@ public class ArmoryActivity extends AppCompatActivity {
     public void upgradeCombat(View view) {
         if (userLoaded) {
             if (SHOP.increaseCombatGearLevel(user)) {
+                refreshScreen();
                 String msg = "Successfully upgraded combat gear level!";
                 toastDisplay.setText(msg);
             } else {
