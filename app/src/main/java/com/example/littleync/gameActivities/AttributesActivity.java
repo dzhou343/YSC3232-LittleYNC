@@ -11,7 +11,6 @@ import com.example.littleync.R;
 import com.example.littleync.TravelActivity;
 import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -67,7 +66,10 @@ public abstract class AttributesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         settingContentView();
 
-        // User and relevant TextViews
+        // Load in the User from the DB
+        readUser();
+
+        // Identify the correct TextViews
         woodDisplay = findViewById(R.id.wood_res);
         woodchoppingGearLevelDisplay = findViewById(R.id.wood_gear_level);
         fishDisplay = findViewById(R.id.fish_res);
@@ -76,13 +78,6 @@ public abstract class AttributesActivity extends AppCompatActivity {
         combatGearLevelDisplay = findViewById(R.id.combat_gear_level);
         aggLevelDisplay = findViewById(R.id.agg_level);
         aggLevelProgressDisplay = findViewById(R.id.agg_level_progress);
-
-        // Load in the User from the DB
-        String userID = FirebaseAuth.getInstance().getUid();
-        userLoaded = false;
-        assert userID != null;
-        userDoc = fs.collection("users").document(userID);
-        readUser(userDoc.get());
     }
 
     /**
@@ -107,11 +102,13 @@ public abstract class AttributesActivity extends AppCompatActivity {
     /**
      * Read in User by userID, update all the textViews at top of page, and flags that the User has
      * been loaded in
-     *
-     * @param ds DocumentSnapshot of the User from the DB
      */
-    private void readUser(Task<DocumentSnapshot> ds) {
-        ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+    private void readUser() {
+        userLoaded = false;
+        String userID = FirebaseAuth.getInstance().getUid();
+        assert userID != null;
+        userDoc = fs.collection("users").document(userID);
+        userDoc.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 // Store the initial values of the user
@@ -129,22 +126,21 @@ public abstract class AttributesActivity extends AppCompatActivity {
      * Refreshes the TextViews that display the User attributes at the top of the page
      */
     protected void refreshUserAttributes() {
-        String woodRes = String.format(Locale.getDefault(), "Wood: %s", user.getWood());
+        String woodRes = String.format(Locale.getDefault(), "%s", user.getWood());
         woodDisplay.setText(woodRes);
-        String woodGearLevel = String.format(Locale.getDefault(), "Wood Gear Level: %s", user.getWoodchoppingGearLevel());
+        String woodGearLevel = String.format(Locale.getDefault(), "%s", user.getWoodchoppingGearLevel());
         woodchoppingGearLevelDisplay.setText(woodGearLevel);
-        String fishRes = String.format(Locale.getDefault(), "Fish: %s", user.getFish());
+        String fishRes = String.format(Locale.getDefault(), "%s", user.getFish());
         fishDisplay.setText(fishRes);
-        String fishGearLevel = String.format(Locale.getDefault(), "Fish Gear Level: %s", user.getFishingGearLevel());
+        String fishGearLevel = String.format(Locale.getDefault(), "%s", user.getFishingGearLevel());
         fishingGearLevelDisplay.setText(fishGearLevel);
-        String goldRes = String.format(Locale.getDefault(), "Gold: %s", user.getGold());
+        String goldRes = String.format(Locale.getDefault(), "%s", user.getGold());
         goldDisplay.setText(goldRes);
-        String combatGearLevel = String.format(Locale.getDefault(), "Combat Gear Level: %s", user.getCombatGearLevel());
+        String combatGearLevel = String.format(Locale.getDefault(), "%s", user.getCombatGearLevel());
         combatGearLevelDisplay.setText(combatGearLevel);
-        String aggLevel = String.format(Locale.getDefault(), "Aggregate Level: %s", user.getAggregateLevel());
+        String aggLevel = String.format(Locale.getDefault(), "LEVEL %s", user.getAggregateLevel());
         aggLevelDisplay.setText(aggLevel);
-        String aggLevelProgress = String.format(Locale.getDefault(),
-                "%s / %s", user.getExp(), user.requiredExperience(user.getAggregateLevel() + 1));
+        String aggLevelProgress = String.format(Locale.getDefault(), "%s / %s", user.getExp(), user.requiredExperience(user.getAggregateLevel() + 1));
         aggLevelProgressDisplay.setText(aggLevelProgress);
     }
 

@@ -159,30 +159,7 @@
 
         </ImageView>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
 
-            <Spinner
-                android:id="@+id/spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:entries="@array/monster_names"
-                android:popupBackground="@android:color/transparent" />
-
-            <TextView
-                android:id="@+id/health_display"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:text="@string/monster_hp"
-                android:textColor="#C89FFD"
-                android:textSize="20dp" />
-        </LinearLayout>
 
         <TextView
             android:id="@+id/gain_display"

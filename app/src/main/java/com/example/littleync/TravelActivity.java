@@ -14,6 +14,7 @@ import android.widget.Button;
 import com.example.littleync.gameActivities.ArmoryActivity;
 import com.example.littleync.gameActivities.CendanaForestTimerActivity;
 import com.example.littleync.gameActivities.EcopondTimerActivity;
+import com.example.littleync.gameActivities.MarketplaceActivity;
 import com.example.littleync.gameActivities.SagaBattlegroundTimerActivity;
 
 import static com.example.littleync.LoginActivity.fLC;
@@ -77,15 +78,15 @@ public class TravelActivity extends AppCompatActivity {
         ecopond.setEnabled(true);
         armory.setEnabled(true);
 
-        if (whereAmINowMap.get("Cendana") == true) {
+        if (whereAmINowMap.get("Cendana")) {
             cTree.setAlpha(0);
-        } else if (whereAmINowMap.get("Elm") == true) {
+        } else if (whereAmINowMap.get("Elm")) {
             trading.setAlpha(0);
-        } else if (whereAmINowMap.get("Saga") == true) {
+        } else if (whereAmINowMap.get("Saga")) {
             battleground.setAlpha(0);
-        } else if (whereAmINowMap.get("Ecopond") == true) {
+        } else if (whereAmINowMap.get("Ecopond")) {
             ecopond.setAlpha(0);
-        } else if (whereAmINowMap.get("Armory") == true) {
+        } else if (whereAmINowMap.get("Armory")) {
             armory.setAlpha(0);
         }
 

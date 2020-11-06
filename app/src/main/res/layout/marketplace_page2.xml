@@ -7,11 +7,117 @@
     android:id="@+id/marketplace_page2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MarketplaceActivity"
-    android:background="@android:color/background_dark"
+    tools:context=".gameActivities.MarketplaceActivity"
+    android:background="@drawable/design_2"
     android:orientation="vertical"
     >
 
+    <TextView
+        android:id="@+id/agg_level"
+        style="@style/user_stat_style3"
+        android:layout_marginStart="8dp"
+        android:text="LEVEL"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.058" />
+
+    <TextView
+        android:id="@+id/agg_level_progress"
+        style="@style/user_stat_style3"
+        android:layout_marginTop="48dp"
+        android:text="LOADING..."
+        app:layout_constraintBottom_toTopOf="@+id/title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.022"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/wood_gear_level"
+        style="@style/user_stat_style3"
+        android:text=""
+        app:layout_constraintBottom_toTopOf="@+id/wood_res"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.441"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.259" />
+
+    <TextView
+        android:id="@+id/fish_gear_level"
+        style="@style/user_stat_style3"
+        android:text=""
+        app:layout_constraintBottom_toTopOf="@+id/fish_res"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.689"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.28" />
+
+    <TextView
+        android:id="@+id/combat_gear_level"
+        style="@style/user_stat_style3"
+        android:text=""
+        app:layout_constraintBottom_toTopOf="@+id/gold_res"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.936"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.28" />
+
+    <TextView
+        android:id="@+id/wood_res"
+        style="@style/user_stat_style4"
+        android:text=""
+        android:textColor="@color/final_green"
+        app:layout_constraintBottom_toTopOf="@+id/title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.426"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.628" />
+
+    <TextView
+        android:id="@+id/fish_res"
+        style="@style/user_stat_style4"
+        android:text=""
+        android:textColor="@color/final_blue"
+        app:layout_constraintBottom_toTopOf="@+id/title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.654"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.628" />
+
+    <TextView
+        android:id="@+id/gold_res"
+        style="@style/user_stat_style4"
+        android:text=""
+        android:textColor="@color/final_gold"
+        app:layout_constraintBottom_toTopOf="@+id/title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.897"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.628" />
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/activity_title"
+        android:layout_marginTop="88dp"
+        android:text="@string/marketplace_name"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </TextView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/t1"

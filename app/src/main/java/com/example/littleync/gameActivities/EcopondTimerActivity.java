@@ -28,7 +28,7 @@ public class EcopondTimerActivity extends ActionTimerActivity {
      */
     @Override
     protected void settingContentView() {
-        setContentView(R.layout.ecopond_page);
+        setContentView(R.layout.ecopond_page2);
     }
 
     /**
@@ -54,8 +54,8 @@ public class EcopondTimerActivity extends ActionTimerActivity {
         SpannableStringBuilder fishSpan = new SpannableStringBuilder(fishText);
         SpannableStringBuilder expSpan = new SpannableStringBuilder(expText);
 
-        int fishColor = Color.parseColor("#8CEAFF");
-        int expColor = Color.parseColor("#FF9999");
+        int fishColor = Color.parseColor("#79C1C6");
+        int expColor = Color.parseColor("#C89FFD");
 
         ForegroundColorSpan fishToColor = new ForegroundColorSpan(fishColor);
         ForegroundColorSpan expToColor = new ForegroundColorSpan(expColor);

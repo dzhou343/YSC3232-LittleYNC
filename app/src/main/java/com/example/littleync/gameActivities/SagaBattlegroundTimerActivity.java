@@ -38,9 +38,6 @@ public class SagaBattlegroundTimerActivity extends ActionTimerActivity implement
         super("SagaBattlegroundActivity");
     }
 
-    /**
-     * Create the spinner to select and initiate the monster to battle
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +55,7 @@ public class SagaBattlegroundTimerActivity extends ActionTimerActivity implement
         enemySpinner.setAdapter(enemyAdapter);
         enemySpinner.setOnItemSelectedListener(this);
         healthDisplay = findViewById(R.id.health_display);
-        monsterDisplay = findViewById(R.id.page_img);
+        monsterDisplay = findViewById(R.id.monster_img);
     }
 
     /**
@@ -92,7 +89,7 @@ public class SagaBattlegroundTimerActivity extends ActionTimerActivity implement
      */
     @Override
     protected void settingContentView() {
-        setContentView(R.layout.battleground_page);
+        setContentView(R.layout.battleground_page2);
     }
 
     /**
@@ -132,8 +129,8 @@ public class SagaBattlegroundTimerActivity extends ActionTimerActivity implement
         SpannableStringBuilder combatSpan = new SpannableStringBuilder(combatText);
         SpannableStringBuilder expSpan = new SpannableStringBuilder(expText);
 
-        int combatColor = Color.parseColor("#CCA533");
-        int expColor = Color.parseColor("#FF9999");
+        int combatColor = Color.parseColor("#BF8E53");
+        int expColor = Color.parseColor("#C89FFD");
 
         ForegroundColorSpan combatToColor = new ForegroundColorSpan(combatColor);
         ForegroundColorSpan expToColor = new ForegroundColorSpan(expColor);

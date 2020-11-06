@@ -25,6 +25,7 @@
         android:backgroundTint="@android:color/white"
         android:textColorHint="#C89FFD"
         android:textColor="#C89FFD"
+        android:fontFamily="@font/advent_pro_semibold"
          />
 
 
@@ -43,6 +44,7 @@
         android:backgroundTint="@android:color/white"
         android:textColorHint="#C89FFD"
         android:textColor="#C89FFD"
+        android:fontFamily="@font/advent_pro_semibold"
         />
 
 
@@ -55,7 +57,10 @@
         android:text="@string/login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input_password" />
+        app:layout_constraintTop_toBottomOf="@+id/input_password"
+        android:textColor="@color/colorPrimaryDark"
+        android:fontFamily="@font/advent_pro_semibold"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/signup_line"
@@ -66,12 +71,14 @@
         android:clickable="true"
         android:focusable="true"
         android:onClick="signUp"
+
         android:text="@string/sign_up"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_btn"
-        android:textColor="#C89FFD"/>
+        style="@style/tutorial_text_style"
+        android:textAlignment="center"/>
 
     <TextView
         android:id="@+id/forgot_password"
@@ -85,20 +92,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_btn"
-        android:textColor="#C89FFD"/>
+        style="@style/tutorial_text_style"/>
 
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="330dp"
         android:layout_height="251dp"
         android:layout_marginTop="38dp"
+        android:rotation="-0.5"
         app:layout_constraintBottom_toTopOf="@+id/input_email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/logo2" />
+        app:srcCompat="@drawable/new_logo" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

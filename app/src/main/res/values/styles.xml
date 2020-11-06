@@ -71,6 +71,63 @@
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">#C89FFD</item>
 
+    </style>
+
+    <style name="user_stat_style1">
+        <item name="fontFamily">@font/advent_pro_semibold</item>
+        <item name="android:textColor">@color/black_text</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:layout_width">90dp</item>
+        <item name="android:layout_height">wrap_content</item>
+
+    </style>
+
+    <style name="user_stat_style2">
+        <item name="fontFamily">@font/advent_pro_semibold</item>
+        <item name="android:textColor">@color/final_purple</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:layout_width">90dp</item>
+        <item name="android:layout_height">wrap_content</item>
+
+    </style>
+
+    <style name="user_stat_style3">
+        <item name="fontFamily">@font/advent_pro_semibold</item>
+        <item name="android:textColor">@color/black_text</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+
+    </style>
+
+    <style name="user_stat_style4">
+        <item name="fontFamily">@font/advent_pro_semibold</item>
+        <item name="android:textColor">@color/final_purple</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+
+    </style>
+
+    <style name="activity_title">
+        <item name="fontFamily">@font/advent_pro_semibold</item>
+        <item name="android:textColor">@color/final_purple</item>
+        <item name="android:textSize">35sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textStyle">bold</item>
+
+    </style>
+
+    <style name="activity_gain">
+        <item name="fontFamily">@font/advent_pro_semibold</item>
+        <item name="android:textColor">@color/final_purple</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textStyle">bold</item>
 
     </style>
 </resources>

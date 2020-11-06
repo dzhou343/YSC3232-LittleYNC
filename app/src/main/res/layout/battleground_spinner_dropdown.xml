@@ -7,6 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/dropdownListPreferredItemHeight"
     android:ellipsize="marquee"
-    android:textColor="#C89FFD"
+    android:textColor="@color/final_gold"
+    android:fontFamily="@font/advent_pro_semibold"
     android:background="#4a4947"
-    android:textAlignment="center"/>
+    android:textAlignment="center"
+    android:textSize="20sp"/>

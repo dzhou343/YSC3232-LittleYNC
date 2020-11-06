@@ -38,7 +38,7 @@ public class ArmoryActivity extends AttributesActivity {
      */
     @Override
     protected void settingContentView() {
-        setContentView(R.layout.armory_page);
+        setContentView(R.layout.armory_page2);
     }
 
     /**
@@ -66,8 +66,7 @@ public class ArmoryActivity extends AttributesActivity {
         int currentLevel = user.getWoodchoppingGearLevel();
         String toLevel = String.format(Locale.getDefault(), "%s -> %s", currentLevel, currentLevel + 1);
         woodToLevel.setText(toLevel);
-        String cost = String.format(Locale.getDefault(), "Cost: %s Fish, %s Gold",
-                SHOP.requiredPrimaryResource(currentLevel), SHOP.requiredSecondaryResource(currentLevel));
+        String cost = String.format(Locale.getDefault(), "Cost: %s Fish, %s Gold", SHOP.requiredPrimaryResource(currentLevel), SHOP.requiredSecondaryResource(currentLevel));
         woodCost.setText(cost);
     }
 
@@ -78,8 +77,7 @@ public class ArmoryActivity extends AttributesActivity {
         int currentLevel = user.getFishingGearLevel();
         String toLevel = String.format(Locale.getDefault(), "%s -> %s", currentLevel, currentLevel + 1);
         fishToLevel.setText(toLevel);
-        String cost = String.format(Locale.getDefault(), "Cost: %s Wood, %s Gold",
-                SHOP.requiredPrimaryResource(currentLevel), SHOP.requiredSecondaryResource(currentLevel));
+        String cost = String.format(Locale.getDefault(), "Cost: %s Wood, %s Gold", SHOP.requiredPrimaryResource(currentLevel), SHOP.requiredSecondaryResource(currentLevel));
         fishCost.setText(cost);
     }
 
@@ -90,8 +88,7 @@ public class ArmoryActivity extends AttributesActivity {
         int currentLevel = user.getCombatGearLevel();
         String toLevel = String.format(Locale.getDefault(), "%s -> %s", currentLevel, currentLevel + 1);
         combatToLevel.setText(toLevel);
-        String cost = String.format(Locale.getDefault(), "Cost: %s Fish, %s Wood",
-                SHOP.requiredPrimaryResource(currentLevel), SHOP.requiredPrimaryResource(currentLevel));
+        String cost = String.format(Locale.getDefault(), "Cost: %s Fish, %s Wood", SHOP.requiredPrimaryResource(currentLevel), SHOP.requiredPrimaryResource(currentLevel));
         goldCost.setText(cost);
     }
 
@@ -99,6 +96,7 @@ public class ArmoryActivity extends AttributesActivity {
      * To refresh the TextView displays on the entire page, called each time the user presses a
      * button; this called in readUser(), so User is definitely already loaded in
      */
+
     @Override
     public void refreshUserAttributes() {
         super.refreshUserAttributes();
