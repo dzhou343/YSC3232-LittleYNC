@@ -1,7 +1,5 @@
 package com.example.littleync.gameActivities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,18 +7,8 @@ import android.widget.TextView;
 
 import com.example.littleync.R;
 import com.example.littleync.model.Shop;
-import com.example.littleync.model.User;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Locale;
-
-import static com.example.littleync.MainActivity.loginStatus;
-import static com.example.littleync.MainActivity.logoutTrigger;
 
 /**
  * Armory Activity page which allows the user to upgrade their woodchopping, fishing, and/or combat

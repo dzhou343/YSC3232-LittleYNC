@@ -23,7 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"
+        <activity android:name=".LoginActivity"
             android:parentActivityName=".SplashScreen">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -31,12 +31,12 @@
         </activity>
         <activity
             android:name=".TravelActivity"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".LoginActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".LoginActivity" />
         </activity>
         <activity
             android:name=".gameActivities.CendanaForestTimerActivity"
@@ -67,12 +67,12 @@
         </activity>
         <activity
             android:name=".SignupActivity"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".LoginActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".LoginActivity" />
         </activity>
         <activity
             android:name=".Tutorial"
@@ -86,12 +86,12 @@
 
         <activity
             android:name=".ForgotPassword"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".LoginActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".LoginActivity" />
         </activity>
         <activity
             android:name=".gameActivities.ArmoryActivity"

@@ -16,13 +16,13 @@ import com.example.littleync.gameActivities.CendanaForestTimerActivity;
 import com.example.littleync.gameActivities.EcopondTimerActivity;
 import com.example.littleync.gameActivities.SagaBattlegroundTimerActivity;
 
-import static com.example.littleync.MainActivity.fLC;
-import static com.example.littleync.MainActivity.lCB;
-import static com.example.littleync.MainActivity.loginStatus;
-import static com.example.littleync.MainActivity.logoutTrigger;
-import static com.example.littleync.MainActivity.userInstance;
-import static com.example.littleync.MainActivity.whereAmINowMap;
-import static com.example.littleync.MainActivity.whereWasIMap;
+import static com.example.littleync.LoginActivity.fLC;
+import static com.example.littleync.LoginActivity.lCB;
+import static com.example.littleync.LoginActivity.loginStatus;
+import static com.example.littleync.LoginActivity.logoutTrigger;
+import static com.example.littleync.LoginActivity.userInstance;
+import static com.example.littleync.LoginActivity.whereAmINowMap;
+import static com.example.littleync.LoginActivity.whereWasIMap;
 
 
 public class TravelActivity extends AppCompatActivity {

@@ -31,7 +31,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import static com.example.littleync.MainActivity.userInstance;
+import static com.example.littleync.LoginActivity.userInstance;
 
 
 public class SignupActivity extends AppCompatActivity {

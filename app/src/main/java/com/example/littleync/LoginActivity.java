@@ -31,7 +31,8 @@ import com.google.firebase.auth.*;
 
 import java.util.TreeMap;
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
+    private static final String TAG = "LOGINACTIVTIY";
     public static FirebaseAuth userInstance = FirebaseAuth.getInstance();
     public static boolean loginStatus = false;
     public static int logoutTrigger = 0;
@@ -77,30 +78,44 @@ public class MainActivity extends AppCompatActivity {
         userInstance.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if ((firebaseAuth.getCurrentUser() != null) && (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) &&
-                        (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
-                    generateLocationReceiverAndNavigateToTravelPage();
+                try {
+                    if ((firebaseAuth.getCurrentUser() != null) && (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) &&
+                            (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) && (!firebaseAuth.getCurrentUser().getDisplayName().isEmpty())) {
+                        Log.d(TAG, "Logged in, permission granted, display name not null.");
+                        generateLocationReceiverAndNavigateToTravelPage();
+                    } else if ((firebaseAuth.getCurrentUser() != null) && (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) &&
+                            (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) && (firebaseAuth.getCurrentUser().getDisplayName().isEmpty())) {
+                        Log.d(TAG, "Logged in, permission granted, display name null.");
+                        userInstance.signOut();
+                        return;
+                    } else if ((firebaseAuth.getCurrentUser() == null) && (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) &&
+                            (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) && (firebaseAuth.getCurrentUser().getDisplayName().isEmpty())) {
+                        Log.d(TAG, "Not logged in, permission granted, display name null.");
+                        userInstance.signOut();
+                        return;
+                    } else if ((firebaseAuth.getCurrentUser() != null) && (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) &&
+                            (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED) && (firebaseAuth.getCurrentUser().getDisplayName().isEmpty())) {
+                        Log.d(TAG, "Logged in, permission not granted, display name null.");
+                        userInstance.signOut();
+                        return;
+                    } else if ((firebaseAuth.getCurrentUser() == null) && (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) &&
+                            (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED) && (firebaseAuth.getCurrentUser().getDisplayName().isEmpty())) {
+                        Log.d(TAG, "Not logged in, permission not granted, display name null.");
+                    }
+                } catch (Exception e) {
+                    Log.d(TAG, e.getStackTrace().toString());
                 }
+
             }
 
         });
 
         UID = null;
 
-        /**
-         * Check if the user is already logged in
-         */
-        if ((userInstance.getCurrentUser() != null) && (loginStatus == true)) {
-            System.out.println(loginStatus);
-            setContentView(R.layout.travel_page);
-
-        } else {
-            setContentView(R.layout.login_page);
-            loginButton = findViewById(R.id.login_btn);
-            emailLogin = findViewById(R.id.input_email);
-            passwordLogin = findViewById(R.id.input_password);
-        }
-
+        setContentView(R.layout.login_page);
+        loginButton = findViewById(R.id.login_btn);
+        emailLogin = findViewById(R.id.input_email);
+        passwordLogin = findViewById(R.id.input_password);
 
     }
 
@@ -222,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
                         /**
                          * Gets the application context and creates a new intent for a new travel page if the person's GPS coordinates has changed enough.
                          */
-                        Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
+                        Intent refresh = new Intent(LoginActivity.super.getApplicationContext(), TravelActivity.class);
                         refresh.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(refresh);
 
@@ -245,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
         /**
          * Initialize a fused Location Provider client with the location requests and it will start executing.
          */
-        fLC = LocationServices.getFusedLocationProviderClient(MainActivity.this);
+        fLC = LocationServices.getFusedLocationProviderClient(LoginActivity.this);
         fLC.requestLocationUpdates(lR, lCB, null);
         loginButton.setEnabled(true);
         loginStatus = true;
@@ -255,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        Intent refresh = new Intent(MainActivity.super.getApplicationContext(), TravelActivity.class);
+        Intent refresh = new Intent(LoginActivity.super.getApplicationContext(), TravelActivity.class);
         startActivity(refresh);
     }
 
@@ -263,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
     //This is what happens when the user gives permission to access location for the first time.
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
-        if ((grantResults[0] == PackageManager.PERMISSION_GRANTED) && ((grantResults[1] == PackageManager.PERMISSION_GRANTED))) {
+        if ((grantResults[0] == PackageManager.PERMISSION_GRANTED) && ((grantResults[1] == PackageManager.PERMISSION_GRANTED) && (emailLogin.getText().toString() != null))) {
             signIn();
         } else {
             loginButton.setEnabled(true);
@@ -393,8 +408,8 @@ public class MainActivity extends AppCompatActivity {
          * Setup the location requests
          */
         //Checks if the user has location services provided, and to give it if not.
-        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+        if (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(LoginActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding

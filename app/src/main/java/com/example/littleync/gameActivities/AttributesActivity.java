@@ -19,8 +19,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Locale;
 
-import static com.example.littleync.MainActivity.loginStatus;
-import static com.example.littleync.MainActivity.logoutTrigger;
+import static com.example.littleync.LoginActivity.loginStatus;
+import static com.example.littleync.LoginActivity.logoutTrigger;
 
 /**
  * Abstract class we implement for woodchopping, fishing, and combat. All three of these activities
