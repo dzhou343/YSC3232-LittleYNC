@@ -26,7 +26,7 @@
     <string name="combat_gear_level">Combat Gear Level:</string>
     <string name="agg_level">Aggregate Level:</string>
     <string name="agg_level_progress"> / </string>
-    <string name="toast_msg">LOADING…</string>
+    <string name="gain_display"> </string>
 
     <!-- For loading Monster attributes -->
     <string name="monster_hp">HP:</string>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".actionActivities.SagaBattlegroundActivity">
+    tools:context=".gameActivities.SagaBattlegroundTimerActivity">
 
     <LinearLayout
         android:id="@+id/battleground"
@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:background="@android:color/background_dark"
         android:orientation="vertical"
-        tools:context=".actionActivities.SagaBattlegroundActivity">
+        tools:context=".gameActivities.SagaBattlegroundTimerActivity">
 
         <LinearLayout
             android:id="@+id/Dashboard"
@@ -152,7 +152,7 @@
         </TextView>
 
         <ImageView
-            android:id="@+id/monster_img"
+            android:id="@+id/page_img"
             android:layout_width="match_parent"
             android:layout_height="180dp"
             app:srcCompat="@drawable/battle_sergey">
@@ -189,7 +189,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:text="@string/toast_msg"
+            android:text="@string/gain_display"
             android:textAlignment="center"
             android:textColor="#C89FFD"
             android:textSize="20dp"></TextView>
