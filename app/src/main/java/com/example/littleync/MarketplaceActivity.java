@@ -1,7 +1,6 @@
 package com.example.littleync;
 
 import com.example.littleync.model.Marketplace;
-import com.example.littleync.model.Resource;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -57,7 +56,6 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     private Marketplace MARKETPLACE;
 
     //        T1
-    Resource sRecourceType;
     private EditText receiveQty;
     private EditText sellQty;
     private Button postTradeBtn;
