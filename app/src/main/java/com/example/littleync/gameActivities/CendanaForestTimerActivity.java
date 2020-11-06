@@ -1,4 +1,4 @@
-package com.example.littleync.actionActivities;
+package com.example.littleync.gameActivities;
 
 import android.graphics.Color;
 import android.text.SpannableStringBuilder;
@@ -14,12 +14,12 @@ import java.util.Locale;
 /**
  * Cendana Forest Activity page where the user can idly chop down trees to gain wood resource
  */
-public class CendanaForestActivity extends ActionActivity {
+public class CendanaForestTimerActivity extends ActionTimerActivity {
 
     /**
      * Sets the tag for the Log
      */
-    public CendanaForestActivity() {
+    public CendanaForestTimerActivity() {
         super("CendanaForestActivity");
     }
 

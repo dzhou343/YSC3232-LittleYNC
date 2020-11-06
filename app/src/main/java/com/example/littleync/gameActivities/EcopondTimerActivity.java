@@ -1,4 +1,4 @@
-package com.example.littleync.actionActivities;
+package com.example.littleync.gameActivities;
 
 import android.graphics.Color;
 import android.text.SpannableStringBuilder;
@@ -14,12 +14,12 @@ import java.util.Locale;
 /**
  * Ecopond Activity page where the user can idly fish for fish to gain fish resource
  */
-public class EcopondActivity extends ActionActivity {
+public class EcopondTimerActivity extends ActionTimerActivity {
 
     /**
      * Sets the tag for the Log
      */
-    public EcopondActivity() {
+    public EcopondTimerActivity() {
         super("EcopondActivity");
     }
 

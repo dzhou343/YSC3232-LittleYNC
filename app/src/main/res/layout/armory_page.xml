@@ -5,7 +5,7 @@
     android:id="@+id/armory"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ArmoryActivity"
+    tools:context=".gameActivities.ArmoryActivity"
     android:background="@android:color/background_dark"
     android:orientation="vertical">
 
@@ -153,10 +153,10 @@
         tools:srcCompat="@drawable/merchant_dave" />
 
     <TextView
-        android:id="@+id/username2"
+        android:id="@+id/armory_toast_msg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/toast_msg"
+        android:text="@string/gain_display"
         android:textColor="#C89FFD"
         android:gravity="center"
         />

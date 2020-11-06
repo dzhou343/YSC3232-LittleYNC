@@ -5,7 +5,7 @@
     android:id="@+id/pond"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".actionActivities.EcopondActivity"
+    tools:context=".gameActivities.EcopondTimerActivity"
     android:background="@android:color/background_dark"
     android:orientation="vertical">
 
@@ -146,7 +146,7 @@
     </TextView>
 
     <ImageView
-        android:id="@+id/monster_img"
+        android:id="@+id/page_img"
         android:layout_width="match_parent"
         android:layout_height="180dp"
         app:srcCompat="@drawable/ic_fishing"
@@ -159,7 +159,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:text="@string/toast_msg"
+        android:text="@string/gain_display"
         android:textColor="#C89FFD"
         android:textSize="20dp"
         android:textAlignment="center">

@@ -171,7 +171,7 @@
             >
 
             <TextView
-                android:id="@+id/username2"
+                android:id="@+id/armory_toast_msg"
                 style="@style/marketplace1_title"
                 android:text="balabala"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -182,9 +182,9 @@
                 android:id="@+id/giving2"
                 style="@style/marketplace1_title"
                 android:text="fish"
-                app:layout_constraintBottom_toBottomOf="@+id/username2"
-                app:layout_constraintStart_toEndOf="@+id/username2"
-                app:layout_constraintTop_toTopOf="@+id/username2" />
+                app:layout_constraintBottom_toBottomOf="@+id/armory_toast_msg"
+                app:layout_constraintStart_toEndOf="@+id/armory_toast_msg"
+                app:layout_constraintTop_toTopOf="@+id/armory_toast_msg" />
 
             <TextView
                 android:id="@+id/receiving2"

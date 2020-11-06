@@ -1,6 +1,7 @@
-package com.example.littleync.actionActivities;
+package com.example.littleync.gameActivities;
 
 import android.graphics.Color;
+import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -21,7 +22,7 @@ import java.util.Locale;
 /**
  * Saga Battleground Activity page where the user can idly battle monsters to gain gold resource
  */
-public class SagaBattlegroundActivity extends ActionActivity implements AdapterView.OnItemSelectedListener {
+public class SagaBattlegroundTimerActivity extends ActionTimerActivity implements AdapterView.OnItemSelectedListener {
 
     // Monster-specific attributes
     private final Monsters MONSTERS = new Monsters();
@@ -33,28 +34,22 @@ public class SagaBattlegroundActivity extends ActionActivity implements AdapterV
     /**
      * Sets the tag for the Log
      */
-    public SagaBattlegroundActivity() {
+    public SagaBattlegroundTimerActivity() {
         super("SagaBattlegroundActivity");
-    }
-
-    /**
-     * Sets the correct content view
-     */
-    @Override
-    protected void settingContentView() {
-        setContentView(R.layout.battleground_page);
     }
 
     /**
      * Create the spinner to select and initiate the monster to battle
      */
     @Override
-    protected void createSpinners() {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         // Initializing Spinner
         // This spinner refers to initializing the drop down menu for picking which enemy a user would like to fight
         Spinner enemySpinner = findViewById(R.id.spinner);
         ArrayAdapter<String> enemyAdapter = new ArrayAdapter<>(
-                SagaBattlegroundActivity.this,
+                SagaBattlegroundTimerActivity.this,
                 R.layout.battleground_spinner,
                 getResources().getStringArray(R.array.monster_names));
         // Creates the list of data
@@ -63,7 +58,7 @@ public class SagaBattlegroundActivity extends ActionActivity implements AdapterV
         enemySpinner.setAdapter(enemyAdapter);
         enemySpinner.setOnItemSelectedListener(this);
         healthDisplay = findViewById(R.id.health_display);
-        monsterDisplay = findViewById(R.id.monster_img);
+        monsterDisplay = findViewById(R.id.page_img);
     }
 
     /**
@@ -91,6 +86,14 @@ public class SagaBattlegroundActivity extends ActionActivity implements AdapterV
      */
     @Override
     public void onNothingSelected(AdapterView<?> parent) {}
+
+    /**
+     * Sets the correct content view
+     */
+    @Override
+    protected void settingContentView() {
+        setContentView(R.layout.battleground_page);
+    }
 
     /**
      * On this page, since it's the battleground, we want to deal damage to monsters
