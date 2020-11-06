@@ -66,8 +66,7 @@ public class ArmoryActivity extends AttributesActivity {
         int currentLevel = user.getWoodchoppingGearLevel();
         String toLevel = String.format(Locale.getDefault(), "%s -> %s", currentLevel, currentLevel + 1);
         woodToLevel.setText(toLevel);
-        String cost = String.format(Locale.getDefault(), "Cost: %s Fish, %s Gold",
-                SHOP.requiredPrimaryResource(currentLevel), SHOP.requiredSecondaryResource(currentLevel));
+        String cost = String.format(Locale.getDefault(), "Cost: %s Fish, %s Gold", SHOP.requiredPrimaryResource(currentLevel), SHOP.requiredSecondaryResource(currentLevel));
         woodCost.setText(cost);
     }
 
@@ -78,8 +77,7 @@ public class ArmoryActivity extends AttributesActivity {
         int currentLevel = user.getFishingGearLevel();
         String toLevel = String.format(Locale.getDefault(), "%s -> %s", currentLevel, currentLevel + 1);
         fishToLevel.setText(toLevel);
-        String cost = String.format(Locale.getDefault(), "Cost: %s Wood, %s Gold",
-                SHOP.requiredPrimaryResource(currentLevel), SHOP.requiredSecondaryResource(currentLevel));
+        String cost = String.format(Locale.getDefault(), "Cost: %s Wood, %s Gold", SHOP.requiredPrimaryResource(currentLevel), SHOP.requiredSecondaryResource(currentLevel));
         fishCost.setText(cost);
     }
 
@@ -90,8 +88,7 @@ public class ArmoryActivity extends AttributesActivity {
         int currentLevel = user.getCombatGearLevel();
         String toLevel = String.format(Locale.getDefault(), "%s -> %s", currentLevel, currentLevel + 1);
         combatToLevel.setText(toLevel);
-        String cost = String.format(Locale.getDefault(), "Cost: %s Fish, %s Wood",
-                SHOP.requiredPrimaryResource(currentLevel), SHOP.requiredPrimaryResource(currentLevel));
+        String cost = String.format(Locale.getDefault(), "Cost: %s Fish, %s Wood", SHOP.requiredPrimaryResource(currentLevel), SHOP.requiredPrimaryResource(currentLevel));
         goldCost.setText(cost);
     }
 

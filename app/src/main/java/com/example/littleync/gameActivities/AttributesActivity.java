@@ -11,7 +11,6 @@ import com.example.littleync.R;
 import com.example.littleync.TravelActivity;
 import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -67,7 +66,10 @@ public abstract class AttributesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         settingContentView();
 
-        // User and relevant TextViews
+        // Load in the User from the DB
+        readUser();
+
+        // Identify the correct TextViews
         woodDisplay = findViewById(R.id.wood_res);
         woodchoppingGearLevelDisplay = findViewById(R.id.wood_gear_level);
         fishDisplay = findViewById(R.id.fish_res);
@@ -76,13 +78,6 @@ public abstract class AttributesActivity extends AppCompatActivity {
         combatGearLevelDisplay = findViewById(R.id.combat_gear_level);
         aggLevelDisplay = findViewById(R.id.agg_level);
         aggLevelProgressDisplay = findViewById(R.id.agg_level_progress);
-
-        // Load in the User from the DB
-        String userID = FirebaseAuth.getInstance().getUid();
-        userLoaded = false;
-        assert userID != null;
-        userDoc = fs.collection("users").document(userID);
-        readUser(userDoc.get());
     }
 
     /**
@@ -107,11 +102,13 @@ public abstract class AttributesActivity extends AppCompatActivity {
     /**
      * Read in User by userID, update all the textViews at top of page, and flags that the User has
      * been loaded in
-     *
-     * @param ds DocumentSnapshot of the User from the DB
      */
-    private void readUser(Task<DocumentSnapshot> ds) {
-        ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+    private void readUser() {
+        userLoaded = false;
+        String userID = FirebaseAuth.getInstance().getUid();
+        assert userID != null;
+        userDoc = fs.collection("users").document(userID);
+        userDoc.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 // Store the initial values of the user
@@ -143,8 +140,7 @@ public abstract class AttributesActivity extends AppCompatActivity {
         combatGearLevelDisplay.setText(combatGearLevel);
         String aggLevel = String.format(Locale.getDefault(), "LEVEL %s", user.getAggregateLevel());
         aggLevelDisplay.setText(aggLevel);
-        String aggLevelProgress = String.format(Locale.getDefault(),
-                "%s / %s", user.getExp(), user.requiredExperience(user.getAggregateLevel() + 1));
+        String aggLevelProgress = String.format(Locale.getDefault(), "%s / %s", user.getExp(), user.requiredExperience(user.getAggregateLevel() + 1));
         aggLevelProgressDisplay.setText(aggLevelProgress);
     }
 
