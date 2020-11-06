@@ -164,7 +164,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                                         Trade t = document.toObject(Trade.class);
                                         trades.add(t);
                                     }
-                                    MARKETPLACE = new Marketplace(getApplicationContext(), trades);
+                                    MARKETPLACE = new Marketplace(getApplicationContext(), getLayoutInflater(), trades);
                                     tradesLoaded = true;
                                     populateExistingDeals();
                                 }
@@ -250,16 +250,6 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //                                to debug the toast message customization
                             LayoutInflater inflater = getLayoutInflater();
                             View toastLayout = inflater.inflate(R.layout.toast_custom, null);
-
-                            TextView text = (TextView) toastLayout.findViewById(R.id.text);
-                            text.setText("Hello! This is a text message");
-
-                            Toast toast = new Toast(getApplicationContext());
-                            toast.setGravity(Gravity.BOTTOM, 0, 0);
-                            toast.setDuration(Toast.LENGTH_LONG);
-                            toast.setView(toastLayout);
-                            toast.show();
-                            Log.d(TAG, "toast please work");
 
 
                         }
