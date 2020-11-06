@@ -39,7 +39,7 @@ import static org.hamcrest.Matchers.is;
 public class TravelPageTest {
 
     @Rule
-    public ActivityTestRule<SplashScreen> mActivityTestRule = new ActivityTestRule<>(SplashScreen.class);
+    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
     @Rule
     public GrantPermissionRule mGrantPermissionRule =
@@ -92,6 +92,12 @@ withId(android.R.id.content),
 2),
 isDisplayed()));
         appCompatButton.perform(click());
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         
         ViewInteraction appCompatButton2 = onView(
 allOf(withId(R.id.cendana_forest_travel), withText("Cendana Forest"),
