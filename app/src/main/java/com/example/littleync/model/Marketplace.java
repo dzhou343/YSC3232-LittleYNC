@@ -3,13 +3,18 @@ package com.example.littleync.model;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
+import android.util.LayoutDirection;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import com.example.littleync.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -35,6 +40,7 @@ import java.util.Objects;
 public class Marketplace {
     private final String TAG = "Marketplace Class";
     private final Context context;
+    private final LayoutInflater inflater;
     private final ArrayList<Trade> trades;
     private final Map<String, Trade> tradesMap = new HashMap<>();
     private volatile boolean acceptingTrade = false;
@@ -48,9 +54,11 @@ public class Marketplace {
      *
      * @param trades an ArrayList of all trades
      */
-    public Marketplace(Context context, ArrayList<Trade> trades) {
+    public Marketplace(Context context, LayoutInflater inflater, ArrayList<Trade> trades) {
         this.context = context;
+        this.inflater = inflater;
         this.trades = trades;
+
         for (Trade t : trades) {
             tradesMap.put(t.getDocumentID(), t);
         }
@@ -67,7 +75,17 @@ public class Marketplace {
     }
 
     private void showToast(String msg) {
-        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+        View toastLayout = inflater.inflate(R.layout.toast_custom, null);
+
+        TextView text = (TextView) toastLayout.findViewById(R.id.text);
+        text.setText(msg);
+
+        Toast toast = new Toast(context.getApplicationContext());
+        toast.setGravity(Gravity.BOTTOM, 0, 0);
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(toastLayout);
+        toast.show();
+
     }
 
     /**
@@ -132,10 +150,11 @@ public class Marketplace {
                                 });
                     } else {
                         showToast("Trade already deleted!");
+                        deletingTrade = false;
                     }
                 };
             });
-        } else{
+        } else {
                 showToast("Trades still being processed, please wait");
             }
         }

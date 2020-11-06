@@ -51,8 +51,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:dropDownWidth="wrap_content"
+                android:minWidth="30dp"
                 android:entries="@array/marketplace1_spinner"
-                android:spinnerMode="dropdown"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/marketplace3_title1"
                 app:layout_constraintTop_toTopOf="parent" />

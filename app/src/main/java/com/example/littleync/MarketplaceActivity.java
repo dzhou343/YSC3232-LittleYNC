@@ -4,12 +4,15 @@ import com.example.littleync.model.Marketplace;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.util.Log;
 import android.widget.TextView;
@@ -66,6 +69,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
     //    T2
     private ConstraintLayout scrollParent;
     private Boolean deleteConfirm = false;
+    private String lastTimestamp;
     //    for trade button t
 
 
@@ -160,7 +164,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                                         Trade t = document.toObject(Trade.class);
                                         trades.add(t);
                                     }
-                                    MARKETPLACE = new Marketplace(getApplicationContext(), trades);
+                                    MARKETPLACE = new Marketplace(getApplicationContext(), getLayoutInflater(), trades);
                                     tradesLoaded = true;
                                     populateExistingDeals();
                                 }
@@ -207,12 +211,13 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 
 //        set content
                 TextView index = new_row.findViewById(R.id.index2);
-                TextView timestamp = new_row.findViewById(R.id.timestamp2);
+                final TextView timestamp = new_row.findViewById(R.id.timestamp2);
                 TextView username = new_row.findViewById(R.id.username2);
                 TextView giving = new_row.findViewById(R.id.giving2);
                 TextView receiving = new_row.findViewById(R.id.receiving2);
                 final ImageButton t2Btn = new_row.findViewById(R.id.t2_btn2);
                 final Button t2Btn_text = new_row.findViewById(R.id.t2_btn_text2);
+                final Button t2Btn_text_delete = new_row.findViewById(R.id.t2_btn_text3);
 
 //            change the appearance of the accept button if the current user posted this particular
 //            trade and make it unclickable as well
@@ -231,21 +236,31 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
                 receiving.setText(String.format(Locale.getDefault(), "%s x %d", t.getReceiveType(), t.getReceiveQty()));
 
                 final boolean finalSameUser = sameUser;
+
                 t2Btn_text.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (!finalSameUser) {
                             acceptTrade(t2Btn_text, t.getDocumentID());
                         } else {
-                            if (!deleteConfirm) {
-                                t2Btn_text.setText("Delete?");
-                                t2Btn_text.setBackground(getResources().getDrawable(R.drawable.marketplace2_btn2));
-                                deleteConfirm = true;
-                            } else {
-                                deleteTrade(t2Btn_text, t.getDocumentID());
-                                deleteConfirm = false;
-                            }
+
+                            t2Btn_text.setVisibility(View.INVISIBLE);
+                            t2Btn_text_delete.setVisibility(View.VISIBLE);
+
+//                                to debug the toast message customization
+                            LayoutInflater inflater = getLayoutInflater();
+                            View toastLayout = inflater.inflate(R.layout.toast_custom, null);
+
+
                         }
+                    }
+                });
+
+                t2Btn_text_delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        t2Btn_text.setText("Deleted!");
+                        deleteTrade(t2Btn_text_delete, t.getDocumentID());
                     }
                 });
 
