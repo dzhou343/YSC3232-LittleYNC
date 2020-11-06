@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/design_2"
-    tools:context=".ArmoryActivity">
+    tools:context=".gameActivities.ArmoryActivity">
 
     <TextView
         android:id="@+id/agg_level"
@@ -132,7 +132,6 @@
         android:id="@+id/username2"
         style="@style/activity_gain"
         android:gravity="center"
-        android:text="@string/toast_msg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

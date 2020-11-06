@@ -125,7 +125,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:text="@string/toast_msg"
         android:textColor="#C89FFD"
         android:textSize="20dp"
         android:textAlignment="center">

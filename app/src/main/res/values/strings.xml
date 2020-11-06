@@ -26,7 +26,7 @@
     <string name="combat_gear_level">Combat Gear Level:</string>
     <string name="agg_level">Aggregate Level:</string>
     <string name="agg_level_progress"> / </string>
-    <string name="toast_msg">LOADING…</string>
+    <string name="gain_display"> </string>
 
     <!-- For loading Monster attributes -->
     <string name="monster_hp">HP:</string>
@@ -83,4 +83,5 @@
     <string name="tutorial_4">4. You can upgrade your fishing rod, woodcutting axe and monster-battling sword to more efficient ones in Dean of Students Office with some resources.</string>
     <string name="tutorial_5">5. You can trade with other users fish, wood or gold with any of the three in Elm Buttery Marketplace. You have to have enough resources to exchange to successfully post a trade. Each user is entitled to a total of 5 trades in the duration of the game, so use your trades carefully. You can also delete your trade.</string>
     <string name="tutorial_6">6. Check the leaderboard to see your ranking!</string>
+    <string name="armory_display">Upgrade your gear here!</string>
 </resources>

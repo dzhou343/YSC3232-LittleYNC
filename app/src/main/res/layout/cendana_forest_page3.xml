@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/design_2"
-    tools:context=".actionActivities.CendanaForestActivity">
+    tools:context=".gameActivities.CendanaForestTimerActivity">
 
     <TextView
         android:id="@+id/agg_level"
@@ -132,7 +132,6 @@
         style="@style/activity_gain"
 
         android:layout_marginBottom="12dp"
-        android:text="@string/toast_msg"
         app:layout_constraintBottom_toTopOf="@+id/time_section"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"></TextView>

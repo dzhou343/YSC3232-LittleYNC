@@ -11,9 +11,10 @@ import android.view.View;
 import android.widget.Button;
 
 
-import com.example.littleync.actionActivities.CendanaForestActivity;
-import com.example.littleync.actionActivities.EcopondActivity;
-import com.example.littleync.actionActivities.SagaBattlegroundActivity;
+import com.example.littleync.gameActivities.ArmoryActivity;
+import com.example.littleync.gameActivities.CendanaForestTimerActivity;
+import com.example.littleync.gameActivities.EcopondTimerActivity;
+import com.example.littleync.gameActivities.SagaBattlegroundTimerActivity;
 
 import static com.example.littleync.MainActivity.fLC;
 import static com.example.littleync.MainActivity.lCB;
@@ -138,7 +139,7 @@ public class TravelActivity extends AppCompatActivity {
 
     }
     public void cendanaForestButton(View view) {
-        Intent intent = new Intent(this, CendanaForestActivity.class);
+        Intent intent = new Intent(this, CendanaForestTimerActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
@@ -157,13 +158,13 @@ public class TravelActivity extends AppCompatActivity {
     }
 
     public void battleButton(View view) {
-        Intent intent = new Intent(this, SagaBattlegroundActivity.class);
+        Intent intent = new Intent(this, SagaBattlegroundTimerActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
     public void fishButton(View view) {
-        Intent intent = new Intent(this, EcopondActivity.class);
+        Intent intent = new Intent(this, EcopondTimerActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

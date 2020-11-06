@@ -4,7 +4,6 @@ import com.example.littleync.model.Marketplace;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.util.Log;
 import android.widget.TextView;
@@ -212,7 +210,7 @@ public class MarketplaceActivity extends AppCompatActivity implements AdapterVie
 //        set content
                 TextView index = new_row.findViewById(R.id.index2);
                 final TextView timestamp = new_row.findViewById(R.id.timestamp2);
-                TextView username = new_row.findViewById(R.id.username2);
+                TextView username = new_row.findViewById(R.id.armory_toast_msg);
                 TextView giving = new_row.findViewById(R.id.giving2);
                 TextView receiving = new_row.findViewById(R.id.receiving2);
                 final ImageButton t2Btn = new_row.findViewById(R.id.t2_btn2);

@@ -39,7 +39,7 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".actionActivities.CendanaForestActivity"
+            android:name=".gameActivities.CendanaForestTimerActivity"
             android:parentActivityName=".TravelActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
@@ -48,7 +48,7 @@
                 android:value=".TravelActivity" />
         </activity>
         <activity
-            android:name=".actionActivities.EcopondActivity"
+            android:name=".gameActivities.EcopondTimerActivity"
             android:parentActivityName=".TravelActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
@@ -57,7 +57,7 @@
                 android:value=".TravelActivity" />
         </activity>
         <activity
-            android:name=".actionActivities.SagaBattlegroundActivity"
+            android:name=".gameActivities.SagaBattlegroundTimerActivity"
             android:parentActivityName=".TravelActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
@@ -94,7 +94,7 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".ArmoryActivity"
+            android:name=".gameActivities.ArmoryActivity"
             android:parentActivityName=".TravelActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->

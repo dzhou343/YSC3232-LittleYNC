@@ -1,4 +1,4 @@
-package com.example.littleync;
+package com.example.littleync.gameActivities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,36 +24,32 @@ import static com.example.littleync.MainActivity.logoutTrigger;
  * Armory Activity page which allows the user to upgrade their woodchopping, fishing, and/or combat
  * gear
  */
-public class ArmoryActivity extends AppCompatActivity {
-    // To print to log instead of console
-    private final static String TAG = "ArmoryActivity";
-
-    // DB attributes
-    private final FirebaseFirestore fs = FirebaseFirestore.getInstance();
-    private DocumentReference userDoc;
-    private User user;
-    private User initialUser;
-    private volatile Boolean userLoaded = false;
-
-    // To update User stats at top of page
-    private TextView woodDisplay;
-    private TextView woodchoppingGearLevelDisplay;
-    private TextView fishDisplay;
-    private TextView fishingGearLevelDisplay;
-    private TextView goldDisplay;
-    private TextView combatGearLevelDisplay;
-    private TextView aggLevelDisplay;
-    private TextView aggLevelProgressDisplay;
-    private TextView toastDisplay;
+public class ArmoryActivity extends AttributesActivity {
 
     // To update for next level stats
     private final Shop SHOP = new Shop();
+    private TextView toastDisplay;
     private TextView woodToLevel;
     private TextView woodCost;
     private TextView fishToLevel;
     private TextView fishCost;
     private TextView combatToLevel;
     private TextView goldCost;
+
+    /**
+     * Sets the tag for the Log
+     */
+    public ArmoryActivity() {
+        super("ArmoryActivity");
+    }
+
+    /**
+     * Sets the correct content view
+     */
+    @Override
+    protected void settingContentView() {
+        setContentView(R.layout.armory_page2);
+    }
 
     /**
      * Initialize the objects and TextViews required for this page
@@ -63,67 +59,14 @@ public class ArmoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.armory_page2);
 
-        // User and relevant TextViews
-        woodDisplay = findViewById(R.id.wood_res);
-        woodchoppingGearLevelDisplay = findViewById(R.id.wood_gear_level);
-        fishDisplay = findViewById(R.id.fish_res);
-        fishingGearLevelDisplay = findViewById(R.id.fish_gear_level);
-        goldDisplay = findViewById(R.id.gold_res);
-        combatGearLevelDisplay = findViewById(R.id.combat_gear_level);
-        aggLevelDisplay = findViewById(R.id.agg_level);
-        aggLevelProgressDisplay = findViewById(R.id.agg_level_progress);
-        toastDisplay = findViewById(R.id.username2);
-
+        toastDisplay = findViewById(R.id.armory_toast_msg);
         woodToLevel = findViewById(R.id.wood_upgrade_level);
         woodCost = findViewById(R.id.wood_upgrade_cost);
         fishToLevel = findViewById(R.id.fish_upgrade_level);
         fishCost = findViewById(R.id.fish_upgrade_cost);
         combatToLevel = findViewById(R.id.battle_upgrade_level);
         goldCost = findViewById(R.id.battle_upgrade_cost);
-
-        String userID = FirebaseAuth.getInstance().getUid();
-        userLoaded = false;
-        assert userID != null;
-        userDoc = fs.collection("users").document(userID);
-        readUser(userDoc.get());
-    }
-
-    /**
-     * Write the local User and any updates made to it back to the DB; this is called when we press
-     * the back button to return to the Main Activity
-     */
-    @Override
-    public void onDestroy() {
-        user.writeToDatabase(fs, userDoc, initialUser);
-        Log.d(TAG, "Wrote to DB");
-        logoutTrigger = 0;
-        super.onDestroy();
-
-    }
-
-    /**
-     * Read in User by userID, update all the textViews at top of page, flags that the User has
-     * been loaded in
-     *
-     * @param ds DocumentSnapshot of the User from the DB
-     */
-    public void readUser(Task<DocumentSnapshot> ds) {
-        ds.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        // Store the initial values of the user
-                                        initialUser = documentSnapshot.toObject(User.class);
-                                        // Store the user that this page will manipulate
-                                        user = documentSnapshot.toObject(User.class);
-                                        userLoaded = true;
-                                        refreshScreen();
-                                        String msg = "Upgrade your gear!";
-                                        toastDisplay.setText(msg);
-                                    }
-                                }
-        );
     }
 
     /**
@@ -166,24 +109,10 @@ public class ArmoryActivity extends AppCompatActivity {
      * To refresh the TextView displays on the entire page, called each time the user presses a
      * button; this called in readUser(), so User is definitely already loaded in
      */
-    public void refreshScreen() {
-        String woodRes = String.format(Locale.getDefault(), "%s", user.getWood());
-        woodDisplay.setText(woodRes);
-        String woodGearLevel = String.format(Locale.getDefault(), "%s", user.getWoodchoppingGearLevel());
-        woodchoppingGearLevelDisplay.setText(woodGearLevel);
-        String fishRes = String.format(Locale.getDefault(), "%s", user.getFish());
-        fishDisplay.setText(fishRes);
-        String fishGearLevel = String.format(Locale.getDefault(), "%s", user.getFishingGearLevel());
-        fishingGearLevelDisplay.setText(fishGearLevel);
-        String goldRes = String.format(Locale.getDefault(), "%s", user.getGold());
-        goldDisplay.setText(goldRes);
-        String combatGearLevel = String.format(Locale.getDefault(), "%s", user.getCombatGearLevel());
-        combatGearLevelDisplay.setText(combatGearLevel);
-        String aggLevel = String.format(Locale.getDefault(), "LEVEL %s", user.getAggregateLevel());
-        aggLevelDisplay.setText(aggLevel);
-        String aggLevelProgress = String.format(Locale.getDefault(),
-                "%s / %s", user.getExp(), user.requiredExperience(user.getAggregateLevel() + 1));
-        aggLevelProgressDisplay.setText(aggLevelProgress);
+
+    @Override
+    public void refreshUserAttributes() {
+        super.refreshUserAttributes();
         setWoodUpgrade();
         setFishUpgrade();
         setCombatUpgrade();
@@ -199,7 +128,7 @@ public class ArmoryActivity extends AppCompatActivity {
     public void upgradeWood(View view) {
         if (userLoaded) {
             if (SHOP.increaseWoodchoppingLevel(user)) {
-                refreshScreen();
+                refreshUserAttributes();
                 String msg = "Successfully upgraded woodchopping gear level!";
                 toastDisplay.setText(msg);
             } else {
@@ -221,7 +150,7 @@ public class ArmoryActivity extends AppCompatActivity {
     public void upgradeFish(View view) {
         if (userLoaded) {
             if (SHOP.increaseFishingGearLevel(user)) {
-                refreshScreen();
+                refreshUserAttributes();
                 String msg = "Successfully upgraded fishing gear level!";
                 toastDisplay.setText(msg);
             } else {
@@ -243,6 +172,7 @@ public class ArmoryActivity extends AppCompatActivity {
     public void upgradeCombat(View view) {
         if (userLoaded) {
             if (SHOP.increaseCombatGearLevel(user)) {
+                refreshUserAttributes();
                 String msg = "Successfully upgraded combat gear level!";
                 toastDisplay.setText(msg);
             } else {
