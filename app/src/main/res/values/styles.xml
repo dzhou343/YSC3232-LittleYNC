@@ -112,7 +112,7 @@
     <style name="activity_title">
         <item name="fontFamily">@font/advent_pro_semibold</item>
         <item name="android:textColor">@color/final_purple</item>
-        <item name="android:textSize">30sp</item>
+        <item name="android:textSize">35sp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAlignment">center</item>

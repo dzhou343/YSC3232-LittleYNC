@@ -42,7 +42,7 @@ public class SagaBattlegroundActivity extends ActionActivity implements AdapterV
      */
     @Override
     protected void settingContentView() {
-        setContentView(R.layout.battleground_page);
+        setContentView(R.layout.battleground_page2);
     }
 
     /**
@@ -129,8 +129,8 @@ public class SagaBattlegroundActivity extends ActionActivity implements AdapterV
         SpannableStringBuilder combatSpan = new SpannableStringBuilder(combatText);
         SpannableStringBuilder expSpan = new SpannableStringBuilder(expText);
 
-        int combatColor = Color.parseColor("#CCA533");
-        int expColor = Color.parseColor("#FF9999");
+        int combatColor = Color.parseColor("#BF8E53");
+        int expColor = Color.parseColor("#C89FFD");
 
         ForegroundColorSpan combatToColor = new ForegroundColorSpan(combatColor);
         ForegroundColorSpan expToColor = new ForegroundColorSpan(expColor);

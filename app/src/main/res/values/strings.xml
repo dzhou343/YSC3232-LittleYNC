@@ -10,10 +10,10 @@
 
     <!-- For loading Travel Page attributes -->
     <string name="woodcutting_name"><u>Cendana Forest</u></string>
-    <string name="fishing_name">Eco Pond</string>
-    <string name="battleground_name">Saga Battleground</string>
-    <string name="armory_name">DoS Armory Shop</string>
-    <string name="marketplace_name">Elm Buttery Trading Hub</string>
+    <string name="fishing_name"><u>Eco Pond</u></string>
+    <string name="battleground_name"><u>Saga Battleground</u></string>
+    <string name="armory_name"><u>DoS Armory Shop</u></string>
+    <string name="marketplace_name"><u>Elm Buttery Trading Hub</u></string>
     <string name="login">Login</string>
 
 

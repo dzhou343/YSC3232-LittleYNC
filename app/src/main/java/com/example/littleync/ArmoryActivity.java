@@ -63,7 +63,7 @@ public class ArmoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.armory_page);
+        setContentView(R.layout.armory_page2);
 
         // User and relevant TextViews
         woodDisplay = findViewById(R.id.wood_res);
@@ -167,19 +167,19 @@ public class ArmoryActivity extends AppCompatActivity {
      * button; this called in readUser(), so User is definitely already loaded in
      */
     public void refreshScreen() {
-        String woodRes = String.format(Locale.getDefault(), "Wood: %s", user.getWood());
+        String woodRes = String.format(Locale.getDefault(), "%s", user.getWood());
         woodDisplay.setText(woodRes);
-        String woodGearLevel = String.format(Locale.getDefault(), "Wood Gear Level: %s", user.getWoodchoppingGearLevel());
+        String woodGearLevel = String.format(Locale.getDefault(), "%s", user.getWoodchoppingGearLevel());
         woodchoppingGearLevelDisplay.setText(woodGearLevel);
-        String fishRes = String.format(Locale.getDefault(), "Fish: %s", user.getFish());
+        String fishRes = String.format(Locale.getDefault(), "%s", user.getFish());
         fishDisplay.setText(fishRes);
-        String fishGearLevel = String.format(Locale.getDefault(), "Fish Gear Level: %s", user.getFishingGearLevel());
+        String fishGearLevel = String.format(Locale.getDefault(), "%s", user.getFishingGearLevel());
         fishingGearLevelDisplay.setText(fishGearLevel);
-        String goldRes = String.format(Locale.getDefault(), "Gold: %s", user.getGold());
+        String goldRes = String.format(Locale.getDefault(), "%s", user.getGold());
         goldDisplay.setText(goldRes);
-        String combatGearLevel = String.format(Locale.getDefault(), "Combat Gear Level: %s", user.getCombatGearLevel());
+        String combatGearLevel = String.format(Locale.getDefault(), "%s", user.getCombatGearLevel());
         combatGearLevelDisplay.setText(combatGearLevel);
-        String aggLevel = String.format(Locale.getDefault(), "Aggregate Level: %s", user.getAggregateLevel());
+        String aggLevel = String.format(Locale.getDefault(), "LEVEL %s", user.getAggregateLevel());
         aggLevelDisplay.setText(aggLevel);
         String aggLevelProgress = String.format(Locale.getDefault(),
                 "%s / %s", user.getExp(), user.requiredExperience(user.getAggregateLevel() + 1));

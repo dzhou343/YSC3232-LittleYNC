@@ -60,8 +60,8 @@ public class CendanaForestActivity extends ActionActivity {
         SpannableStringBuilder woodSpan = new SpannableStringBuilder(woodText);
         SpannableStringBuilder expSpan = new SpannableStringBuilder(expText);
 
-        int woodColor = Color.parseColor("#8FFF7C");
-        int expColor = Color.parseColor("#FF9999");
+        int woodColor = Color.parseColor("#90BCA0");
+        int expColor = Color.parseColor("#C89FFD");
 
         ForegroundColorSpan woodToColor = new ForegroundColorSpan(woodColor);
         ForegroundColorSpan expToColor = new ForegroundColorSpan(expColor);
