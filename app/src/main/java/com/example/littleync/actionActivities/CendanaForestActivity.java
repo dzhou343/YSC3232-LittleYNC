@@ -28,7 +28,7 @@ public class CendanaForestActivity extends ActionActivity {
      */
     @Override
     protected void settingContentView() {
-        setContentView(R.layout.cendana_forest_page);
+        setContentView(R.layout.cendana_forest_page3);
     }
 
     /**

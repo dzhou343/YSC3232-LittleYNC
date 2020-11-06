@@ -2,13 +2,11 @@ package com.example.littleync;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.littleync.R;
 import com.example.littleync.model.Shop;
 import com.example.littleync.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -20,7 +18,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Locale;
 
-import static com.example.littleync.MainActivity.loginStatus;
 import static com.example.littleync.MainActivity.logoutTrigger;
 
 /**

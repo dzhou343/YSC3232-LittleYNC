@@ -9,7 +9,7 @@
 
 
     <!-- For loading Travel Page attributes -->
-    <string name="woodcutting_name">Cendana Forest</string>
+    <string name="woodcutting_name"><u>Cendana Forest</u></string>
     <string name="fishing_name">Eco Pond</string>
     <string name="battleground_name">Saga Battleground</string>
     <string name="armory_name">DoS Armory Shop</string>
