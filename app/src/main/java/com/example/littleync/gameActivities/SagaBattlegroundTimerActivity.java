@@ -45,6 +45,7 @@ public class SagaBattlegroundTimerActivity extends ActionTimerActivity implement
         // Initializing Spinner
         // This spinner refers to initializing the drop down menu for picking which enemy a user would like to fight
         Spinner enemySpinner = findViewById(R.id.spinner);
+        // List of monsters stored in strings.xml
         ArrayAdapter<String> enemyAdapter = new ArrayAdapter<>(
                 SagaBattlegroundTimerActivity.this,
                 R.layout.battleground_spinner,
@@ -107,6 +108,7 @@ public class SagaBattlegroundTimerActivity extends ActionTimerActivity implement
             currentHP = MONSTERS.getMonsterHitpoints(currentMonster);
             // Only play animation here
             updateGainText();
+            // Animations are not played every 5 second but when a monster has been slain.
             Animation animFadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
             gainDisplay.startAnimation(animFadeOut);
         }

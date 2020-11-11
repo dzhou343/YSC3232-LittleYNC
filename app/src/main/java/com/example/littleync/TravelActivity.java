@@ -72,6 +72,7 @@ public class TravelActivity extends AppCompatActivity {
         armory.setEnabled(whereAmINowMap.get("Armory"));*/
 
         //MUTE THIS FOR DEVELOPMENT ON WINDOWS MACHINES
+
         cTree.setEnabled(true);
         trading.setEnabled(true);
         battleground.setEnabled(true);
@@ -139,6 +140,8 @@ public class TravelActivity extends AppCompatActivity {
         }
 
     }
+    // Butttons that navigate players to their respective activities. A new activity is spawned and the travel page is set to Pause.
+
     public void cendanaForestButton(View view) {
         Intent intent = new Intent(this, CendanaForestTimerActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

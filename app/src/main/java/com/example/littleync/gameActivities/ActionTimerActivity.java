@@ -114,6 +114,9 @@ public abstract class ActionTimerActivity extends AttributesActivity {
                 updateStamina();
             }
 
+            /**
+            *  Method that handles the case when the timer has reached 00:00 or stamina has reached 0/50.
+            * */
             @Override
             public void onFinish() {
                 timerRunning = false;

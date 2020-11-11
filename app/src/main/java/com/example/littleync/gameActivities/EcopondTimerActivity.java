@@ -38,6 +38,7 @@ public class EcopondTimerActivity extends ActionTimerActivity {
     protected void action() {
         user.fishFish();
         updateGainText();
+        // Instantiating animation to add a fade out effect to the text after a 5 second tick.
         Animation animFadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         gainDisplay.startAnimation(animFadeOut);
     }
