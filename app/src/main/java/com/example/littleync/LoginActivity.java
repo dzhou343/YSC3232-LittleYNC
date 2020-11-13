@@ -216,7 +216,6 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-
                         /**
                          * Creates a user object
                          */
@@ -321,14 +320,17 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Checks whether the user has granted permission to access GPS location results.
+     *
      * @param requestCode
      * @param permissions
      * @param grantResults
+     * @see <a href="https://developer.android.com/training/permissions/requesting">https://developer.android.com/training/permissions/requesting</>
      */
     //This is what happens when the user gives permission to access location for the first time.
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
         if ((grantResults[0] == PackageManager.PERMISSION_GRANTED) && ((grantResults[1] == PackageManager.PERMISSION_GRANTED) && (emailLogin.getText().toString() != null))) {
+            //Signs in, but the password might be wrong.
             signIn();
         } else {
             loginButton.setEnabled(true);
@@ -451,6 +453,7 @@ public class LoginActivity extends AppCompatActivity {
      *
      * @param view
      * @see this.signIn()
+     * @see <a href="https://developer.android.com/training/permissions/requesting">https://developer.android.com/training/permissions/requesting</>
      */
     public void loginButton(View view) {
         loginButton.setEnabled(false);
@@ -468,7 +471,15 @@ public class LoginActivity extends AppCompatActivity {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-        } else {
+        }
+        else if (userInstance.getCurrentUser()!=null){
+            if ((userInstance.getCurrentUser() != null) && (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) &&
+                    (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) && (!userInstance.getCurrentUser().getDisplayName().isEmpty())) {
+                Log.d(TAG, "Logged in, permission granted, display name not null.");
+                generateLocationReceiverAndNavigateToTravelPage();
+            }
+        }
+        else {
             signIn();
         }
 
