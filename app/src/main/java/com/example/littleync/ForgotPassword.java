@@ -16,6 +16,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * Loads the forgot password page, to allow users to reset their password using their known email address.
+ */
 public class ForgotPassword extends AppCompatActivity {
 
     private EditText forgotPasswordInput;
@@ -30,6 +33,12 @@ public class ForgotPassword extends AppCompatActivity {
         resetButton = findViewById(R.id.submit_forgot_password);
     }
 
+    /**
+     * Called when reset password button is called, to send an email to the user's email address where they can type in a new password.
+     *
+     * @param view
+     * @return void
+     */
     public void resetPassword(View view) {
         try {
             resetButton.setEnabled(false);

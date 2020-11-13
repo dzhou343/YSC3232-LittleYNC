@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -33,7 +34,12 @@ public class TravelActivity extends AppCompatActivity {
     private Button trading;
     private Button ecopond;
     private Button battleground;
-
+    /**
+     * Returns the main action bar at the top of the screen, if there exists one, which allows us to edit what is shown under the title of the top bar.
+     *
+     * @return ActionBar
+     * @see <a href="https://developer.android.com/training/appbar/setting-up">https://developer.android.com/training/appbar/setting-up</a>
+     */
     @Nullable
     @Override
     public ActionBar getSupportActionBar() {
@@ -58,7 +64,6 @@ public class TravelActivity extends AppCompatActivity {
     /**
      * Check for the activated location of the user based on whereAmINowMap to set alpha of button transparent.
      */
-
     @Override
     public void onStart() {
         super.onStart();
@@ -72,7 +77,6 @@ public class TravelActivity extends AppCompatActivity {
         armory.setEnabled(whereAmINowMap.get("Armory"));*/
 
         //MUTE THIS FOR DEVELOPMENT ON WINDOWS MACHINES
-
         cTree.setEnabled(true);
         trading.setEnabled(true);
         battleground.setEnabled(true);
@@ -104,7 +108,6 @@ public class TravelActivity extends AppCompatActivity {
     /**
      * Calls onStop whenever a new page is generated.
      */
-
     @Override
     public void onStop() {
         super.onStop();
@@ -114,17 +117,18 @@ public class TravelActivity extends AppCompatActivity {
             TravelActivity.super.finish();
         }
 
-    }/*
-    @Override
-    public void onDestroy() {
-        if (logoutTrigger < 2) {
-            logoutTrigger++;
-        } else {
-            this.finish();
-            super.onDestroy();
-        }
-    }*/
+    }
 
+    /**
+     * Called when the logout button is pressed.
+     * loginStatus will be set to false
+     * logoutTrigger will be set to 0
+     * The fusedLocationProvider will stop the location updates from GPS
+     * userInstance will be signed out.
+     * @param view
+     *
+     * @see LoginActivity
+     */
     public void logoutButton(View view) {
         try{
             loginStatus = false;
@@ -135,13 +139,14 @@ public class TravelActivity extends AppCompatActivity {
             TravelActivity.super.finish();
             }
         catch (Exception e) {
-            //Intent in = new Intent(this, TravelActivity.class);
-            //startActivity(in);
+            Log.d("TRAVEL ACTIVITY", "Logout failed");
         }
 
     }
-    // Butttons that navigate players to their respective activities. A new activity is spawned and the travel page is set to Pause.
 
+    /**
+     *Buttton that navigate players to Cendana Forest. A new activity is spawned and the travel page is set to Pause.
+      */
     public void cendanaForestButton(View view) {
         Intent intent = new Intent(this, CendanaForestTimerActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -149,24 +154,37 @@ public class TravelActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *Buttton that navigate players to Armory. A new activity is spawned and the travel page is set to Pause.
+     */
     public void armoryButton(View view) {
         Intent intent = new Intent(this, ArmoryActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
+    /**
+     *Buttton that navigate players to Marketplace. A new activity is spawned and the travel page is set to Pause.
+     */
     public void goToMarketplace(View view) {
         Intent intent = new Intent(this, MarketplaceActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
+
+    /**
+     *Buttton that navigate players to Saga battleground. A new activity is spawned and the travel page is set to Pause.
+     */
     public void battleButton(View view) {
         Intent intent = new Intent(this, SagaBattlegroundTimerActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
+    /**
+     *Buttton that navigate players to ecopond. A new activity is spawned and the travel page is set to Pause.
+     */
     public void fishButton(View view) {
         Intent intent = new Intent(this, EcopondTimerActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

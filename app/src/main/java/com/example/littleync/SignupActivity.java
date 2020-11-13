@@ -33,7 +33,14 @@ import java.util.ArrayList;
 
 import static com.example.littleync.LoginActivity.userInstance;
 
-
+/**
+ * Class which determines the logic for the signup page.
+ * Has the ability ot create a new user, and on successful creation, redirects to the login page.
+ *
+ * @see Tutorial
+ * @see LoginActivity
+ * @see UserNameAlreadyUsed
+ */
 public class SignupActivity extends AppCompatActivity {
     private EditText email;
     private EditText password;
@@ -67,6 +74,9 @@ public class SignupActivity extends AppCompatActivity {
     /**createUser() sends a request to firebase only when we have ensured that the passwords match and that the username is unique.
      * It does not take in any parameters as the email, username, and password information are all taken from SignUpActivity class.
      *
+     * @param
+     *
+     * @return void
      */
     public void createUser(){
         userInstance.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -115,7 +125,9 @@ public class SignupActivity extends AppCompatActivity {
 
     /**
      * signUpSubmit is the button which is linked to the signup button on the signup page.
+     * It checks if the 2 passwords match, and then queries the database to see if the name already exists online, then if it has not been registered yet, calls createUser() to generate the User in the database.
      * @param view
+     * @return void
      */
     public void signUpSubmit(View view) {
         submitSignUp.setEnabled(false);
@@ -179,6 +191,10 @@ public class SignupActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Button which redirects to the tutorial page.
+     * @param view
+     */
     public void goToTutorial(View view){
         Intent intent = new Intent(this, Tutorial.class);
         startActivity(intent);

@@ -31,26 +31,61 @@ import com.google.firebase.auth.*;
 
 import java.util.TreeMap;
 
+/**
+ * Main login page logic, which is linked to the signup page, forgot password page, tutorial page, and the travel activity page.
+ * The main threads for the GPS location updates are triggered in this class
+ * Most Firebase authentications are established inside this page, to get the username and FirebaseBaseAuth instantiated.
+ *
+ * @see TravelActivity
+ * @see ForgotPassword
+ * @see SignupActivity
+ * @see Tutorial
+ * @see javax.security.auth.login.LoginException
+ */
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LOGINACTIVTIY";
+    /**
+     * userInstance is accessible from anywhere in the app
+     */
     public static FirebaseAuth userInstance = FirebaseAuth.getInstance();
+    /**
+     * loginStatus tracks whether the user is logged in
+     */
     public static boolean loginStatus = false;
+    /**
+     * logoutTrigger ensures that there are 0 pages in the page navigation stack on logout.
+     */
     public static int logoutTrigger = 0;
+
+    /**
+     * GPS longitude
+     */
     public static double longitude;
+    /**
+     * GPS latitude
+     */
     public static double latitude;
+    /**
+     * locationCallBack is used in LoginActivity
+     */
     public static LocationCallback lCB;
     private EditText emailLogin;
     private EditText passwordLogin;
     private Button loginButton;
     public static String UID = null;
     private Boolean _b = true;
-    static User loggedInUser;
     public static FusedLocationProviderClient fLC;
     LocationRequest lR;
     public static TreeMap<String, Boolean> whereAmINowMap = new TreeMap<String, Boolean>();
     public static TreeMap<String, Boolean> whereWasIMap = new TreeMap<String, Boolean>();
 
 
+    /**
+     * Returns the main action bar at the top of the screen, if there exists one, which allows us to edit what is shown under the title of the top bar.
+     *
+     * @return ActionBar
+     * @see <a href="https://developer.android.com/training/appbar/setting-up">https://developer.android.com/training/appbar/setting-up</a>
+     */
     @Nullable
     @Override
     public ActionBar getSupportActionBar() {
@@ -73,8 +108,14 @@ public class LoginActivity extends AppCompatActivity {
         whereWasIMap.putAll(whereAmINowMap);
         //Set the flag of initialized to true.
         whereWasIMap.put("initialized", false);
-
-        //This listener will be activated upon successful sign in. We have to trigger the location receiver here and the navigation to next page from here.
+        /**
+         * This listener will be activated upon successful sign in or signout.
+         * If the user is logged in, and permission to access GPS is granted, and the display name is not null, then we trigger the location receiver here, navigate to the travel page.
+         * For all other cases, the userInstance is signed out and it returns to the login page.
+         * @see <a href="https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseAuth.AuthStateListener">https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseAuth.AuthStateListener</a>
+         * @see <a href="https://developer.android.com/training/location/permissions">https://developer.android.com/training/location/permissions</a>
+         *
+         */
         userInstance.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -161,9 +202,16 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * signIn() method sends a signin request to firebase, and returns the results of the attempt. Any exception is shown next to the textbox.
+     * The login button will be blanked out whilst the sign in attempt is processing.
+     *
+     * @param
+     * @return void
+     */
     public void signIn() {
         try {
-
+            loginButton.setEnabled(false);
             userInstance.signInWithEmailAndPassword(emailLogin.getText().toString(), passwordLogin.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
@@ -178,6 +226,7 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d("UID is", String.format(user));
                         UID = user;
                         loginStatus = true;
+                        loginButton.setEnabled(true);
                         //else {
                     } else {
                         loginButton.clearFocus();
@@ -191,9 +240,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
             });
-            /**
-             * Assuming the user has logged in before, and would like to go in again.
-             */
 
         } catch (Exception e) {
             loginButton.clearFocus();
@@ -205,9 +251,18 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Creates a request for location updates, using the location request and locationCallBack objects.
+     * The location call back checks whether or not the user has changed college locations every 500-750ms, and then reloads the TravelActivity page.
+     * To execute the request for location updates, we use the requestLocationUpdates method in fused location provider client.
+     *
+     * @param
+     * @return void
+     * @see <a href = "https://developer.android.com/training/location/retrieve-current">https://developer.android.com/training/location/retrieve-current</>
+     * @see <a href = "https://developers.google.com/android/reference/com/google/android/gms/location/FusedLocationProviderClient.html">https://developers.google.com/android/reference/com/google/android/gms/location/FusedLocationProviderClient.html</>
+     */
     @SuppressLint("MissingPermission")
     public void generateLocationReceiverAndNavigateToTravelPage() {
-
         /**
          * Setup a LocationRequest to be passed into the Activity Compat's request location method.
          */
@@ -216,9 +271,7 @@ public class LoginActivity extends AppCompatActivity {
         lR.setFastestInterval(500);
         lR.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        /** Setup a LocationCallback to be passed into the Activity Compat's request location method.
-         *
-         */
+        //Setup a LocationCallback to be passed into the Activity Compat's request location method.
         lCB = new LocationCallback() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
@@ -226,40 +279,31 @@ public class LoginActivity extends AppCompatActivity {
                 if (lResult != null) {
                     //compute location works on whereAmINowMap
                     computeLocations(lResult.getLastLocation());
-
                     if (!whereWasIMap.equals(whereAmINowMap)) {
                         logoutTrigger = 0;
-                        /**
-                         * Synchronize both whereWasIMap and whereAmINowMap after the if both maps are different statement is started.
-                         */
+                        // Synchronize both whereWasIMap and whereAmINowMap after the if both maps are different statement is started.
                         synchronizeLocations(whereWasIMap, whereAmINowMap);
-
-                        /**
-                         * Gets the application context and creates a new intent for a new travel page if the person's GPS coordinates has changed enough.
-                         */
+                        //    Gets the application context and creates a new intent for a new travel page if the person's GPS coordinates has changed enough.
                         Intent refresh = new Intent(LoginActivity.super.getApplicationContext(), TravelActivity.class);
                         refresh.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(refresh);
-
                     }
-
+                    //update the longitude and latitude values.
                     Log.d("Longitude", String.valueOf(lResult.getLastLocation().getLongitude()));
                     longitude = Double.valueOf(lResult.getLastLocation().getLongitude());
                     Log.d("Latitude", String.valueOf(lResult.getLastLocation().getLatitude()));
                     latitude = Double.valueOf(lResult.getLastLocation().getLatitude());
 
-
                 } else {
-                    System.out.println("Location result is null");
+                    Log.d("LOCATION", "Location result is null");
 
                 }
             }
 
         };
 
-        /**
-         * Initialize a fused Location Provider client with the location requests and it will start executing.
-         */
+
+        //  Initialize a fused Location Provider client with the location requests and it will start executing.
         fLC = LocationServices.getFusedLocationProviderClient(LoginActivity.this);
         fLC.requestLocationUpdates(lR, lCB, null);
         loginButton.setEnabled(true);
@@ -275,6 +319,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Checks whether the user has granted permission to access GPS location results.
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     //This is what happens when the user gives permission to access location for the first time.
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
@@ -397,15 +447,16 @@ public class LoginActivity extends AppCompatActivity {
 
 
     /**
-     * Called when the user taps the Login button
+     * Called when the user taps the Login button, and checks whether the user has allowed the app to access the system's GPS data. If yes, triggers signIn() method.
      *
      * @param view
+     * @see this.signIn()
      */
     public void loginButton(View view) {
         loginButton.setEnabled(false);
 
         /**
-         * Setup the location requests
+         * Setup the location requests, so
          */
         //Checks if the user has location services provided, and to give it if not.
         if (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
