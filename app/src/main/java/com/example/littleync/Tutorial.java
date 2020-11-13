@@ -4,6 +4,9 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * To display the static tutorial page
+ */
 public class Tutorial extends AppCompatActivity {
 
     @Override
