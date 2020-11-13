@@ -17,6 +17,7 @@ import com.example.littleync.gameActivities.CendanaForestTimerActivity;
 import com.example.littleync.gameActivities.EcopondTimerActivity;
 import com.example.littleync.gameActivities.MarketplaceActivity;
 import com.example.littleync.gameActivities.SagaBattlegroundTimerActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
 import static com.example.littleync.LoginActivity.fLC;
 import static com.example.littleync.LoginActivity.lCB;
@@ -51,8 +52,13 @@ public class TravelActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Hides the back button on travel page.
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setSubtitle(String.format("Welcome %s",userInstance.getCurrentUser().getDisplayName()));
+        try{
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setSubtitle(String.format("Welcome %s",userInstance.getCurrentUser().getDisplayName()));
+        }catch (Exception e) {
+            Log.d("TRAVEL ACTIVITY",e.getMessage());
+        }
+
         setContentView(R.layout.travel_page);
         //Disable the home button on the travel page.
         cTree = (Button) findViewById(R.id.cendana_forest_travel);
@@ -136,6 +142,7 @@ public class TravelActivity extends AppCompatActivity {
             whereWasIMap.put("initialized", false);
             fLC.removeLocationUpdates(lCB);
             userInstance.signOut();
+            FirebaseAuth.getInstance().signOut();
             TravelActivity.super.finish();
             }
         catch (Exception e) {
